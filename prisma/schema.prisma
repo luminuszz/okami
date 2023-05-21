@@ -24,6 +24,7 @@ model Work {
   hasNewChapter Boolean @map("has_new_chapter")
   chapters Float
   url String
+  recipientId String? @unique @map("recipent_id")
 
 
 

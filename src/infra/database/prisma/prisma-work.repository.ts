@@ -1,6 +1,7 @@
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { omit } from 'lodash';
 import {
   prismaWorkToEntityMapper,
   workEntityToPrismaMapper,
@@ -9,6 +10,8 @@ import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class PrismaWorkRepository implements WorkRepository {
+  private logger = new Logger(PrismaWorkRepository.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async create(work: Work): Promise<void> {
@@ -48,5 +51,27 @@ export class PrismaWorkRepository implements WorkRepository {
     });
 
     return results.map(prismaWorkToEntityMapper);
+  }
+
+  async createAllWithNotExists(data: Work[]) {
+    const operations = data.map((work) => {
+      const parsedData = workEntityToPrismaMapper(work);
+
+      this.logger.log(
+        `Syncing document ${work.name} to prisma database category => ${work.name}}`,
+      );
+
+      const updateParsedData = omit(parsedData, ['id']);
+
+      return this.prisma.work.upsert({
+        where: {
+          recipientId: work.recipientId,
+        },
+        create: parsedData,
+        update: updateParsedData,
+      });
+    });
+
+    await this.prisma.$transaction(operations);
   }
 }

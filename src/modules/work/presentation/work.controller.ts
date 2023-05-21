@@ -1,3 +1,4 @@
+import { BatchService } from '@app/infra/database/batchs/batch.service';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateWorkCommand } from '../commands/create-work.command';
@@ -11,6 +12,7 @@ export class WorkController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly batchService: BatchService,
   ) {}
 
   @Post()
@@ -44,5 +46,10 @@ export class WorkController {
     const works = await this.queryBus.execute(new FetchForWorkersReadQuery());
 
     return works.map(WorkModel.toHttp);
+  }
+
+  @Get('sync-database')
+  async syncDatabase() {
+    await this.batchService.importNotionDatabaseToMongoDB();
   }
 }

@@ -16,6 +16,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   id: work.id.toString(),
   updatedAt: work.updatedAt,
   url: work.url,
+  recipientId: work.recipientId,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -28,6 +29,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       name: prismaWork.name,
       url: prismaWork.url,
       updatedAt: prismaWork.updatedAt,
+      recipientId: prismaWork.recipientId,
     },
     new UniqueEntityID(prismaWork.id),
   );

@@ -12,6 +12,7 @@ interface WorkProps {
   updatedAt?: Date;
   createdAt: Date;
   category: Category;
+  recipientId?: string;
 }
 
 export enum Category {
@@ -62,6 +63,14 @@ export class Work extends Entity<WorkProps> {
 
   public get category() {
     return this.props.category;
+  }
+  public get recipientId() {
+    return this.props.recipientId;
+  }
+
+  public setRecipientId(recipientId: string) {
+    this.props.recipientId = recipientId;
+    this.commit();
   }
 
   private commit() {
