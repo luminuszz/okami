@@ -1,22 +1,16 @@
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Module } from '@nestjs/common';
+import { BatchService } from './batchs/batch.service';
+import { NotionModule } from './notion/notion.module';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule, NotionModule],
   providers: [
-    PrismaService,
-    {
-      provide: WorkRepository,
-      useClass: PrismaWorkRepository,
-    },
+    { provide: WorkRepository, useClass: PrismaWorkRepository },
+    BatchService,
   ],
-  exports: [
-    PrismaService,
-    {
-      provide: WorkRepository,
-      useClass: PrismaWorkRepository,
-    },
-  ],
+  exports: [WorkRepository, BatchService],
 })
 export class DatabaseModule {}

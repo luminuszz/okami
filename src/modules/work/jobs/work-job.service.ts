@@ -30,7 +30,7 @@ export class WorkJobsService {
     private readonly fetchForWorkersReadUseCase: FetchForWorkersReadUseCase,
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_2_HOURS)
   async triggerQueueFindSerieEpisodeQueue() {
     console.log('triggerQueueFindSerieEpisodeQueue');
     const { works } = await this.fetchForWorkersReadUseCase.execute({});
