@@ -8,8 +8,8 @@ import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateWorkHandler } from './commands/create-work.command';
-import { MarkWorkReadCommand } from './commands/mark-work-read.command';
-import { MarkWorkUnreadCommand } from './commands/mark-work-unread.command';
+import { MarkWorkReadCommandHandler } from './commands/mark-work-read.command';
+import { MarkWorkUnreadCommandHandler } from './commands/mark-work-unread.command';
 import { WorkMarkUnreadEventHandler } from './events/work-mark-unread.event';
 import { WorkJobsService } from './jobs/work-job.service';
 import { WorkController } from './presentation/work.controller';
@@ -17,8 +17,8 @@ import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read.
 
 const CommandHandlers = [
   CreateWorkHandler,
-  MarkWorkReadCommand,
-  MarkWorkUnreadCommand,
+  MarkWorkReadCommandHandler,
+  MarkWorkUnreadCommandHandler,
 ];
 
 const QueryHandlers = [FetchForWorkersReadQueryHandler];
