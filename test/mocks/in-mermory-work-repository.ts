@@ -18,4 +18,8 @@ export class InMemoryWorkRepository implements WorkRepository {
   async findById(id: string): Promise<Work> {
     return this.works.find((work) => work.id === id);
   }
+
+  async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
+    return this.works.filter((work) => work.hasNewChapter === false);
+  }
 }

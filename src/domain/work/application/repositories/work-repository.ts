@@ -4,4 +4,5 @@ export abstract class WorkRepository {
   abstract create(work: Work): Promise<void>;
   abstract save(work: Work): Promise<void>;
   abstract findById(id: string): Promise<Work>;
+  abstract fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]>;
 }

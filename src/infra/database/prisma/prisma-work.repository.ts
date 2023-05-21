@@ -39,4 +39,14 @@ export class PrismaWorkRepository implements WorkRepository {
 
     return prismaWorkToEntityMapper(results);
   }
+
+  async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
+    const results = await this.prisma.work.findMany({
+      where: {
+        hasNewChapter: false,
+      },
+    });
+
+    return results.map(prismaWorkToEntityMapper);
+  }
 }
