@@ -1,27 +1,23 @@
 import { Notification } from '@domain/notification/enterprise/entities/notification';
 import { Content } from '@domain/notification/enterprise/values-objects/content';
-import { SendNotificationProvider } from '../providers/send-notification-provider';
 import { NotificationRepository } from '../repositories/notification.repository';
 
-interface SendNotificationInput {
+interface CreateNotificationInput {
   content: string;
   recipientId: string;
 }
 
-interface SendNotificationDtoOutput {
+interface CreateNotificationDtoOutput {
   notification: Notification;
 }
 
-export class SendNotificationUseCase {
-  constructor(
-    private notificationRepository: NotificationRepository,
-    private readonly sendNotification: SendNotificationProvider,
-  ) {}
+export class CreateNotificationUseCase {
+  constructor(private notificationRepository: NotificationRepository) {}
 
   async execute({
     content,
     recipientId,
-  }: SendNotificationInput): Promise<SendNotificationDtoOutput> {
+  }: CreateNotificationInput): Promise<CreateNotificationDtoOutput> {
     const notification = Notification.create({
       content: new Content(content),
       recipientId,
@@ -29,8 +25,6 @@ export class SendNotificationUseCase {
     });
 
     await this.notificationRepository.create(notification);
-
-    await this.sendNotification.send(notification);
 
     return {
       notification,

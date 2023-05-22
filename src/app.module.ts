@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from './modules/notification/notification.module';
 import { WorkModule } from './modules/work/work.module';
 
 @Module({
@@ -10,6 +11,7 @@ import { WorkModule } from './modules/work/work.module';
     ScheduleModule.forRoot(),
     CqrsModule,
     WorkModule,
+    NotificationModule,
     ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRootAsync({
       useFactory: (config: ConfigService) => ({

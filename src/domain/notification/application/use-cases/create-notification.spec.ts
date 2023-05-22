@@ -1,24 +1,15 @@
-import { SendNotificationProvider } from '@domain/notification/application/providers/send-notification-provider';
 import { InMemoryNotificationRepository } from 'test/mocks/in-mermory-notification-repository';
 import { NotificationRepository } from '../repositories/notification.repository';
-import { SendNotificationUseCase } from './send-notification';
-
-const fakeSendNotificationProvider: SendNotificationProvider = {
-  send: vi.fn(),
-};
+import { CreateNotificationUseCase } from './create-notification';
 
 describe('Send Notification', () => {
-  let stu: SendNotificationUseCase;
-  let sendNotificationProvider: SendNotificationProvider;
+  let stu: CreateNotificationUseCase;
   let notificationRepository: NotificationRepository;
 
   beforeEach(() => {
     notificationRepository = new InMemoryNotificationRepository();
-    sendNotificationProvider = fakeSendNotificationProvider;
-    stu = new SendNotificationUseCase(
-      notificationRepository,
-      sendNotificationProvider,
-    );
+
+    stu = new CreateNotificationUseCase(notificationRepository);
   });
 
   it('should be able to create a notification', async () => {
@@ -38,18 +29,5 @@ describe('Send Notification', () => {
     expect(notificationCreated.recipientId).toBe(notificationInput.recipientId);
     expect(notificationCreated.createdAt).toBeTruthy();
     expect(notificationCreated.readAt).toBeNull();
-  });
-
-  it('should be able to send a notification', async () => {
-    const notificationInput = {
-      content: "Novo capitulo de 'One Piece' disponível",
-      recipientId: '1',
-    };
-
-    const spy = vi.spyOn(sendNotificationProvider, 'send');
-
-    await stu.execute(notificationInput);
-
-    expect(spy.mock.calls.length).toBe(1);
   });
 });

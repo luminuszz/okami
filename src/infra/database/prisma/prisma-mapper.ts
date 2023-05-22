@@ -1,7 +1,13 @@
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { Notification } from '@domain/notification/enterprise/entities/notification';
+import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, Work } from '@domain/work/enterprise/entities/work';
-import { Category as PrismaCategory, Work as PrismaWork } from '@prisma/client';
+import {
+  Category as PrismaCategory,
+  Notification as PrismaNotification,
+  Work as PrismaWork,
+} from '@prisma/client';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -36,3 +42,26 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
 
   return work;
 };
+
+export const parseNotificationEntityToPrisma = (
+  notification: Notification,
+): PrismaNotification => ({
+  content: notification.content.toString(),
+  createdAt: notification.createdAt,
+  id: notification.id.toString(),
+  readAt: notification.readAt,
+  recipientId: notification.recipientId,
+});
+
+export const parsePrismaToNotificationEntity = (
+  prismaNotification: PrismaNotification,
+): Notification =>
+  Notification.create(
+    {
+      content: new Content(prismaNotification.content),
+      recipientId: prismaNotification.recipientId,
+      createdAt: prismaNotification.createdAt,
+      readAt: prismaNotification.readAt,
+    },
+    new UniqueEntityID(prismaNotification.id),
+  ); 

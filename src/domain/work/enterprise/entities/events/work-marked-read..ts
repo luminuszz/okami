@@ -1,16 +1,11 @@
 import { DomainEvent } from '@core/entities/entity';
-
-interface WorkMarkReadEventPayload {
-  id: string;
-  name: string;
-  url: string;
-}
+import { Work } from '../work';
 
 export class WorkMarkReadEvent implements DomainEvent {
   eventName: string;
-  payload: WorkMarkReadEventPayload;
+  payload: Work;
 
-  constructor(payload: WorkMarkReadEventPayload) {
+  constructor(payload: Work) {
     this.eventName = WorkMarkReadEvent.name;
     this.payload = payload;
   }
