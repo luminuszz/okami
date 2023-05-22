@@ -6,7 +6,8 @@ import { MarkWorkReadCommand } from '../commands/mark-work-read.command';
 import { MarkWorkUnreadCommand } from '../commands/mark-work-unread.command';
 import { UpdateWorkChapterCommand } from '../commands/update-work-chapter.command';
 import { WorkJobsService } from '../jobs/work-job.service';
-import { FetchForWorkersReadQuery } from '../queries/fetch-for-works-read.query';
+import { FetchForWorkersReadQuery } from '../queries/fetch-for-works-read';
+import { FetchForWorkersUnreadQuery } from '../queries/fetch-for-works-unread';
 import { WorkModel } from './work.model';
 @Controller('work')
 export class WorkController {
@@ -46,6 +47,13 @@ export class WorkController {
   @Get('/fetch-for-workers-read')
   async fetchForWorkersRead() {
     const works = await this.queryBus.execute(new FetchForWorkersReadQuery());
+
+    return works.map(WorkModel.toHttp);
+  }
+
+  @Get('/fetch-for-workers-unread')
+  async fetchForWorkersUnread() {
+    const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery());
 
     return works.map(WorkModel.toHttp);
   }

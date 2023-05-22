@@ -74,4 +74,8 @@ export class PrismaWorkRepository implements WorkRepository {
 
     await this.prisma.$transaction(operations);
   }
+
+  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
+    throw new Error('Method not implemented.');
+  }
 }

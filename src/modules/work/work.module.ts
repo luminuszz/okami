@@ -13,7 +13,8 @@ import { MarkWorkUnreadCommandHandler } from './commands/mark-work-unread.comman
 
 import { WorkJobsService } from './jobs/work-job.service';
 import { WorkController } from './presentation/work.controller';
-import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read.query';
+import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
+import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -21,7 +22,10 @@ const CommandHandlers = [
   MarkWorkUnreadCommandHandler,
 ];
 
-const QueryHandlers = [FetchForWorkersReadQueryHandler];
+const QueryHandlers = [
+  FetchForWorkersReadQueryHandler,
+  FetchForWorkersUnreadQueryHandler,
+];
 
 const EventHandlers = [];
 

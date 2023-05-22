@@ -5,6 +5,7 @@ export interface WorkHttp {
   name: string;
   url: string;
   hasNewChapter: boolean;
+  chapter: number;
 }
 
 export class WorkModel {
@@ -14,6 +15,7 @@ export class WorkModel {
       id: work.id,
       name: work.name,
       url: work.url,
+      chapter: work.chapter.getChapter(),
     };
   }
 }
