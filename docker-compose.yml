@@ -3,6 +3,7 @@ version: '3.7'
 
 services:
   application:
+    network_mode: "host"
     build: 
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
@@ -17,3 +18,12 @@ services:
       - OKAMI_BASE_URL=${OKAMI_BASE_URL}
       - API_PORT=${API_PORT}
       
+
+
+networks:
+  default:
+    external:
+      name: broker-connection
+
+
+

@@ -17,8 +17,6 @@ export class MarkWorkUnreadCommandHandler
   async execute({ id }: MarkWorkUnreadCommand): Promise<any> {
     const { work } = await this.markUnread.execute({ id });
 
-    console.log('work', work.events);
-
     this.eventBus.publishAll(work.events);
     return;
   }

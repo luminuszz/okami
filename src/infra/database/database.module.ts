@@ -14,6 +14,6 @@ import { PrismaModule } from './prisma/prisma.module';
     { provide: NotificationRepository, useClass: PrismaNotificationRepository },
     BatchService,
   ],
-  exports: [WorkRepository, BatchService, NotificationRepository],
+  exports: [WorkRepository, NotificationRepository, BatchService],
 })
 export class DatabaseModule {}

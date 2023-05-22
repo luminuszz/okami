@@ -4,12 +4,16 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateNotificationCommandHandler } from './commands/createNotification.command';
 import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-notification-created-event-handler';
+import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
-const EventHandlers = [TelegramNotificationCreatedEventHandler];
+const EventHandlers = [
+  TelegramNotificationCreatedEventHandler,
+  NotificationWorkMarkUnreadEventHandler,
+];
 
 @Module({
   imports: [CqrsModule, DatabaseModule],
-  providers: [...CommandHandlers, ...EventHandlers, CreateNotificationUseCase],
+  providers: [...EventHandlers, ...CommandHandlers, CreateNotificationUseCase],
 })
 export class NotificationModule {}

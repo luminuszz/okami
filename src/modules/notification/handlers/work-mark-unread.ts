@@ -5,7 +5,7 @@ import { CommandBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { CreateNotificationCommand } from '../commands/createNotification.command';
 
 @EventsHandler(WorkMarkUnreadEvent)
-export class WorkMarkUnreadEventHandler
+export class NotificationWorkMarkUnreadEventHandler
   implements IEventHandler<WorkMarkUnreadEvent>
 {
   constructor(
@@ -14,6 +14,8 @@ export class WorkMarkUnreadEventHandler
   ) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
+    console.log('WorkMarkUnreadEventHandler', payload);
+
     let content = '';
 
     if (payload.category === Category.ANIME) {
