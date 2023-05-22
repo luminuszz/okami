@@ -5,6 +5,7 @@ import { CreateWorkCommand } from '../commands/create-work.command';
 import { MarkWorkReadCommand } from '../commands/mark-work-read.command';
 import { MarkWorkUnreadCommand } from '../commands/mark-work-unread.command';
 import { UpdateWorkChapterCommand } from '../commands/update-work-chapter.command';
+import { WorkJobsService } from '../jobs/work-job.service';
 import { FetchForWorkersReadQuery } from '../queries/fetch-for-works-read.query';
 import { WorkModel } from './work.model';
 @Controller('work')
@@ -13,6 +14,7 @@ export class WorkController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly batchService: BatchService,
+    private readonly workJobs: WorkJobsService,
   ) {}
 
   @Post()
@@ -51,5 +53,10 @@ export class WorkController {
   @Get('sync-database')
   async syncDatabase() {
     await this.batchService.importNotionDatabaseToMongoDB();
+  }
+
+  @Get('refresh-chapters')
+  async refreshChapters() {
+    await this.workJobs.triggerQueueFindSerieEpisodeQueue();
   }
 }
