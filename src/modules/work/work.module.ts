@@ -10,7 +10,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreateWorkHandler } from './commands/create-work.command';
 import { MarkWorkReadCommandHandler } from './commands/mark-work-read.command';
 import { MarkWorkUnreadCommandHandler } from './commands/mark-work-unread.command';
-import { WorkMarkUnreadEventHandler } from './events/work-mark-unread.event';
+
 import { WorkJobsService } from './jobs/work-job.service';
 import { WorkController } from './presentation/work.controller';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read.query';
@@ -23,7 +23,7 @@ const CommandHandlers = [
 
 const QueryHandlers = [FetchForWorkersReadQueryHandler];
 
-const EventHandlers = [WorkMarkUnreadEventHandler];
+const EventHandlers = [];
 
 @Module({
   imports: [
