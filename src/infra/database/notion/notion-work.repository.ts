@@ -90,4 +90,18 @@ export class NotionWorkRepository implements WorkRepository {
       NotionMapper.toDomain(item as NotionPage),
     );
   }
+
+  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
+    const { results } = await this.notion.databases.query({
+      database_id: this.notion.database_id,
+      filter: {
+        property: 'CAPITULO NOVO',
+        checkbox: {
+          equals: true,
+        },
+      },
+    });
+
+    return results.map((item) => NotionMapper.toDomain(item as NotionPage));
+  }
 }

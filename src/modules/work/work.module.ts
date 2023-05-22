@@ -11,6 +11,7 @@ import { CreateWorkHandler } from './commands/create-work.command';
 import { MarkWorkReadCommandHandler } from './commands/mark-work-read.command';
 import { MarkWorkUnreadCommandHandler } from './commands/mark-work-unread.command';
 
+import { FetchForWorkersUnreadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-unread';
 import { WorkJobsService } from './jobs/work-job.service';
 import { WorkController } from './presentation/work.controller';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
@@ -51,6 +52,7 @@ const EventHandlers = [];
     MarkWorkUnreadUseCase,
     FetchForWorkersReadUseCase,
     WorkJobsService,
+    FetchForWorkersUnreadUseCase,
   ],
 })
 export class WorkModule {}

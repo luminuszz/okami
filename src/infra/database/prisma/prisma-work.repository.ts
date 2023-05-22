@@ -76,6 +76,12 @@ export class PrismaWorkRepository implements WorkRepository {
   }
 
   async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
-    throw new Error('Method not implemented.');
+    const results = await this.prisma.work.findMany({
+      where: {
+        hasNewChapter: true,
+      },
+    });
+
+    return results.map(prismaWorkToEntityMapper);
   }
 }
