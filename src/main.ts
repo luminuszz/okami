@@ -5,7 +5,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*',
+    origin: [
+      'https://okami-front-end-61mg.vercel.app/',
+      'http://localhost:3000',
+    ],
   });
   await app.listen(3000);
 }
