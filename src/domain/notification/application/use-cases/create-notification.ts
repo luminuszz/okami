@@ -1,5 +1,6 @@
 import { Notification } from '@domain/notification/enterprise/entities/notification';
 import { Content } from '@domain/notification/enterprise/values-objects/content';
+import { Injectable } from '@nestjs/common';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 interface CreateNotificationInput {
@@ -11,6 +12,7 @@ interface CreateNotificationDtoOutput {
   notification: Notification;
 }
 
+@Injectable()
 export class CreateNotificationUseCase {
   constructor(private notificationRepository: NotificationRepository) {}
 
