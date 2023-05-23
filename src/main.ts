@@ -9,9 +9,9 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:3008',
       'https://okami.daviribeiro.com',
-      'http://localhost:3009',
+      'http://localhost:3008',
+      'http://localhost:5000',
     ],
     allowedHeaders: '*',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
