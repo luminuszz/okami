@@ -8,7 +8,11 @@ async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: ['http://localhost:3008', 'https://okami.daviribeiro.com'],
+    origin: [
+      'http://localhost:3008',
+      'https://okami.daviribeiro.com',
+      'http://localhost:3009',
+    ],
     allowedHeaders: '*',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     exposedHeaders: '*',
