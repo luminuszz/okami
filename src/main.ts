@@ -10,6 +10,7 @@ async function bootstrap() {
       'http://localhost:3000',
     ],
     allowedHeaders: '*',
+    methods: '*',
   });
   await app.listen(3000);
 }
