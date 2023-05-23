@@ -9,6 +9,7 @@ async function bootstrap() {
       'https://okami-front-end-61mg.vercel.app/',
       'http://localhost:3000',
     ],
+    allowedHeaders: '*',
   });
   await app.listen(3000);
 }
