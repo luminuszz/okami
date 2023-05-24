@@ -37,21 +37,27 @@ export class WorkJobsService {
 
     works.forEach((work) => {
       if (work.category === Category.ANIME) {
-        this.findSerieEpisodeQueue.add({
-          id: work.id,
-          url: work.url,
-          episode: work.chapter.getChapter(),
-          name: work.name,
-        });
+        this.findSerieEpisodeQueue.add(
+          {
+            id: work.id,
+            url: work.url,
+            episode: work.chapter.getChapter(),
+            name: work.name,
+          },
+          { removeOnComplete: true },
+        );
       }
 
       if (work.category === Category.MANGA) {
-        this.findChapterQueue.add({
-          id: work.id,
-          url: work.url,
-          cap: work.chapter.getChapter(),
-          name: work.name,
-        });
+        this.findChapterQueue.add(
+          {
+            id: work.id,
+            url: work.url,
+            cap: work.chapter.getChapter(),
+            name: work.name,
+          },
+          { removeOnComplete: true },
+        );
       }
     });
   }
