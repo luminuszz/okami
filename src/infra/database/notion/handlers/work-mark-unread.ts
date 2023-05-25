@@ -3,7 +3,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '../notion-work.repository';
 
 @EventsHandler(WorkMarkUnreadEvent)
-export class WorkMarkUnreadEventHandler
+export class WorkMarkUnreadNotionEventHandler
   implements IEventHandler<WorkMarkUnreadEvent>
 {
   constructor(private readonly workNotionRepository: NotionWorkRepository) {}

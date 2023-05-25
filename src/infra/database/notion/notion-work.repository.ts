@@ -40,12 +40,18 @@ export class NotionWorkRepository implements WorkRepository {
     });
   }
 
-  public async updateForNewChapterFalse(id: string): Promise<void> {
+  public async updateForNewChapterFalse(
+    id: string,
+    chapter: number,
+  ): Promise<void> {
     await this.notion.pages.update({
       page_id: id,
       properties: {
         'CAPITULO NOVO': {
-          checkbox: true,
+          checkbox: false,
+        },
+        cap: {
+          number: chapter,
         },
       },
     });

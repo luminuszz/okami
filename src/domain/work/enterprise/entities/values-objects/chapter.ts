@@ -1,5 +1,3 @@
-import { SameChapterError } from '../errors/same-chapter-error';
-
 export class Chapter {
   private value: number;
 
@@ -8,10 +6,6 @@ export class Chapter {
   }
 
   public updateChapter(newChapter: number): void {
-    if (this.value >= newChapter) {
-      throw new SameChapterError();
-    }
-
     this.value = newChapter;
   }
 
