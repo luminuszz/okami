@@ -22,4 +22,8 @@ export class InMemoryWorkRepository implements WorkRepository {
   async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
     return this.works.filter((work) => work.hasNewChapter === false);
   }
+
+  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
+    return this.works.filter((work) => work.hasNewChapter);
+  }
 }
