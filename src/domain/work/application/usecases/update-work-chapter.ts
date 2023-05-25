@@ -28,11 +28,13 @@ export class UpdateWorkChapterUseCase {
 
     const currentWorkChapter = work.chapter.getChapter();
 
-    if (currentWorkChapter === chapter) {
+  
+    work.updateChapter(chapter);
+
+    if (currentWorkChapter >= chapter) {
       work.markAsRead();
     }
 
-    work.updateChapter(chapter);
 
     await this.workRepository.save(work);
 
