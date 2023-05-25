@@ -31,7 +31,7 @@ export class UpdateWorkChapterUseCase {
   
     work.updateChapter(chapter);
 
-    if (currentWorkChapter >= chapter) {
+    if (chapter >= currentWorkChapter) {
       work.markAsRead();
     }
 
