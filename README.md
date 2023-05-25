@@ -73,9 +73,9 @@ $ yarn run test
 
 ## Other OKAMI modules 
 
-- [OKAMI-WORKERS](https://kamilmysliwiec.com)
-- [OKAMI-FRONT-END](https://nestjs.com/)
-- [OKAMI-SERVER](https://twitter.com/nestframework)
+- [OKAMI-WORKERS](https://github.com/luminuszz/okami-workers)
+- [OKAMI-FRONT-END](https://github.com/luminuszz/okami-front-end)
+- [OKAMI-SERVER](https://github.com/luminuszz/okami)
 
 ## License
 
