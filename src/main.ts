@@ -20,6 +20,7 @@ async function bootstrap() {
       'https://okami.daviribeiro.com',
       'http://localhost:3008',
       'http://localhost:5000',
+      'http://69.55.54.168',
     ],
     allowedHeaders: '*',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
