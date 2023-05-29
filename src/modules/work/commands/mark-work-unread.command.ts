@@ -5,11 +5,7 @@ export class MarkWorkUnreadCommand {
   constructor(public readonly id: string) {}
 }
 
-export class MarkWorkUnreadCommandError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
+
 
 @CommandHandler(MarkWorkUnreadCommand)
 export class MarkWorkUnreadCommandHandler
@@ -21,12 +17,8 @@ export class MarkWorkUnreadCommandHandler
   ) {}
 
   async execute({ id }: MarkWorkUnreadCommand): Promise<void> {
-    try {
-      const { work } = await this.markUnread.execute({ id });
+    const { work } = await this.markUnread.execute({ id });
 
-      this.eventBus.publishAll(work.events);
-    } catch (err) {
-      throw new MarkWorkUnreadCommandError(err.message);
-    }
+    this.eventBus.publishAll(work.events);
   }
 }

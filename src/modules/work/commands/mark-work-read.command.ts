@@ -6,11 +6,7 @@ export class MarkWorkReadCommand {
 }
 
 
-export class MarkWorkReadCommandError extends Error {
-  constructor(message: string) {
-    super(message);
-  }
-}
+
 
 
 @CommandHandler(MarkWorkReadCommand)
@@ -23,12 +19,8 @@ export class MarkWorkReadCommandHandler
   ) {}
 
   async execute({ id }: MarkWorkReadCommand): Promise<void> {
-    try {
-      const { work } = await this.markRead.execute({ id });
+    const { work } = await this.markRead.execute({ id });
 
-      this.eventBus.publishAll(work.events);
-    } catch (err) {
-      throw new MarkWorkReadCommandError(err.message);
-    }
+    this.eventBus.publishAll(work.events);
   }
 }
