@@ -3,7 +3,10 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '../notion-work.repository';
 
 export class WorkMarkUnreadNotionEventHandlerError extends Error {
-  constructor(message: string, public readonly originalPayload: any) {
+  constructor(
+    message: string,
+    public readonly originalEvent: WorkMarkUnreadEvent,
+  ) {
     super(message);
   }
 }
@@ -14,11 +17,13 @@ export class WorkMarkUnreadNotionEventHandler
 {
   constructor(private readonly workNotionRepository: NotionWorkRepository) {}
 
-  async handle({ payload }: WorkMarkUnreadEvent) {
+  async handle(event: WorkMarkUnreadEvent) {
+    const { payload } = event;
+
     try {
       await this.workNotionRepository.updateForNewChapter(payload.recipientId);
     } catch (err) {
-      throw new WorkMarkUnreadNotionEventHandlerError(err.message, payload);
+      throw new WorkMarkUnreadNotionEventHandlerError(err.message, event);
     }
   }
 }

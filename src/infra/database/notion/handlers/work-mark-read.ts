@@ -4,7 +4,10 @@ import { NotionWorkRepository } from '../notion-work.repository';
 
 
 export class WorkMarkReadNotionEventHandlerError extends Error {
-  constructor(message: string, public readonly originalPayload: any) {
+  constructor(
+    message: string,
+    public readonly originalEvent: WorkMarkReadEvent,
+  ) {
     super(message);
   }
 }
@@ -15,14 +18,16 @@ export class WorkMarkReadNotionEventHandler
 {
   constructor(private readonly workNotionRepository: NotionWorkRepository) {}
 
-  async handle({ payload }: WorkMarkReadEvent) {
+  async handle(event: WorkMarkReadEvent) {
+    const { payload } = event;
+
     try {
       await this.workNotionRepository.updateForNewChapterFalse(
         payload.recipientId,
         payload.chapter.getChapter(),
       );
     } catch (err) {
-      throw new WorkMarkReadNotionEventHandlerError(err.message, payload);
+      throw new WorkMarkReadNotionEventHandlerError(err.message, event);
     }
   }
 }
