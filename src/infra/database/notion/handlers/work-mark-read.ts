@@ -2,6 +2,13 @@ import { WorkMarkReadEvent } from '@domain/work/enterprise/entities/events/work-
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '../notion-work.repository';
 
+
+export class WorkMarkReadNotionEventHandlerError extends Error {
+  constructor(message: string, public readonly originalPayload: any) {
+    super(message);
+  }
+}
+
 @EventsHandler(WorkMarkReadEvent)
 export class WorkMarkReadNotionEventHandler
   implements IEventHandler<WorkMarkReadEvent>
@@ -9,11 +16,13 @@ export class WorkMarkReadNotionEventHandler
   constructor(private readonly workNotionRepository: NotionWorkRepository) {}
 
   async handle({ payload }: WorkMarkReadEvent) {
-    console.log({ payload });
-
-    await this.workNotionRepository.updateForNewChapterFalse(
-      payload.recipientId,
-      payload.chapter.getChapter(),
-    );
+    try {
+      await this.workNotionRepository.updateForNewChapterFalse(
+        payload.recipientId,
+        payload.chapter.getChapter(),
+      );
+    } catch (err) {
+      throw new WorkMarkReadNotionEventHandlerError(err.message, payload);
+    }
   }
 }
