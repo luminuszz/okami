@@ -1,14 +1,16 @@
 import { BatchService } from '@app/infra/database/batchs/batch.service';
+
+import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command';
+import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
+import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unread.command';
+import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
+import { WorkJobsService } from '@infra/crqs/work/jobs/work-job.service';
+import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
+import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateWorkCommand } from '../commands/create-work.command';
-import { MarkWorkReadCommand } from '../commands/mark-work-read.command';
-import { MarkWorkUnreadCommand } from '../commands/mark-work-unread.command';
-import { UpdateWorkChapterCommand } from '../commands/update-work-chapter.command';
-import { WorkJobsService } from '../jobs/work-job.service';
-import { FetchForWorkersReadQuery } from '../queries/fetch-for-works-read';
-import { FetchForWorkersUnreadQuery } from '../queries/fetch-for-works-unread';
-import { WorkModel } from './work.model';
+import { WorkModel } from './presentation/work.model';
+
 @Controller('work')
 export class WorkController {
   constructor(
@@ -48,14 +50,14 @@ export class WorkController {
   async fetchForWorkersRead() {
     const works = await this.queryBus.execute(new FetchForWorkersReadQuery());
 
-    return works.map(WorkModel.toHttp);
+    return WorkModel.toHttpList(works);
   }
 
   @Get('/fetch-for-workers-unread')
   async fetchForWorkersUnread() {
     const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery());
 
-    return works.map(WorkModel.toHttp);
+    return WorkModel.toHttpList(works);
   }
 
   @Get('sync-database')

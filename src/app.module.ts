@@ -5,11 +5,13 @@ import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { NotificationModule } from './modules/notification/notification.module';
-import { WorkModule } from './modules/work/work.module';
+import { NotificationModule } from './infra/crqs/notification/notification.module';
+import { WorkModule } from './infra/crqs/work/work.module';
+import { HttpModule } from './infra/http/http.module';
 
 @Module({
   imports: [
+    HttpModule,
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 20,
