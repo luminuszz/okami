@@ -8,13 +8,13 @@ import { HttpModule } from './infra/http/http.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 20,
     }),
     ScheduleModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         redis: {
