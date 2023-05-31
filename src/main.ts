@@ -27,10 +27,12 @@ async function bootstrap() {
     exposedHeaders: '*',
   });
 
+  
 
-  const port = Number(process.env.PORT) || 3000;
-
-  await app.listen(port, '0.0.0.0');
-
+  await app.listen(process.env.PORT, process.env.ADDRESS, (_, address) =>
+    console.log(address),
+  );
+  
+  
 }
 bootstrap();
