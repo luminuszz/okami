@@ -1,6 +1,5 @@
 version: '3.7'
 
-
 services:
   application:
     volumes:
@@ -9,9 +8,8 @@ services:
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
     container_name: okami
-    restart: always
     ports:
-      - 3000:3000
+      - "${PORT}:${PORT}"
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
@@ -20,5 +18,6 @@ services:
       - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
       - TELEGRAM_NOTIFICATION_BOT=${TELEGRAM_NOTIFICATION_BOT}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - PORT=${PORT}
     
 

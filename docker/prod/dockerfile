@@ -1,13 +1,12 @@
 FROM node:18-alpine3.16
 
-WORKDIR /home/services/okami
+WORKDIR /app
 
 COPY package.json .
 
 RUN yarn install
 
-
-ENV PATH="$PATH:/home/services/okami/node_modules/.bin/nest"
+ENV PATH="/app/node_modules/.bin/nest:$PATH"
 
 RUN yarn global add pm2
 
