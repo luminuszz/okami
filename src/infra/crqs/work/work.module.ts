@@ -54,5 +54,14 @@ const EventHandlers = [];
     WorkJobsService,
     FetchForWorkersUnreadUseCase,
   ],
+  exports: [
+    CreateWorkUseCase,
+    UpdateWorkChapterUseCase,
+    MarkWorkReadUseCase,
+    MarkWorkUnreadUseCase,
+    FetchForWorkersReadUseCase,
+    WorkJobsService,
+    FetchForWorkersUnreadUseCase,
+  ],
 })
 export class WorkModule {}

@@ -3,7 +3,8 @@ version: '3.7'
 
 services:
   application:
-    network_mode: "host"
+    volumes:
+      - .:/app
     build: 
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
@@ -19,13 +20,5 @@ services:
       - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
       - TELEGRAM_NOTIFICATION_BOT=${TELEGRAM_NOTIFICATION_BOT}
       - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-      
-
-
-networks:
-  default:
-    external:
-      name: broker-connection
-
-
+    
 
