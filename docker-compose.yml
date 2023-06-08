@@ -6,8 +6,6 @@ services:
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
     container_name: okami
-    volumes:
-      - .:/app
     ports:
       - "${PORT}:${PORT}"
     environment:
