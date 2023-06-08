@@ -5,9 +5,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HttpModule } from './infra/http/http.module';
+import { LoggerModule } from './infra/logs/logs.module';
 
 @Module({
   imports: [
+    LoggerModule,
     ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
     ThrottlerModule.forRoot({

@@ -13,4 +13,10 @@ export class NotionApiAdapter extends NotionClient {
 
     this.database_id = configService.get<string>('NOTION_DATABASE_ID');
   }
+
+  public async getHealthStatus() {
+    return this.databases.query({
+      database_id: this.database_id,
+    });
+  }
 }
