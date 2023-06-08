@@ -21,6 +21,7 @@ async function bootstrap() {
       'http://localhost:3008',
       'http://localhost:5000',
       'http://69.55.54.168',
+      'http://45.79.222.162',
     ],
     allowedHeaders: '*',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
