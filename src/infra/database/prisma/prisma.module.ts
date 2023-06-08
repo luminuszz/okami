@@ -10,6 +10,6 @@ import { PrismaService } from './prisma.service';
     PrismaWorkRepository,
     PrismaNotificationRepository,
   ],
-  exports: [PrismaService, PrismaWorkRepository],
+  exports: [PrismaService, PrismaWorkRepository, PrismaNotificationRepository],
 })
 export class PrismaModule {}
