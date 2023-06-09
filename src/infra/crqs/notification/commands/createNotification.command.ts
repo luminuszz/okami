@@ -21,11 +21,15 @@ export class CreateNotificationCommandHandler
   ) {}
 
   async execute({ payload }: CreateNotificationCommand): Promise<void> {
-    const { notification } = await this.createNotificationUseCase.execute({
+    const results = await this.createNotificationUseCase.execute({
       content: payload.content,
       recipientId: payload.recipientId,
     });
 
-    await this.eventBus.publish(new NotificationCreatedEvent(notification));
+    if (results.isRight()) {
+      await this.eventBus.publish(new NotificationCreatedEvent(results.value.notification));
+    }
+
+    
   }
 }

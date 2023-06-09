@@ -1,3 +1,4 @@
+import { Either, right } from '@core/either';
 import { Notification } from '@domain/notification/enterprise/entities/notification';
 import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Injectable } from '@nestjs/common';
@@ -8,18 +9,18 @@ interface CreateNotificationInput {
   recipientId: string;
 }
 
-interface CreateNotificationDtoOutput {
-  notification: Notification;
-}
+type CreateNotificationDtoOutput = Either<
+  undefined,
+  {
+    notification: Notification;
+  }
+>;
 
 @Injectable()
 export class CreateNotificationUseCase {
   constructor(private notificationRepository: NotificationRepository) {}
 
-  async execute({
-    content,
-    recipientId,
-  }: CreateNotificationInput): Promise<CreateNotificationDtoOutput> {
+  async execute({ content, recipientId }: CreateNotificationInput): Promise<CreateNotificationDtoOutput> {
     const notification = Notification.create({
       content: new Content(content),
       recipientId,
@@ -28,8 +29,6 @@ export class CreateNotificationUseCase {
 
     await this.notificationRepository.create(notification);
 
-    return {
-      notification,
-    };
+    return right({ notification });
   }
 }

@@ -18,16 +18,19 @@ describe('Send Notification', () => {
       recipientId: '1',
     };
 
-    const { notification: notificationCreated } = await stu.execute(
-      notificationInput,
-    );
+    const response = await stu.execute(notificationInput);
 
-    expect(notificationCreated.id.toString()).toBeTruthy();
-    expect(notificationCreated.content.toString()).toBe(
-      notificationInput.content,
-    );
-    expect(notificationCreated.recipientId).toBe(notificationInput.recipientId);
-    expect(notificationCreated.createdAt).toBeTruthy();
-    expect(notificationCreated.readAt).toBeNull();
+    if (response.isRight()) {
+      const { notification: notificationCreated } = response.value;
+
+      expect(notificationCreated.id.toString()).toBeTruthy();
+      expect(notificationCreated.content.toString()).toBe(notificationInput.content);
+      expect(notificationCreated.recipientId).toBe(notificationInput.recipientId);
+      expect(notificationCreated.createdAt).toBeTruthy();
+      expect(notificationCreated.readAt).toBeNull();
+    }
+
+
+
   });
 });
