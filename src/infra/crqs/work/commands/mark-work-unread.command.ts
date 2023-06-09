@@ -17,8 +17,14 @@ export class MarkWorkUnreadCommandHandler
   ) {}
 
   async execute({ id }: MarkWorkUnreadCommand): Promise<void> {
-    const { work } = await this.markUnread.execute({ id });
+    const response = await this.markUnread.execute({ id });
 
-    this.eventBus.publishAll(work.events);
+    if (response.isRight()) {
+      const work = response.value;
+
+      this.eventBus.publishAll(work.events);
+    }
+
+   
   }
 }

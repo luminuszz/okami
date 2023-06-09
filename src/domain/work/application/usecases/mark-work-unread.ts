@@ -1,3 +1,4 @@
+import { Either, left, right } from '@core/either';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
@@ -7,9 +8,7 @@ interface MarkWorkUnreadInput {
   id: string;
 }
 
-interface MarkWorkUnreadOutput {
-  work: Work;
-}
+type MarkWorkUnreadOutput = Either<WorkNotFoundError, Work>;
 
 @Injectable()
 export class MarkWorkUnreadUseCase {
@@ -19,15 +18,13 @@ export class MarkWorkUnreadUseCase {
     const work = await this.workRepository.findById(id);
 
     if (!work) {
-      throw new WorkNotFoundError();
+      return left(new WorkNotFoundError());
     }
 
     work.markAsUnread();
 
     await this.workRepository.save(work);
 
-    return {
-      work,
-    };
+    return right(work);
   }
 }

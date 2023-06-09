@@ -19,8 +19,14 @@ export class MarkWorkReadCommandHandler
   ) {}
 
   async execute({ id }: MarkWorkReadCommand): Promise<void> {
-    const { work } = await this.markRead.execute({ id });
+    const response = await this.markRead.execute({ id });
 
-    this.eventBus.publishAll(work.events);
+    if (response.isRight()) {
+      const work = response.value;
+
+      this.eventBus.publishAll(work.events);
+    }
+
+   
   }
 }
