@@ -93,4 +93,13 @@ export class Work extends Entity<WorkProps> {
     this.events.push(new WorkMarkUnreadEvent(this));
     this.commit();
   }
+
+  public set url(url: string) {
+    this.props.url = url;
+    this.commit();
+  }
+  public set name(name: string) {
+    this.props.name = name;
+    this.commit();
+  }
 }
