@@ -12,7 +12,9 @@ import { MarkWorkReadCommandHandler } from './commands/mark-work-read.command';
 import { MarkWorkUnreadCommandHandler } from './commands/mark-work-unread.command';
 
 import { FetchForWorkersUnreadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-unread';
+import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
+import { UpdateWorkCommandHandler } from './commands/update-work.command';
 import { WorkJobsService } from './jobs/work-job.service';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
@@ -22,6 +24,7 @@ const CommandHandlers = [
   MarkWorkReadCommandHandler,
   MarkWorkUnreadCommandHandler,
   UpdateWorkChapterCommandHandler,
+  UpdateWorkCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -53,6 +56,7 @@ const EventHandlers = [];
     FetchForWorkersReadUseCase,
     WorkJobsService,
     FetchForWorkersUnreadUseCase,
+    UpdateWorkUseCase,
   ],
   exports: [
     CreateWorkUseCase,

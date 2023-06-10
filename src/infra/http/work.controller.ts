@@ -7,8 +7,9 @@ import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-
 import { WorkJobsService } from '@infra/crqs/work/jobs/work-job.service';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
 import { WorkModel } from './presentation/work.model';
 
 @Controller('work')
@@ -29,10 +30,7 @@ export class WorkController {
   async getById(@Param('id') id: string) {}
 
   @Patch(':id/update-chapater')
-  async updateChapter(
-    @Param('id') id: string,
-    @Body('chapter') chapter: number,
-  ) {
+  async updateChapter(@Param('id') id: string, @Body('chapter') chapter: number) {
     await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter));
   }
 
@@ -68,5 +66,10 @@ export class WorkController {
   @Get('refresh-chapters')
   async refreshChapters() {
     await this.workJobs.triggerQueueFindSerieEpisodeQueue();
+  }
+
+  @Put('update-work')
+  async updateWork(@Body() { data, id }: any) {
+    await this.commandBus.execute(new UpdateWorkCommand(id, data));
   }
 }

@@ -27,13 +27,9 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
       return left(new WorkNotFoundError());
     }
 
-    console.log({
-      data,
-    });
-
-    existsWork.updateChapter(data.chapter ?? existsWork.chapter.getChapter());
-    existsWork.url = data.url ?? existsWork.url;
-    existsWork.name = data.name ?? existsWork.name;
+    existsWork.updateChapter(data?.chapter ?? existsWork.chapter.getChapter());
+    existsWork.url = data?.url ?? existsWork.url;
+    existsWork.name = data?.name ?? existsWork.name;
 
     await this.workRepository.save(existsWork);
 
