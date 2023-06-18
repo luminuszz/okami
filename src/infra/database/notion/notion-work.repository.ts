@@ -7,7 +7,8 @@ import { NotionMapper } from './notion.mappter';
 
 @Injectable()
 export class NotionWorkRepository implements WorkRepository {
-  constructor(private readonly notion: NotionApiAdapter) {}
+  constructor(private readonly notion: NotionApiAdapter) { }
+
 
   async create(work: Work): Promise<void> {
     await this.notion.pages.create({
@@ -109,5 +110,16 @@ export class NotionWorkRepository implements WorkRepository {
     });
 
     return results.map((item) => NotionMapper.toDomain(item as NotionPage));
+  }
+
+
+  async findOne(id: string): Promise<Work> {
+
+    const response = await this.notion.pages.retrieve({
+      page_id: id,
+    });
+
+    return NotionMapper.toDomain(response as NotionPage);
+
   }
 }
