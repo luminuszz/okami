@@ -12,7 +12,8 @@ import { PrismaService } from './prisma.service';
 export class PrismaWorkRepository implements WorkRepository {
   private logger = new Logger(PrismaWorkRepository.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
 
   async create(work: Work): Promise<void> {
     const data = workEntityToPrismaMapper(work);
@@ -83,5 +84,19 @@ export class PrismaWorkRepository implements WorkRepository {
     });
 
     return results.map(prismaWorkToEntityMapper);
+  }
+
+
+  async findOne(id: string): Promise<Work> {
+
+    const results = await this.prisma.work.findUnique({
+      where: {
+        id,
+      }
+    })
+
+
+    return results ? prismaWorkToEntityMapper(results) : null;
+
   }
 }

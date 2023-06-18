@@ -18,6 +18,8 @@ import { UpdateWorkCommandHandler } from './commands/update-work.command';
 import { WorkJobsService } from './jobs/work-job.service';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
+import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
+import { FindOneWorkQueryHandler } from './queries/find-one-work';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -30,6 +32,7 @@ const CommandHandlers = [
 const QueryHandlers = [
   FetchForWorkersReadQueryHandler,
   FetchForWorkersUnreadQueryHandler,
+  FindOneWorkQueryHandler,
 ];
 
 const EventHandlers = [];
@@ -57,6 +60,7 @@ const EventHandlers = [];
     WorkJobsService,
     FetchForWorkersUnreadUseCase,
     UpdateWorkUseCase,
+    FindOneWorkUseCase,
   ],
   exports: [
     CreateWorkUseCase,
@@ -66,6 +70,7 @@ const EventHandlers = [];
     FetchForWorkersReadUseCase,
     WorkJobsService,
     FetchForWorkersUnreadUseCase,
+    FindOneWorkUseCase
   ],
 })
-export class WorkModule {}
+export class WorkModule { }

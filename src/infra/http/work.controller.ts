@@ -11,6 +11,7 @@ import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
 import { WorkModel } from './presentation/work.model';
+import { FindOneWorkQuery } from '../crqs/work/queries/find-one-work';
 
 @Controller('work')
 export class WorkController {
@@ -19,7 +20,7 @@ export class WorkController {
     private readonly queryBus: QueryBus,
     private readonly batchService: BatchService,
     private readonly workJobs: WorkJobsService,
-  ) {}
+  ) { }
 
   @Post()
   async createWork(@Body() data: any) {
@@ -27,7 +28,13 @@ export class WorkController {
   }
 
   @Get('find/:id')
-  async getById(@Param('id') id: string) {}
+  async getById(@Param('id') id: string) {
+
+    const work = await this.queryBus.execute(new FindOneWorkQuery(id));
+
+    return WorkModel.toHttp(work);
+
+  }
 
   @Patch(':id/update-chapater')
   async updateChapter(@Param('id') id: string, @Body('chapter') chapter: number) {
