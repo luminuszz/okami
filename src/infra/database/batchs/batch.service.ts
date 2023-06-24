@@ -10,8 +10,7 @@ export class BatchService {
   ) {}
 
   async importNotionDatabaseToMongoDB() {
-    const allNotionData =
-      await this.notionWorkRepository.findAllDocumentWithStatusFollowing();
+    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing();
 
     await this.prismaWorkRepository.createAllWithNotExists(allNotionData);
   }

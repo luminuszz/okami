@@ -22,6 +22,7 @@ import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-wo
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
 import { MarkWorkFinishedCommandHandler } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
+import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -61,6 +62,7 @@ const EventHandlers = [];
     UpdateWorkUseCase,
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
+    FetchWorksForScrappingUseCase,
   ],
   exports: [
     CreateWorkUseCase,
@@ -72,6 +74,7 @@ const EventHandlers = [];
     FetchForWorkersUnreadUseCase,
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
+    FetchWorksForScrappingUseCase,
   ],
 })
 export class WorkModule {}

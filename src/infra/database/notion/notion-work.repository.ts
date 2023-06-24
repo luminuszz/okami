@@ -124,4 +124,29 @@ export class NotionWorkRepository implements WorkRepository {
       },
     });
   }
+
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
+    const { results } = await this.notion.databases.query({
+      database_id: this.notion.database_id,
+      filter: {
+        and: [
+          {
+            property: 'status',
+            select: {
+              does_not_equal: 'Finalizado',
+            },
+          },
+
+          {
+            property: 'CAPITULO NOVO',
+            checkbox: {
+              equals: false,
+            },
+          },
+        ],
+      },
+    });
+
+    return results.map((item) => NotionMapper.toDomain(item as NotionPage));
+  }
 }
