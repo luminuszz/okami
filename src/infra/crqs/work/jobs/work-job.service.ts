@@ -33,7 +33,6 @@ export class WorkJobsService {
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async triggerQueueFindSerieEpisodeQueue() {
-    console.log('triggerQueueFindSerieEpisodeQueue');
     const { value } = await this.fetchWorksForScrappingUseCase.execute();
 
     value.works.forEach((work) => {
