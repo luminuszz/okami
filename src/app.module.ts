@@ -4,8 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { HttpModule } from './infra/http/http.module';
-import { LoggerModule } from './infra/logs/logs.module';
+import { HttpModule } from '@infra/http/http.module';
+import { LoggerModule } from '@infra/logs/logs.module';
 
 @Module({
   imports: [

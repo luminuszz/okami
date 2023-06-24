@@ -3,18 +3,13 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '../notion-work.repository';
 
 export class WorkMarkUnreadNotionEventHandlerError extends Error {
-  constructor(
-    message: string,
-    public readonly originalEvent: WorkMarkUnreadEvent,
-  ) {
+  constructor(message: string, public readonly originalEvent: WorkMarkUnreadEvent) {
     super(message);
   }
 }
 
 @EventsHandler(WorkMarkUnreadEvent)
-export class WorkMarkUnreadNotionEventHandler
-  implements IEventHandler<WorkMarkUnreadEvent>
-{
+export class WorkMarkUnreadNotionEventHandler implements IEventHandler<WorkMarkUnreadEvent> {
   constructor(private readonly workNotionRepository: NotionWorkRepository) {}
 
   async handle(event: WorkMarkUnreadEvent) {

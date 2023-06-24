@@ -1,9 +1,9 @@
-import { FetchForWorkersReadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-read';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bull';
+import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 
 interface FindSerieEpisodeDTO {
   id: string;
@@ -27,15 +27,14 @@ export class WorkJobsService {
     @InjectQueue('find-comic-cap-by-url')
     private readonly findChapterQueue: Queue<CheckWithExistsNewChapterDto>,
 
-    private readonly fetchForWorkersReadUseCase: FetchForWorkersReadUseCase,
+    private readonly fetchWorksForScrappingUseCase: FetchWorksForScrappingUseCase,
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async triggerQueueFindSerieEpisodeQueue() {
-    console.log('triggerQueueFindSerieEpisodeQueue');
-    const { works } = await this.fetchForWorkersReadUseCase.execute({});
+    const { value } = await this.fetchWorksForScrappingUseCase.execute();
 
-    works.forEach((work) => {
+    value.works.forEach((work) => {
       if (work.category === Category.ANIME) {
         this.findSerieEpisodeQueue.add(
           {

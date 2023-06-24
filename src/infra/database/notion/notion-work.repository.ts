@@ -7,8 +7,7 @@ import { NotionMapper } from './notion.mappter';
 
 @Injectable()
 export class NotionWorkRepository implements WorkRepository {
-  constructor(private readonly notion: NotionApiAdapter) { }
-
+  constructor(private readonly notion: NotionApiAdapter) {}
 
   async create(work: Work): Promise<void> {
     await this.notion.pages.create({
@@ -41,10 +40,7 @@ export class NotionWorkRepository implements WorkRepository {
     });
   }
 
-  public async updateForNewChapterFalse(
-    id: string,
-    chapter: number,
-  ): Promise<void> {
+  public async updateForNewChapterFalse(id: string, chapter: number): Promise<void> {
     await this.notion.pages.update({
       page_id: id,
       properties: {
@@ -58,7 +54,7 @@ export class NotionWorkRepository implements WorkRepository {
     });
   }
 
-  findById(id: string): Promise<Work> {
+  findById(): Promise<Work> {
     throw new Error('Method not implemented.');
   }
 
@@ -73,9 +69,7 @@ export class NotionWorkRepository implements WorkRepository {
       },
     });
 
-    return response.results.map((item) =>
-      NotionMapper.toDomain(item as NotionPage),
-    );
+    return response.results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
   async findAllDocumentWithStatusFollowing(): Promise<Work[]> {
@@ -93,9 +87,7 @@ export class NotionWorkRepository implements WorkRepository {
       },
     });
 
-    return response.results.map((item) =>
-      NotionMapper.toDomain(item as NotionPage),
-    );
+    return response.results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
   async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
@@ -112,14 +104,49 @@ export class NotionWorkRepository implements WorkRepository {
     return results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
-
   async findOne(id: string): Promise<Work> {
-
     const response = await this.notion.pages.retrieve({
       page_id: id,
     });
 
     return NotionMapper.toDomain(response as NotionPage);
+  }
 
+  async moveWorkToFinishedStatus(id: string): Promise<void> {
+    await this.notion.pages.update({
+      page_id: id,
+      properties: {
+        status: {
+          select: {
+            name: 'Finalizado',
+          },
+        },
+      },
+    });
+  }
+
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
+    const { results } = await this.notion.databases.query({
+      database_id: this.notion.database_id,
+      filter: {
+        and: [
+          {
+            property: 'status',
+            select: {
+              does_not_equal: 'Finalizado',
+            },
+          },
+
+          {
+            property: 'CAPITULO NOVO',
+            checkbox: {
+              equals: false,
+            },
+          },
+        ],
+      },
+    });
+
+    return results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 }

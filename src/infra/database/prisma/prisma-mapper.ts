@@ -3,11 +3,7 @@ import { Notification } from '@domain/notification/enterprise/entities/notificat
 import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, Work } from '@domain/work/enterprise/entities/work';
-import {
-  Category as PrismaCategory,
-  Notification as PrismaNotification,
-  Work as PrismaWork,
-} from '@prisma/client';
+import { Category as PrismaCategory, Notification as PrismaNotification, Work as PrismaWork } from '@prisma/client';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -23,10 +19,11 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   updatedAt: work.updatedAt,
   url: work.url,
   recipientId: work.recipientId,
+  isFinished: work.isFinished,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
-  const work = Work.create(
+  return Work.create(
     {
       category: prismaWork.category as Category,
       chapter: new Chapter(prismaWork.chapters),
@@ -39,13 +36,9 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
     },
     new UniqueEntityID(prismaWork.id),
   );
-
-  return work;
 };
 
-export const parseNotificationEntityToPrisma = (
-  notification: Notification,
-): PrismaNotification => ({
+export const parseNotificationEntityToPrisma = (notification: Notification): PrismaNotification => ({
   content: notification.content.toString(),
   createdAt: notification.createdAt,
   id: notification.id.toString(),
@@ -53,9 +46,7 @@ export const parseNotificationEntityToPrisma = (
   recipientId: notification.recipientId,
 });
 
-export const parsePrismaToNotificationEntity = (
-  prismaNotification: PrismaNotification,
-): Notification =>
+export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotification): Notification =>
   Notification.create(
     {
       content: new Content(prismaNotification.content),
@@ -64,4 +55,4 @@ export const parsePrismaToNotificationEntity = (
       readAt: prismaNotification.readAt,
     },
     new UniqueEntityID(prismaNotification.id),
-  ); 
+  );
