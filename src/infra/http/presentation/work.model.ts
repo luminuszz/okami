@@ -8,6 +8,7 @@ const workSchema = z.object({
   url: z.string().url(),
   hasNewChapter: z.boolean(),
   chapter: z.preprocess((value: Chapter) => value.getChapter(), z.number()),
+  isFinished: z.boolean(),
 });
 
 export type WorkHttp = z.infer<typeof workSchema>;

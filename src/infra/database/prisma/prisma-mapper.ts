@@ -33,6 +33,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       url: prismaWork.url,
       updatedAt: prismaWork.updatedAt,
       recipientId: prismaWork.recipientId,
+      isFinished: prismaWork.isFinished,
     },
     new UniqueEntityID(prismaWork.id),
   );
