@@ -1,4 +1,3 @@
-import { FetchForWorkersReadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-read';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';

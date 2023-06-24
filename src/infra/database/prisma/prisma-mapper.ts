@@ -23,7 +23,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
-  const work = Work.create(
+  return Work.create(
     {
       category: prismaWork.category as Category,
       chapter: new Chapter(prismaWork.chapters),
@@ -36,8 +36,6 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
     },
     new UniqueEntityID(prismaWork.id),
   );
-
-  return work;
 };
 
 export const parseNotificationEntityToPrisma = (notification: Notification): PrismaNotification => ({

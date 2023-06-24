@@ -54,7 +54,7 @@ export class NotionWorkRepository implements WorkRepository {
     });
   }
 
-  findById(id: string): Promise<Work> {
+  findById(): Promise<Work> {
     throw new Error('Method not implemented.');
   }
 

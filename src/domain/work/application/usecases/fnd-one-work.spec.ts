@@ -1,6 +1,6 @@
 import { InMemoryWorkRepository } from 'test/mocks/in-mermory-work-repository';
 import { FindOneWorkUseCase } from './fnd-one-work';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category } from '@domain/work/enterprise/entities/work';
 import { CreateWorkUseCase } from './create-work';
 
 describe('FindOneWork', () => {
@@ -31,7 +31,7 @@ describe('FindOneWork', () => {
   it('should a null value if work not exsits', async () => {
     const createWork = new CreateWorkUseCase(workRepository);
 
-    const { work } = await createWork.execute({
+    await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
