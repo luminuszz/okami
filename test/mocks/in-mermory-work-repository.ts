@@ -2,7 +2,6 @@ import { WorkRepository } from '@domain/work/application/repositories/work-repos
 import { Work } from '@domain/work/enterprise/entities/work';
 
 export class InMemoryWorkRepository implements WorkRepository {
-
   public readonly works: Work[] = [];
 
   async create(work: Work): Promise<void> {
@@ -28,9 +27,7 @@ export class InMemoryWorkRepository implements WorkRepository {
     return this.works.filter((work) => work.hasNewChapter);
   }
 
-
   async findOne(id: string): Promise<Work> {
-
     return this.works.find((work) => work.id === id);
   }
 }

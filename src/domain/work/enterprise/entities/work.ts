@@ -105,6 +105,8 @@ export class Work extends Entity<WorkProps> {
   }
 
   public markAsFinished(): void {
+    if (this.props.isFinished) return;
+
     this.props.isFinished = true;
     this.events.push(new WorkMarkedFinishedEvent(this));
     this.commit();

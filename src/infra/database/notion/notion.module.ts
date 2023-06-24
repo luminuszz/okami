@@ -5,8 +5,10 @@ import { WorkMarkReadNotionEventHandler } from './handlers/work-mark-read';
 import { WorkMarkUnreadNotionEventHandler } from './handlers/work-mark-unread';
 import { NotionApiAdapter } from './notion-api-adapter.provider';
 import { NotionWorkRepository } from './notion-work.repository';
+import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
 
 const EventHandlers = [
+  WorkMarkedNotionFinishedEventHandler,
   WorkMarkUnreadNotionEventHandler,
   WorkMarkReadNotionEventHandler,
 ];

@@ -4,6 +4,7 @@ import { Observable, catchError } from 'rxjs';
 import { WorkMarkReadNotionEventHandlerError } from '../handlers/work-mark-read';
 import { WorkMarkUnreadNotionEventHandlerError } from '../handlers/work-mark-unread';
 import { NotionWorkRepository } from '../notion-work.repository';
+import { WorkMarkFinishedNotionEventHandlerError } from '@infra/database/notion/handlers/work-marked-finished';
 
 @Injectable()
 export class FailedNotionApiRetrySaga {
@@ -21,12 +22,12 @@ export class FailedNotionApiRetrySaga {
         }
 
         if (error instanceof WorkMarkUnreadNotionEventHandlerError) {
-          await this.notionWorkerRepository.updateForNewChapter(
-            error.originalEvent.payload.id,
-          );
+          await this.notionWorkerRepository.updateForNewChapter(error.originalEvent.payload.id);
         }
 
-        return error;
+        if (error instanceof WorkMarkFinishedNotionEventHandlerError) {
+          await this.notionWorkerRepository.moveWorkToFinishedStatus(error.originalEvent.payload.id);
+        }
       }),
     );
   };
