@@ -1,8 +1,9 @@
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
-import { WorkMarkReadEvent } from './events/work-marked-read.';
+import { WorkMarkReadEvent } from './events/work-marked-read';
 import { WorkMarkUnreadEvent } from './events/work-marked-unread';
 import { Chapter } from './values-objects/chapter';
+import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 
 interface WorkProps {
   name: string;
@@ -13,6 +14,7 @@ interface WorkProps {
   createdAt: Date;
   category: Category;
   recipientId?: string;
+  isFinished?: boolean;
 }
 
 export enum Category {
@@ -25,6 +27,7 @@ export class Work extends Entity<WorkProps> {
     super(props, id);
 
     this.props.createdAt = props.createdAt ?? new Date();
+    this.props.isFinished = props.isFinished ?? false;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -32,17 +35,24 @@ export class Work extends Entity<WorkProps> {
   }
 
   public static create(props: WorkProps, id?: UniqueEntityID): Work {
-    const work = new Work(props, id);
-
-    return work;
+    return new Work(props, id);
   }
 
   public get name() {
     return this.props.name;
   }
 
+  public set name(name: string) {
+    this.props.name = name;
+    this.commit();
+  }
+
   public get url() {
     return this.props.url;
+  }
+  public set url(url: string) {
+    this.props.url = url;
+    this.commit();
   }
 
   public get updatedAt() {
@@ -94,12 +104,13 @@ export class Work extends Entity<WorkProps> {
     this.commit();
   }
 
-  public set url(url: string) {
-    this.props.url = url;
+  public markAsFinished(): void {
+    this.props.isFinished = true;
+    this.events.push(new WorkMarkedFinishedEvent(this));
     this.commit();
   }
-  public set name(name: string) {
-    this.props.name = name;
-    this.commit();
+
+  public get isFinished() {
+    return this.props.isFinished;
   }
 }

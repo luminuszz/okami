@@ -1,19 +1,13 @@
 import helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { AppModule } from './app.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-  );
+(async () => {
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
-  app.register(helmet);
+  await app.register(helmet);
 
   app.enableCors({
     origin: [
@@ -28,12 +22,5 @@ async function bootstrap() {
     exposedHeaders: '*',
   });
 
-  
-
-  await app.listen(process.env.PORT, process.env.ADDRESS, (_, address) =>
-    console.log(address),
-  );
-  
-  
-}
-bootstrap();
+  await app.listen(process.env.PORT, process.env.ADDRESS, (_, address) => console.log(address));
+})();
