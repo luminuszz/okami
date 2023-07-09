@@ -9,19 +9,30 @@ import { NotionMapper } from './notion.mappter';
 export class NotionWorkRepository implements WorkRepository {
   constructor(private readonly notion: NotionApiAdapter) {}
 
+  private getUpdateMessage = () => ({
+    rich_text: [
+      {
+        type: 'text',
+        text: {
+          content: `updated by Okami integration ${new Date().toLocaleString()} `,
+        },
+      },
+    ],
+  });
+
   async create(work: Work): Promise<void> {
     await this.notion.pages.create({
       parent: {
         database_id: this.notion.database_id,
       },
-      properties: { ...work } as any,
+      properties: { ...work, Notas: this.getUpdateMessage() } as any,
     });
   }
 
   async save(work: Work): Promise<void> {
     await this.notion.pages.update({
       page_id: work.id,
-      properties: { ...work } as any,
+      properties: { ...work, Notas: this.getUpdateMessage() } as any,
     });
   }
 
@@ -36,6 +47,8 @@ export class NotionWorkRepository implements WorkRepository {
         'CAPITULO NOVO': {
           checkbox: true,
         },
+
+        Notas: this.getUpdateMessage() as any,
       },
     });
   }
@@ -50,6 +63,8 @@ export class NotionWorkRepository implements WorkRepository {
         cap: {
           number: chapter,
         },
+
+        Notas: this.getUpdateMessage() as any,
       },
     });
   }
