@@ -16,4 +16,4 @@ RUN npx prisma generate
 RUN yarn build
 
 
-CMD ["pm2-runtime", "./dist/src/main.js", "--name", "okami"]`
+CMD ["pm2-runtime", "./dist/src/main.js", "--name", "okami"]
