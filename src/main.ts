@@ -1,3 +1,5 @@
+import 'newrelic';
+
 import helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
