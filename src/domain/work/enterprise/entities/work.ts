@@ -15,6 +15,7 @@ interface WorkProps {
   category: Category;
   recipientId?: string;
   isFinished?: boolean;
+  imageUrl?: string;
 }
 
 export enum Category {
@@ -114,5 +115,9 @@ export class Work extends Entity<WorkProps> {
 
   public get isFinished() {
     return this.props.isFinished;
+  }
+
+  public get imageUrl() {
+    return this.props.imageUrl;
   }
 }
