@@ -17,6 +17,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.374.0",
     "@fastify/helmet": "^10.1.1",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
@@ -32,13 +33,13 @@
     "@types/cron": "^2.0.1",
     "bson": "^5.3.0",
     "lodash": "^4.17.21",
+    "newrelic": "latest",
     "prom-client": "^14.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "telegraf": "^4.12.2",
     "vitest": "^0.31.1",
-    "zod": "^3.21.4",
-    "newrelic": "latest"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",

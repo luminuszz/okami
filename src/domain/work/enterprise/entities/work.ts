@@ -120,4 +120,9 @@ export class Work extends Entity<WorkProps> {
   public get imageUrl() {
     return this.props.imageUrl;
   }
+
+  public set imageUrl(imageUrl: string) {
+    this.props.imageUrl = imageUrl;
+    this.commit();
+  }
 }

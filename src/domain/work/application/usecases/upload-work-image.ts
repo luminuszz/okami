@@ -7,6 +7,7 @@ import { WorkRepository } from '@domain/work/application/repositories/work-repos
 
 interface UploadWorkImageInput {
   imageBuffer: ArrayBuffer;
+  fileType: string;
   workId: string;
 }
 
@@ -15,17 +16,16 @@ type UploadWorkImageOutput = Either<WorkNotFoundError, void>;
 @Injectable()
 export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkImageInput, UploadWorkImageOutput> {
   constructor(private storageProvider: StorageProvider, private workRepository: WorkRepository) {}
-  async execute({ imageBuffer, workId }: UploadWorkImageInput): Promise<UploadWorkImageOutput> {
+
+  async execute({ imageBuffer, workId, fileType }: UploadWorkImageInput): Promise<UploadWorkImageOutput> {
     const work = await this.workRepository.findOne(workId);
 
     if (!work) return left(new WorkNotFoundError());
 
-    const fileName = work.name.replace(/\s/g, '-').toLowerCase();
-
-    await this.storageProvider.uploadFile({
-      fileName,
+    await this.storageProvider.uploadWorkImage({
+      fileName: `${work.id}`,
       fileData: imageBuffer,
-      fileMimeType: 'image/png',
+      fileMimeType: fileType,
     });
   }
 }

@@ -1,9 +1,10 @@
-interface FiletoUpload {
+export interface FiletoUpload {
   fileName: string;
   fileData: ArrayBuffer;
   fileMimeType: string;
 }
 
 export abstract class StorageProvider {
-  abstract uploadFile(file: FiletoUpload): Promise<void>;
+  abstract uploadWorkImage(file: FiletoUpload): Promise<void>;
+  abstract createWorkImageURL(fileName: string): Promise<string>;
 }
