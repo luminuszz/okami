@@ -1,26 +1,30 @@
 import { FiletoUpload, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
 import { ListObjectsV2Command, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { ConfigService } from '@nestjs/config';
+import * as process from 'process';
 
 @Injectable()
 export class S3FileStorageAdapter implements StorageProvider {
   private readonly s3Client: S3;
 
-  private readonly bucketName = 'okami-storage';
+  public readonly awsBucket: string;
 
-  constructor() {
+  constructor(private config: ConfigService) {
     this.s3Client = new S3({
-      region: 'us-east-1',
+      region: this.config.get<string>('AWS_S3_REGION'),
       credentials: {
-        accessKeyId: 'AKIA3J36C7ABTNAV2SWV',
-        secretAccessKey: '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',
+        accessKeyId: this.config.get<string>('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.config.get<string>('AWS_SECRET_KEY_ACCESS'),
       },
     });
+
+    this.awsBucket = this.config.get<string>('AWS_S3_BUCKET');
   }
 
   private async createFolderIfNotExists(folderPrefix: string) {
     const listObjectsCommand = new ListObjectsV2Command({
-      Bucket: this.bucketName,
+      Bucket: this.awsBucket,
       Prefix: folderPrefix,
       MaxKeys: 1,
     });
@@ -40,7 +44,7 @@ export class S3FileStorageAdapter implements StorageProvider {
     }
 
     const createFolderCommand = new PutObjectCommand({
-      Bucket: this.bucketName,
+      Bucket: this.awsBucket,
       Key: folderPrefix,
     });
 
@@ -48,14 +52,17 @@ export class S3FileStorageAdapter implements StorageProvider {
   }
 
   async uploadWorkImage({ fileName, fileData, fileMimeType }: FiletoUpload): Promise<void> {
+    await this.createFolderIfNotExists('work-images');
+
     await this.s3Client.putObject({
+      Bucket: this.awsBucket,
       Body: Buffer.from(fileData),
-      Key: `${fileName}.${fileMimeType}`,
-      Bucket: this.bucketName,
+      Key: `work-images/${fileName}.${fileMimeType}`,
+      ContentType: `image/${fileMimeType}`,
     });
   }
 
-  async createWorkImageURL(fileName: string): Promise<string> {
-    return `https://${this.bucketName}.s3.amazonaws.com/${fileName}`;
+  static createWorkImageURL(fileName: string): string {
+    return `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/work-images/${fileName}`;
   }
 }

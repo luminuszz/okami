@@ -4,6 +4,7 @@ import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work
 import { Injectable } from '@nestjs/common';
 import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
+import { randomUUID } from 'node:crypto';
 
 interface UploadWorkImageInput {
   imageBuffer: ArrayBuffer;
@@ -22,8 +23,14 @@ export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkI
 
     if (!work) return left(new WorkNotFoundError());
 
+    const imageId = randomUUID();
+
+    work.imageId = `${imageId}.${fileType}`;
+
+    await this.workRepository.save(work);
+
     await this.storageProvider.uploadWorkImage({
-      fileName: `${work.id}`,
+      fileName: `${work.id}-${imageId}`,
       fileData: imageBuffer,
       fileMimeType: fileType,
     });

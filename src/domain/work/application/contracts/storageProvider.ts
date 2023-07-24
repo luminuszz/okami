@@ -6,5 +6,4 @@ export interface FiletoUpload {
 
 export abstract class StorageProvider {
   abstract uploadWorkImage(file: FiletoUpload): Promise<void>;
-  abstract createWorkImageURL(fileName: string): Promise<string>;
 }

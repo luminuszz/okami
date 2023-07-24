@@ -7,12 +7,13 @@ import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-
 import { WorkJobsService } from '@infra/crqs/work/jobs/work-job.service';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
 import { WorkModel } from './presentation/work.model';
 import { FindOneWorkQuery } from '../crqs/work/queries/find-one-work';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
+import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
 
 @Controller('work')
 export class WorkController {
@@ -82,5 +83,20 @@ export class WorkController {
   @Patch('/mark-finished/:id')
   async markFinished(@Param('id') id: string) {
     await this.commandBus.execute(new MarkWorkFinishedCommand(id));
+  }
+
+  @Post('/upload-work-image/:id')
+  async uploadWorkImage(@Param('id') id: string, @Req() req: any) {
+    if (!req.isMultipart()) {
+      return new BadRequestException({
+        message: 'Invalid file',
+      });
+    }
+
+    const file = await req.file();
+
+    const imageData = await file.toBuffer();
+
+    await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
   }
 }

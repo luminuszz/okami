@@ -23,6 +23,9 @@ import { FindOneWorkQueryHandler } from './queries/find-one-work';
 import { MarkWorkFinishedCommandHandler } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
+import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { StorageModule } from '@infra/storage/storage.module';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -31,6 +34,7 @@ const CommandHandlers = [
   UpdateWorkChapterCommandHandler,
   UpdateWorkCommandHandler,
   MarkWorkFinishedCommandHandler,
+  UploadWorkImageCommandHandler,
 ];
 
 const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQueryHandler, FindOneWorkQueryHandler];
@@ -41,6 +45,7 @@ const EventHandlers = [];
   imports: [
     CqrsModule,
     DatabaseModule,
+    StorageModule,
     BullModule.registerQueue(
       {
         name: 'find-serie-episode',
@@ -63,6 +68,7 @@ const EventHandlers = [];
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
+    UploadWorkImageUseCase,
   ],
   exports: [
     CreateWorkUseCase,
@@ -75,6 +81,7 @@ const EventHandlers = [];
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
+    UploadWorkImageUseCase,
   ],
 })
 export class WorkModule {}
