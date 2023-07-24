@@ -1,11 +1,12 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HttpModule } from '@infra/http/http.module';
 import { LoggerModule } from '@infra/logs/logs.module';
+import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
 
 @Module({
   imports: [
@@ -36,6 +37,9 @@ import { LoggerModule } from '@infra/logs/logs.module';
     }),
   ],
   controllers: [],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_INTERCEPTOR, useClass: CommonExceptionInterceptor },
+  ],
 })
 export class AppModule {}

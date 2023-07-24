@@ -10,16 +10,8 @@ services:
     container_name: okami
     ports:
       - "${PORT}:${PORT}"
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - NOTION_AUTH_TOKEN=${NOTION_AUTH_TOKEN}
-      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
-      - TELEGRAM_NOTIFICATION_BOT=${TELEGRAM_NOTIFICATION_BOT}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-      - PORT=${PORT}
-      - ADDRESS=${ADDRESS}
+    env_file:
+      - .env
 
     
 

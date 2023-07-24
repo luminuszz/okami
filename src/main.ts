@@ -3,13 +3,14 @@ import 'newrelic';
 import helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import fmp from 'fastify-multipart';
 
 import { AppModule } from './app.module';
 
 (async () => {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
-  await app.register(helmet);
+  await Promise.all([app.register(helmet), app.register(fmp)]);
 
   app.enableCors({
     origin: [
