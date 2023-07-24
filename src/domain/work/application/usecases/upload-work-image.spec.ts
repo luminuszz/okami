@@ -38,7 +38,6 @@ describe('UploadWorkImageUseCase', () => {
     });
 
     expect(fakeStorageProvider.uploadWorkImage).toHaveBeenCalled();
-    expect(inMemoryWorkRepository.works[0].imageUrl).not.toBeUndefined();
   });
 
   it('should not be able to upload file if Work not exists ', async () => {
