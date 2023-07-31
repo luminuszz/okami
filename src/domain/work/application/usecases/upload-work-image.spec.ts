@@ -29,15 +29,23 @@ describe('UploadWorkImageUseCase', () => {
       category: Category.ANIME,
     });
 
-    fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce({ url: faker.image.url() });
+    fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce(null);
 
-    await stu.execute({
+    const results = await stu.execute({
       imageBuffer: new ArrayBuffer(1),
       workId: work.id,
-      fileType: 'image/png',
+      fileType: 'png',
     });
 
+    console.log(results.value);
+
     expect(fakeStorageProvider.uploadWorkImage).toHaveBeenCalled();
+    expect(results.isRight()).toBe(true);
+
+    if (results.isRight()) {
+      expect(results.value.imageId).toBeDefined();
+      expect(results.value.imageId.includes('.png')).toBeTruthy();
+    }
   });
 
   it('should not be able to upload file if Work not exists ', async () => {

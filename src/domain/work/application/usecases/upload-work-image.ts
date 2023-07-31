@@ -1,10 +1,11 @@
 import { UseCaseImplementation } from '@core/use-case';
-import { Either, left } from '@core/either';
+import { Either, left, right } from '@core/either';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { Injectable } from '@nestjs/common';
 import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { randomUUID } from 'node:crypto';
+import { Work } from '@domain/work/enterprise/entities/work';
 
 interface UploadWorkImageInput {
   imageBuffer: ArrayBuffer;
@@ -12,7 +13,7 @@ interface UploadWorkImageInput {
   workId: string;
 }
 
-type UploadWorkImageOutput = Either<WorkNotFoundError, void>;
+type UploadWorkImageOutput = Either<WorkNotFoundError, Work>;
 
 @Injectable()
 export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkImageInput, UploadWorkImageOutput> {
@@ -34,5 +35,7 @@ export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkI
       fileData: imageBuffer,
       fileMimeType: fileType,
     });
+
+    return right(work);
   }
 }

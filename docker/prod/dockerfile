@@ -10,7 +10,6 @@ NEW_RELIC_LOG=stdout
 
 RUN yarn install
 RUN yarn global add pm2
-RUN yarn global add @nestjs/cli
 
 COPY . .
 

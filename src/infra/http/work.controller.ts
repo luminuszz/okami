@@ -14,6 +14,10 @@ import { WorkModel } from './presentation/work.model';
 import { FindOneWorkQuery } from '../crqs/work/queries/find-one-work';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
+import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
+import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
+import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
+import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 
 @Controller('work')
 export class WorkController {
@@ -25,29 +29,29 @@ export class WorkController {
   ) {}
 
   @Post()
-  async createWork(@Body() data: any) {
+  async createWork(@Body() data: CreateWorkDto) {
     await this.commandBus.execute(new CreateWorkCommand(data));
   }
 
   @Get('find/:id')
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id', ParseObjectIdPipe) id: string) {
     const work = await this.queryBus.execute(new FindOneWorkQuery(id));
 
     return WorkModel.toHttp(work);
   }
 
   @Patch(':id/update-chapater')
-  async updateChapter(@Param('id') id: string, @Body('chapter') chapter: number) {
+  async updateChapter(@Param('id', ParseObjectIdPipe) id: string, @Body() { chapter }: UpdateChapterDto) {
     await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter));
   }
 
   @Patch(':id/mark-read')
-  async markRead(@Param('id') id: string) {
+  async markRead(@Param('id', ParseObjectIdPipe) id: string) {
     await this.commandBus.execute(new MarkWorkReadCommand(id));
   }
 
   @Patch(':id/mark-unread')
-  async markUnread(@Param('id') id: string) {
+  async markUnread(@Param('id', ParseObjectIdPipe) id: string) {
     await this.commandBus.execute(new MarkWorkUnreadCommand(id));
   }
 
@@ -76,17 +80,17 @@ export class WorkController {
   }
 
   @Put('update-work')
-  async updateWork(@Body() { data, id }: any) {
+  async updateWork(@Body() { id, ...data }: UpdateWorkDto) {
     await this.commandBus.execute(new UpdateWorkCommand(id, data));
   }
 
   @Patch('/mark-finished/:id')
-  async markFinished(@Param('id') id: string) {
+  async markFinished(@Param('id', ParseObjectIdPipe) id: string) {
     await this.commandBus.execute(new MarkWorkFinishedCommand(id));
   }
 
   @Post('/upload-work-image/:id')
-  async uploadWorkImage(@Param('id') id: string, @Req() req: any) {
+  async uploadWorkImage(@Param('id', ParseObjectIdPipe) id: string, @Req() req: any) {
     if (!req.isMultipart()) {
       return new BadRequestException({
         message: 'Invalid file',
