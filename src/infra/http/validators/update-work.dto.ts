@@ -1,11 +1,6 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
-import { IsObjectId } from '@infra/utils/IsObjectId';
+import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class UpdateWorkDto {
-  @IsObjectId()
-  @IsNotEmpty()
-  id: string;
-
   @IsNumber()
   @IsOptional()
   chapter: number;

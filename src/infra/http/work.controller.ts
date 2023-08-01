@@ -79,8 +79,8 @@ export class WorkController {
     await this.workJobs.triggerQueueFindSerieEpisodeQueue();
   }
 
-  @Put('update-work')
-  async updateWork(@Body() { id, ...data }: UpdateWorkDto) {
+  @Put('update-work/:id')
+  async updateWork(@Param('id', ParseObjectIdPipe) id: string, @Body() data: UpdateWorkDto) {
     await this.commandBus.execute(new UpdateWorkCommand(id, data));
   }
 
