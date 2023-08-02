@@ -4,7 +4,6 @@ import { FetchForWorkersReadUseCase } from '@domain/work/application/usecases/fe
 import { MarkWorkReadUseCase } from '@domain/work/application/usecases/mark-work-read';
 import { MarkWorkUnreadUseCase } from '@domain/work/application/usecases/mark-work-unread';
 import { UpdateWorkChapterUseCase } from '@domain/work/application/usecases/update-work-chapter';
-import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateWorkHandler } from './commands/create-work.command';
@@ -15,7 +14,7 @@ import { FetchForWorkersUnreadUseCase } from '@domain/work/application/usecases/
 import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
 import { UpdateWorkCommandHandler } from './commands/update-work.command';
-import { WorkJobsService } from './jobs/work-job.service';
+
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
@@ -26,6 +25,10 @@ import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases
 import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { StorageModule } from '@infra/storage/storage.module';
+import { QueueModule } from '@infra/queue/queue.module';
+import { TaskModule } from '@infra/tasks/task.module';
+import { Task } from '@domain/work/application/tasks/Task';
+import { Queue } from '@domain/work/application/queue/Queue';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -42,17 +45,7 @@ const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQue
 const EventHandlers = [];
 
 @Module({
-  imports: [
-    CqrsModule,
-    DatabaseModule,
-    StorageModule,
-    BullModule.registerQueue(
-      {
-        name: 'find-serie-episode',
-      },
-      { name: 'find-comic-cap-by-url' },
-    ),
-  ],
+  imports: [CqrsModule, DatabaseModule, StorageModule, QueueModule, TaskModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,
@@ -62,13 +55,14 @@ const EventHandlers = [];
     MarkWorkReadUseCase,
     MarkWorkUnreadUseCase,
     FetchForWorkersReadUseCase,
-    WorkJobsService,
     FetchForWorkersUnreadUseCase,
     UpdateWorkUseCase,
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
+    Task,
+    Queue,
   ],
   exports: [
     CreateWorkUseCase,
@@ -76,12 +70,13 @@ const EventHandlers = [];
     MarkWorkReadUseCase,
     MarkWorkUnreadUseCase,
     FetchForWorkersReadUseCase,
-    WorkJobsService,
     FetchForWorkersUnreadUseCase,
     FindOneWorkUseCase,
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
+    Task,
+    Queue,
   ],
 })
 export class WorkModule {}

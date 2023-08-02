@@ -4,7 +4,6 @@ import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
 import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unread.command';
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
-import { WorkJobsService } from '@infra/crqs/work/jobs/work-job.service';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
@@ -18,6 +17,7 @@ import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
 import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
 import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
+import { Task } from '@domain/work/application/tasks/Task';
 
 @Controller('work')
 export class WorkController {
@@ -25,7 +25,7 @@ export class WorkController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly batchService: BatchService,
-    private readonly workJobs: WorkJobsService,
+    private readonly task: Task,
   ) {}
 
   @Post()
@@ -76,7 +76,7 @@ export class WorkController {
 
   @Get('refresh-chapters')
   async refreshChapters() {
-    await this.workJobs.triggerQueueFindSerieEpisodeQueue();
+    await this.task.createRefreshWorkChapterStatusTask();
   }
 
   @Put('update-work/:id')
