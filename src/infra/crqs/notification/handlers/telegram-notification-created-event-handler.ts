@@ -11,9 +11,7 @@ export class TelegramNotificationCreatedEventHandler
   private telegraf: Telegraf;
 
   constructor(private readonly configService: ConfigService) {
-    this.telegraf = new Telegraf(
-      this.configService.get('TELEGRAM_NOTIFICATION_BOT'),
-    );
+    this.telegraf = new Telegraf(this.configService.get('TELEGRAM_NOTIFICATION_BOT'));
   }
 
   onModuleDestroy() {
