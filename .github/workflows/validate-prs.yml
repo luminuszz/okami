@@ -25,9 +25,7 @@ jobs:
       - name: "Run tests"
         run: |
           yarn coverage
-      - name: "Validate build"
-        run: |
-          yarn build
+
   validate_build:
     name: "Validate build"
     runs-on: ubuntu-latest
