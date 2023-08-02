@@ -1,0 +1,46 @@
+name: "Validate prs"
+
+
+
+on:
+  pull_request:
+    branches:
+      - master
+
+
+jobs:
+  validate_tests:
+    name: "Validate tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node action"
+        uses: actions/setup-node@v3
+        with:
+          node-version: "latest"
+      - name: "Install dependencies"
+        run: |
+          yarn install
+      - name: "Run tests"
+        run: |
+          yarn coverage
+      - name: "Validate build"
+        run: |
+          yarn build
+  validate_build:
+    name: "Validate build"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node action"
+        uses: actions/setup-node@v3
+        with:
+          node-version: "latest"
+      - name: "Install dependencies"
+        run: |
+          yarn install
+      - name: "Validate build"
+        run: |
+          yarn build
