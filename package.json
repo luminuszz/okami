@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
+    "@aws-sdk/client-secrets-manager": "^3.382.0",
     "@fastify/helmet": "^10.1.1",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
