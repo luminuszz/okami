@@ -38,13 +38,10 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
-          ARGS: "-rltgoDzvO --delete"
-          SOURCE: "./"
           REMOTE_HOST: ${{ secrets.HOST}}
           REMOTE_USER: ${{ secrets.USERNAME}}
-          TARGET: ${{ secrets.TARGET }}
           EXCLUDE: "/dist/, /node_modules/, **.env"
-          SCRIPT_AFTER: docker compsoe -f docker-compose.prd.yml down ||
+          SCRIPT_AFTER: docker compose -f docker-compose.prd.yml down ||
                         docker compose -f docker-compose.prd.yml --build -d
 
 
