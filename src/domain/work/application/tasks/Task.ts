@@ -17,6 +17,12 @@ export class Task {
       CronExpression.EVERY_6_HOURS,
       this.createRefreshWorkChapterStatusTask.bind(this),
     );
+
+    this.scheduleProvider.createTask(
+      'sync-others-database',
+      CronExpression.EVERY_DAY_AT_10AM,
+      this.queue.syncWithOtherDatabases.bind(this.queue),
+    );
   }
 
   public async createRefreshWorkChapterStatusTask() {

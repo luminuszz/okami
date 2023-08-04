@@ -8,7 +8,7 @@ import { Telegraf } from 'telegraf';
 export class TelegramNotificationCreatedEventHandler
   implements IEventHandler<NotificationCreatedEvent>, OnModuleDestroy
 {
-  private telegraf: Telegraf;
+  private readonly telegraf: Telegraf;
 
   constructor(private readonly configService: ConfigService) {
     this.telegraf = new Telegraf(this.configService.get('TELEGRAM_NOTIFICATION_BOT'));

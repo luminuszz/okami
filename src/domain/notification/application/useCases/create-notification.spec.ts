@@ -29,8 +29,5 @@ describe('Send Notification', () => {
       expect(notificationCreated.createdAt).toBeTruthy();
       expect(notificationCreated.readAt).toBeNull();
     }
-
-
-
   });
 });
