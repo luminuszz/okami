@@ -35,14 +35,18 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
       - name: deploy to cloud
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            cd apps/okami
-            docker compose down
-            git pull origin master  
-             docker compose  -f ./docker-compose.prd.yml up -d --build
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.HOST}}
+          REMOTE_USER: ${{ secrets.USERNAME}}
+          TARGET: ${{ secrets.TARGET }}
+          EXCLUDE: "/dist/, /node_modules/, **.env"
+          SCRIPT_AFTER: docker compsoe -f docker-compose.prd.yml down ||
+                        docker compose -f docker-compose.prd.yml --build -d
+
+
+
             

@@ -2,18 +2,16 @@ version: '3.7'
 
 services:
   application:
+    environment:
+      - DOCKERFILE=prod
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_KEY_ACCESS=${AWS_SECRET_KEY_ACCESS}
     restart: always
     volumes:
       - .:/app
     build:
-      context: .
+      context: ..
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
     container_name: okami
     ports:
       - "${PORT}:${PORT}"
-    env_file:
-      - .env
-
-
-
-
