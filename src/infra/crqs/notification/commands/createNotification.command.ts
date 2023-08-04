@@ -1,4 +1,4 @@
-import { CreateNotificationUseCase } from '@domain/notification/application/use-cases/create-notification';
+import { CreateNotificationUseCase } from '@domain/notification/application/useCases/create-notification';
 import { NotificationCreatedEvent } from '@domain/notification/enterprise/events/notificationCreated';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
@@ -12,9 +12,7 @@ export class CreateNotificationCommand {
 }
 
 @CommandHandler(CreateNotificationCommand)
-export class CreateNotificationCommandHandler
-  implements ICommandHandler<CreateNotificationCommand>
-{
+export class CreateNotificationCommandHandler implements ICommandHandler<CreateNotificationCommand> {
   constructor(
     private readonly createNotificationUseCase: CreateNotificationUseCase,
     private readonly eventBus: EventBus,
@@ -29,7 +27,5 @@ export class CreateNotificationCommandHandler
     if (results.isRight()) {
       await this.eventBus.publish(new NotificationCreatedEvent(results.value.notification));
     }
-
-    
   }
 }

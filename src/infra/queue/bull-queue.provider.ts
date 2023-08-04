@@ -33,9 +33,21 @@ export class BullQueueProvider implements QueueProvider {
     return queueOrNull;
   }
 
-  async publish<Payload = any>(name: string, payload: Payload): Promise<void> {
+  public async publish<Payload = any>(name: string, payload: Payload): Promise<void> {
     const queue = this.createBullQueue(name);
 
     await queue.add(payload);
+  }
+
+  public async subscribe<Payload = any>(name: string, callback: (payload: Payload) => Promise<any>): Promise<void> {
+    const queue = this.createBullQueue(name);
+
+    await queue.process((job, done) => {
+      callback(job.data || null)
+        .then((data) => done(data))
+        .catch((e) => {
+          throw new Error(e);
+        });
+    });
   }
 }

@@ -5,6 +5,7 @@ import { CheckWithExistsNewChapterDto, FindSerieEpisodeDTO } from '@domain/work/
 export enum QueueMessage {
   FIND_SERIE_EPISODE = 'find-serie-episode',
   FIND_COMIC_CAP_BY_URL = 'find-comic-cap-by-url',
+  SYNC_WITH_OTHER_DATABASES = 'sync-with-other-databases',
 }
 
 @Injectable()
@@ -17,5 +18,9 @@ export class Queue {
 
   async sendToRefreshWorkMangaChapter(payload: CheckWithExistsNewChapterDto) {
     await this.queueProvider.publish(QueueMessage.FIND_COMIC_CAP_BY_URL, payload);
+  }
+
+  async syncWithOtherDatabases() {
+    await this.queueProvider.publish(QueueMessage.SYNC_WITH_OTHER_DATABASES, {});
   }
 }

@@ -6,9 +6,10 @@ import { NotionModule } from './notion/notion.module';
 import { PrismaNotificationRepository } from './prisma/prisma-notification.repository';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
 import { PrismaModule } from './prisma/prisma.module';
+import { QueueModule } from '@infra/queue/queue.module';
 
 @Module({
-  imports: [PrismaModule, NotionModule],
+  imports: [PrismaModule, NotionModule, QueueModule],
   providers: [
     { provide: WorkRepository, useClass: PrismaWorkRepository },
     { provide: NotificationRepository, useClass: PrismaNotificationRepository },
