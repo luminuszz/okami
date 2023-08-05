@@ -35,16 +35,14 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
       - name: deploy to cloud
-        uses: easingthemes/ssh-deploy@main
-        env:
-          TARGET: "./apps"
-          PORT: "3000:3000"
-          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-          REMOTE_HOST: ${{secrets.HOST}}
-          REMOTE_USER: ${{secrets.USERNAME}}
-          SCRIPT_AFTER: bash ./deploy.sh
-
-
-
-
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY}}
+          script: |
+            cd apps
+            docker compose down
+            git pull origin master
+            docker compose -f ./docker-compose.prd.yml up -d --build
             
