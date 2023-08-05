@@ -3,16 +3,30 @@ import 'newrelic';
 import helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import fmp from 'fastify-multipart';
+import fmp from '@fastify/multipart';
 
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { writeFileSync } from 'node:fs';
 
 (async () => {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
   app.useGlobalPipes(new ValidationPipe());
 
-  await Promise.all([app.register(helmet), app.register(fmp)]);
+  await Promise.all([
+    app.register(helmet, {
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          styleSrc: [`'self'`, `'unsafe-inline'`],
+          imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        },
+      },
+    }),
+    app.register(fmp),
+  ]);
 
   app.enableCors({
     origin: [
@@ -26,6 +40,19 @@ import { ValidationPipe } from '@nestjs/common';
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     exposedHeaders: '*',
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Okami API')
+    .setDescription('The Okami rest api')
+    .setVersion('1.0')
+    .addTag('okami')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  writeFileSync('./swagger.json', JSON.stringify(document));
+
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT, process.env.ADDRESS, (_, address) => console.log(address));
 })();

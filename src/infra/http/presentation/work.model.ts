@@ -2,6 +2,7 @@ import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter
 import { Work } from '@domain/work/enterprise/entities/work';
 import { z } from 'zod';
 import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
+import { ApiProperty } from '@nestjs/swagger';
 
 const workSchema = z
   .object({
@@ -21,14 +22,33 @@ const workSchema = z
     };
   });
 
-export type WorkHttp = z.infer<typeof workSchema>;
+export type WorkHttpType = z.infer<typeof workSchema>;
+
+export class WorkHttp implements WorkHttpType {
+  @ApiProperty()
+  chapter: number;
+  @ApiProperty()
+  hasNewChapter: boolean;
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  imageId: string;
+  @ApiProperty()
+  imageUrl: string;
+  @ApiProperty()
+  isFinished: boolean;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  url: string;
+}
 
 export class WorkModel {
-  static toHttpList(works: Work[]): WorkHttp[] {
+  static toHttpList(works: Work[]): WorkHttpType[] {
     return z.array(workSchema).parse(works);
   }
 
-  static toHttp(work: Work): WorkHttp {
+  static toHttp(work: Work): WorkHttpType {
     return workSchema.parse(work);
   }
 }

@@ -9,7 +9,7 @@ import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-w
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
-import { WorkModel } from './presentation/work.model';
+import { WorkHttp, WorkModel } from './presentation/work.model';
 import { FindOneWorkQuery } from '../crqs/work/queries/find-one-work';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
@@ -18,7 +18,9 @@ import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
 import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { Task } from '@domain/work/application/tasks/Task';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('work')
 @Controller('work')
 export class WorkController {
   constructor(
@@ -34,6 +36,7 @@ export class WorkController {
   }
 
   @Get('find/:id')
+  @ApiOkResponse({ type: WorkHttp })
   async getById(@Param('id', ParseObjectIdPipe) id: string) {
     const work = await this.queryBus.execute(new FindOneWorkQuery(id));
 
@@ -56,6 +59,7 @@ export class WorkController {
   }
 
   @Get('/fetch-for-workers-read')
+  @ApiOkResponse({ type: WorkHttp, isArray: true })
   async fetchForWorkersRead() {
     const works = await this.queryBus.execute(new FetchForWorkersReadQuery());
 
@@ -63,6 +67,7 @@ export class WorkController {
   }
 
   @Get('/fetch-for-workers-unread')
+  @ApiOkResponse({ type: WorkHttp, isArray: true })
   async fetchForWorkersUnread() {
     const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery());
 
