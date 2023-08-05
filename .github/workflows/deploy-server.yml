@@ -37,9 +37,9 @@ jobs:
       - name: deploy to cloud
         uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
-          REMOTE_HOST: ${{ secrets.HOST}}
-          REMOTE_USER: ${{ secrets.USERNAME}}
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          REMOTE_HOST: ${{secrets.HOST}}
+          REMOTE_USER: ${{secrets.USERNAME}}
           EXCLUDE: "/dist/, /node_modules/, **.env"
           SCRIPT_AFTER: docker compose -f docker-compose.prd.yml down ||
                         docker compose -f docker-compose.prd.yml --build -d
