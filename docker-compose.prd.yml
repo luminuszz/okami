@@ -3,7 +3,7 @@ version: '3.7'
 services:
   application:
     ports:
-      - "3000:8080"
+      - "3000:80"
     restart: always
     volumes:
       - .:/app
