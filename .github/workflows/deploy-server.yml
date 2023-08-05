@@ -41,7 +41,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           REMOTE_HOST: ${{secrets.HOST}}
           REMOTE_USER: ${{secrets.USERNAME}}
-          SCRIPT_AFTER: ./scripts/deploy.sh
+          SCRIPT_AFTER: bash ./scripts/deploy.sh
 
 
 
