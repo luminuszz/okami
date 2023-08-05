@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - webapp
+      - application
     volumes:
       - ./prod/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
@@ -15,8 +15,6 @@ services:
 
 
   application:
-    depends_on:
-      - proxy
     hostname: okami
     ports:
       - "${PORT}:${PORT}"
