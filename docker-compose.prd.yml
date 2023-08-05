@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/app
     build:
-      context: ..
+      context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
     container_name: okami
     env_file:

@@ -41,8 +41,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           REMOTE_HOST: ${{secrets.HOST}}
           REMOTE_USER: ${{secrets.USERNAME}}
-          SCRIPT_AFTER: docker compose -f docker-compose.prd.yml down ||
-                        docker compose -f docker-compose.prd.yml --build -d
+          SCRIPT_AFTER: ./scripts/deploy.sh
 
 
 
