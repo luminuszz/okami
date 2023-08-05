@@ -9,7 +9,7 @@ services:
     depends_on:
       - application
     volumes:
-      - ./prod/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/prod/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - okami_network
 
