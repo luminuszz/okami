@@ -37,7 +37,11 @@ describe('AuthenticateUser', () => {
     const results = await stu.execute(authPayload);
 
     expect(results.isRight()).toBe(true);
-    expect(results.value).toBe(true);
+    expect(results.value).toHaveProperty('user');
+    if (results.isRight()) {
+      expect(results.value.isAuthenticated).toBe(true);
+    }
+
     expect(spy).toHaveBeenCalled();
   });
 });
