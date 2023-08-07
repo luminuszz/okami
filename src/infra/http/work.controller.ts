@@ -6,7 +6,7 @@ import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unrea
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
 import { WorkHttp, WorkModel } from './presentation/work.model';
@@ -19,7 +19,9 @@ import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { Task } from '@domain/work/application/tasks/Task';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @ApiTags('work')
 @Controller('work')
 export class WorkController {

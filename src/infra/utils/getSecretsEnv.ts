@@ -1,7 +1,7 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import * as process from 'process';
 
-export interface EnvScretes {
+export interface EnvSecrets {
   DATABASE_URL: string;
   REDIS_PORT: number;
   REDIS_PASSWORD: string;
@@ -19,6 +19,7 @@ export interface EnvScretes {
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_KEY_ACCESS: string;
   REDIS_HOST: string;
+  JWT_SECRET: string;
 }
 
 const secret_name = 'okami-server-envs';
@@ -31,10 +32,10 @@ const client = new SecretsManagerClient({
   },
 });
 
-let secrets: EnvScretes;
+let secrets: EnvSecrets;
 
 export default async () => {
-  if (process.env.DOCKERFILE !== 'prod') return process.env as unknown as EnvScretes;
+  if (process.env.DOCKERFILE !== 'prod') return process.env as unknown as EnvSecrets;
 
   if (secrets) return secrets;
 
@@ -44,5 +45,5 @@ export default async () => {
     }),
   );
 
-  return JSON.parse(SecretString) as EnvScretes;
+  return JSON.parse(SecretString) as EnvSecrets;
 };

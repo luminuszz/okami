@@ -3,7 +3,14 @@ import { Notification } from '@domain/notification/enterprise/entities/notificat
 import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, Work } from '@domain/work/enterprise/entities/work';
-import { Category as PrismaCategory, Notification as PrismaNotification, Work as PrismaWork } from '@prisma/client';
+
+import {
+  Category as PrismaCategory,
+  Notification as PrismaNotification,
+  User as PrismaUser,
+  Work as PrismaWork,
+} from '@prisma/client';
+import { User } from '@domain/auth/enterprise/entities/User';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -59,3 +66,24 @@ export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotifi
     },
     new UniqueEntityID(prismaNotification.id),
   );
+
+export const parsePrismaUserToDomainUser = (prismaUser: PrismaUser): User =>
+  User.create(
+    {
+      name: prismaUser.name,
+      createdAt: prismaUser.createdAt,
+      updatedAt: prismaUser.updatedAt,
+      passwordHash: prismaUser.passwordHash,
+      email: prismaUser.email,
+    },
+    new UniqueEntityID(prismaUser.id),
+  );
+
+export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
+  updatedAt: user.updatedAt,
+  passwordHash: user.passwordHash,
+  email: user.email,
+  name: user.name,
+  createdAt: user.createdAt,
+  id: user.id.toString(),
+});

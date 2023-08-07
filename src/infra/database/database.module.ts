@@ -7,14 +7,17 @@ import { PrismaNotificationRepository } from './prisma/prisma-notification.repos
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
 import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from '@infra/queue/queue.module';
+import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
+import { PrismaUserRepository } from '@infra/database/prisma/prisma-user.repository';
 
 @Module({
   imports: [PrismaModule, NotionModule, QueueModule],
   providers: [
     { provide: WorkRepository, useClass: PrismaWorkRepository },
     { provide: NotificationRepository, useClass: PrismaNotificationRepository },
+    { provide: UserRepository, useClass: PrismaUserRepository },
     BatchService,
   ],
-  exports: [WorkRepository, NotificationRepository, BatchService],
+  exports: [WorkRepository, NotificationRepository, BatchService, UserRepository],
 })
 export class DatabaseModule {}

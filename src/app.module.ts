@@ -6,7 +6,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { HttpModule } from '@infra/http/http.module';
 import { LoggerModule } from '@infra/logs/logs.module';
 import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
-import loadSecrets from '@infra/utils/getSecretesEnv';
+import loadSecrets from '@infra/utils/getSecretsEnv';
 
 @Module({
   imports: [
