@@ -37,13 +37,13 @@ let secrets: EnvSecrets;
 export default async () => {
   if (process.env.DOCKERFILE !== 'prod') return process.env as unknown as EnvSecrets;
 
-  if (secrets) return secrets;
-
   const { SecretString } = await client.send(
     new GetSecretValueCommand({
       SecretId: secret_name,
     }),
   );
 
-  return JSON.parse(SecretString) as EnvSecrets;
+  secrets = JSON.parse(SecretString) as EnvSecrets;
+
+  return secrets;
 };
