@@ -27,8 +27,6 @@ export class CreateUserUseCase implements UseCaseImplementation<CreateUserInput,
 
     const passwordHash = await this.hashProvider.hash(password);
 
-    console.log({ passwordHash });
-
     const user = User.create({ email, passwordHash, name });
 
     await this.userRepository.create(user);
