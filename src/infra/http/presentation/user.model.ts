@@ -8,7 +8,7 @@ const userSchema = z
     id: z.string().nonempty(),
     name: z.string().nonempty(),
     email: z.string().email(),
-    avatarImageId: z.string().optional(),
+    avatarImageId: z.string().optional().nullable(),
   })
   .transform((data) => ({
     ...data,
