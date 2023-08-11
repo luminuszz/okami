@@ -1,10 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from '@infra/http/validators/create-user.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '@infra/crqs/auth/commands/create-user.command';
 import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
-import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
@@ -30,8 +29,9 @@ export class AuthController {
     };
   }
 
-  @Post('/user/avatar/upload/:id')
-  async uploadAvatarImage(@Param('id', ParseObjectIdPipe) id: string, @Req() req: any) {
+  @UseGuards(AuthGuard)
+  @Post('/user/avatar/upload')
+  async uploadAvatarImage(@Req() req: any) {
     if (!req.isMultipart()) {
       return new BadRequestException({
         message: 'Invalid file',
@@ -41,6 +41,8 @@ export class AuthController {
     const file = await req.file();
 
     const imageData = await file.toBuffer();
+
+    const { id } = req.user as UserTokenDto;
 
     await this.commandBus.execute(
       new UploadUserImageUrlCommand({
