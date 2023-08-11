@@ -36,6 +36,8 @@ export class UploadUserAvatarImage implements UseCaseImplementation<UploadAvatar
 
     userOrUndefined.avatarUrl = imageName;
 
+    await this.userRepository.save(userOrUndefined);
+
     return right({
       user: userOrUndefined,
     });

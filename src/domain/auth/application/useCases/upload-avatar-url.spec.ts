@@ -21,6 +21,8 @@ describe('UploadWorkImageUseCase', () => {
   });
 
   it('should be able to upload user avatar image', async () => {
+    const spy = vi.spyOn(inMemoryUserRepository, 'save');
+
     const userResult = await createUserUseCase.execute({
       name: faker.person.firstName(),
       password: faker.internet.password(),
@@ -47,6 +49,7 @@ describe('UploadWorkImageUseCase', () => {
       expect(results.value.user.avatarUrl).toBeDefined();
       expect(results.value.user.avatarUrl).includes('.png');
       expect(results.value.user.avatarUrl).includes(results.value.user.id.toString());
+      expect(spy).toHaveBeenCalled();
     }
   });
 });

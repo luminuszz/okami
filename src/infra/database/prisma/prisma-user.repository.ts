@@ -25,4 +25,25 @@ export class PrismaUserRepository implements UserRepository {
 
     return results ? parsePrismaUserToDomainUser(results) : undefined;
   }
+
+  async findById(id: string): Promise<User | undefined> {
+    const results = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return results ? parsePrismaUserToDomainUser(results) : undefined;
+  }
+
+  async save(user: User): Promise<void> {
+    const { id, ...data } = parseDomainUserToPrismaUser(user);
+
+    await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
 }

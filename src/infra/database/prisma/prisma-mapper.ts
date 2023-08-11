@@ -86,4 +86,5 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   name: user.name,
   createdAt: user.createdAt,
   id: user.id.toString(),
+  imageUrl: user.avatarUrl,
 });
