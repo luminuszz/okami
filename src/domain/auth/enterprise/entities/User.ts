@@ -7,6 +7,7 @@ interface EntityProps {
   passwordHash: string;
   createdAt?: Date;
   updatedAt?: Date;
+  avatarUrl?: string;
 }
 
 export class User extends Entity<EntityProps> {
@@ -34,6 +35,14 @@ export class User extends Entity<EntityProps> {
 
   get createdAt(): Date {
     return this.props.createdAt;
+  }
+
+  get avatarUrl(): string {
+    return this.props.avatarUrl;
+  }
+
+  set avatarUrl(url: string) {
+    this.props.avatarUrl = url;
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {
