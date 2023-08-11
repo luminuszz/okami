@@ -13,7 +13,7 @@ RUN yarn global add pm2
 
 COPY . .
 
-RUN npx prisma generate
+RUN yarn prisma generate
 
 RUN yarn build
 
