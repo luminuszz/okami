@@ -9,10 +9,20 @@ import { DatabaseModule } from '@infra/database/database.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { UploadUserImageUrlCommandHandler } from '@infra/crqs/auth/commands/upload-user-image-url.command';
+import { StorageModule } from '@infra/storage/storage.module';
+import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
+import { FindUserByIdQueryHandler } from '@infra/crqs/auth/queries/find-user-by-id.query';
+import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
+
+const Commands = [LoginCommandHandler, UploadUserImageUrlCommandHandler, CreateUserCommandHandler];
+const Queries = [FindUserByIdQueryHandler];
 
 @Module({
   imports: [
     CqrsModule,
+    StorageModule,
     EncryptModule,
     DatabaseModule,
     JwtModule.registerAsync({
@@ -25,13 +35,23 @@ import { AuthGuard } from '@infra/crqs/auth/auth.guard';
     }),
   ],
   providers: [
-    LoginCommandHandler,
+    UploadWorkImageUseCase,
     AuthenticateUserUseCase,
     CreateUserUseCase,
-    CreateUserCommandHandler,
     AuthGuard,
     JwtService,
+    ...Commands,
+    ...Queries,
+    UploadUserAvatarImage,
+    FindUserByIdUseCase,
   ],
-  exports: [AuthenticateUserUseCase, CreateUserUseCase, AuthGuard, JwtService],
+  exports: [
+    AuthenticateUserUseCase,
+    CreateUserUseCase,
+    AuthGuard,
+    JwtService,
+    UploadWorkImageUseCase,
+    FindUserByIdUseCase,
+  ],
 })
 export class AuthModule {}
