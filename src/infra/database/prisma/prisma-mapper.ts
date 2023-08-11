@@ -75,6 +75,7 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUser): User =>
       updatedAt: prismaUser.updatedAt,
       passwordHash: prismaUser.passwordHash,
       email: prismaUser.email,
+      avatarImageId: prismaUser.imageUrl,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -86,5 +87,5 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   name: user.name,
   createdAt: user.createdAt,
   id: user.id.toString(),
-  imageUrl: user.avatarUrl,
+  imageUrl: user.avatarImageId,
 });
