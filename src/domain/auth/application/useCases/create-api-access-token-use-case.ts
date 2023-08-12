@@ -14,7 +14,7 @@ interface CreateApiAccessTokenInput {
 type CreateApiAccessTokenOutput = Either<UserNotFound, { accessToken: AccessToken }>;
 
 @Injectable()
-export class CreateApiAccessToken
+export class CreateApiAccessTokenUseCase
   implements UseCaseImplementation<CreateApiAccessTokenInput, CreateApiAccessTokenOutput>
 {
   constructor(private readonly userRepository: UserRepository, private accessTokenRepository: AccessTokenRepository) {}

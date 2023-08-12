@@ -2,25 +2,25 @@ import { describe, expect } from 'vitest';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
 import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
 import { fakeHashProvider } from '../../../../../test/mocks/mocks';
-import { CreateApiAccessToken } from '@domain/auth/application/useCases/create-api-access-token';
+import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
 import { InMemoryAccessTokenRepository } from '../../../../../test/mocks/in-memory-access-token-repository';
 import { faker } from '@faker-js/faker';
-import { VerifyApiAccessToken } from '@domain/auth/application/useCases/verify-api-access-token';
+import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 import { TokenNotFoundError, TokenRevokedError } from '@domain/auth/application/errors/Token';
 
 describe('VerifyApiAccessToken', () => {
   let createUser: CreateUserUseCase;
   let userRepository: InMemoryUserRepository;
-  let stu: VerifyApiAccessToken;
+  let stu: VerifyApiAccessTokenUseCase;
   let accessTokenRepository: InMemoryAccessTokenRepository;
-  let createToken: CreateApiAccessToken;
+  let createToken: CreateApiAccessTokenUseCase;
 
   beforeEach(() => {
     userRepository = new InMemoryUserRepository();
     createUser = new CreateUserUseCase(fakeHashProvider, userRepository);
     accessTokenRepository = new InMemoryAccessTokenRepository();
-    stu = new VerifyApiAccessToken(accessTokenRepository);
-    createToken = new CreateApiAccessToken(userRepository, accessTokenRepository);
+    stu = new VerifyApiAccessTokenUseCase(accessTokenRepository);
+    createToken = new CreateApiAccessTokenUseCase(userRepository, accessTokenRepository);
   });
 
   it('should be able to validate a token', async () => {

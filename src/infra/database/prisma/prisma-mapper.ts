@@ -11,6 +11,8 @@ import {
   Work as PrismaWork,
 } from '@prisma/client';
 import { User } from '@domain/auth/enterprise/entities/User';
+import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
+import { AccessToken as PrismaAccessToken } from '@prisma/client';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -89,3 +91,19 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   id: user.id.toString(),
   imageUrl: user.avatarImageId,
 });
+
+export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({
+  token: accessToken.token,
+  createdAt: accessToken.createdAt,
+  id: accessToken.id,
+  userId: accessToken.userId,
+  revokedAt: accessToken.revokedAt,
+});
+
+export const parsePrismaAccessTokenToDomainAccessToken = (prismaAccessToken: PrismaAccessToken): AccessToken =>
+  AccessToken.create({
+    token: prismaAccessToken.token,
+    createdAt: prismaAccessToken.createdAt,
+    revokedAt: prismaAccessToken.revokedAt,
+    userId: prismaAccessToken.userId,
+  });

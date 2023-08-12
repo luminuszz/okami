@@ -11,7 +11,9 @@ interface VerifyAccessTokenInput {
 type VerifyAccessTokenOutput = Either<TokenNotFoundError | TokenRevokedError, { isValid: boolean }>;
 
 @Injectable()
-export class VerifyApiAccessToken implements UseCaseImplementation<VerifyAccessTokenInput, VerifyAccessTokenOutput> {
+export class VerifyApiAccessTokenUseCase
+  implements UseCaseImplementation<VerifyAccessTokenInput, VerifyAccessTokenOutput>
+{
   constructor(private readonly accessTokenRepository: AccessTokenRepository) {}
 
   async execute({ token }: VerifyAccessTokenInput): Promise<VerifyAccessTokenOutput> {

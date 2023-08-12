@@ -47,4 +47,18 @@ model User {
   createdAt    DateTime  @map("created_at")
   updatedAt    DateTime? @map("updated_at")
   imageUrl     String?   @default("") @map("image_url")
+
+  accessToken AccessToken?
+}
+
+model AccessToken {
+  id        String    @id @map("_id") @db.ObjectId
+  token     String    @unique
+  revokedAt DateTime? @map("revoked_at")
+
+  createdAt DateTime @map("created_at")
+
+  userId String @unique @db.ObjectId
+
+  user User? @relation(fields: [userId], references: [id])
 }
