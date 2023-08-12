@@ -15,8 +15,16 @@ import { StorageModule } from '@infra/storage/storage.module';
 import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
 import { FindUserByIdQueryHandler } from '@infra/crqs/auth/queries/find-user-by-id.query';
 import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
+import { CreateAccessTokenCommandHandler } from '@infra/crqs/auth/commands/create-access-token.command';
+import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
+import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 
-const Commands = [LoginCommandHandler, UploadUserImageUrlCommandHandler, CreateUserCommandHandler];
+const Commands = [
+  LoginCommandHandler,
+  UploadUserImageUrlCommandHandler,
+  CreateUserCommandHandler,
+  CreateAccessTokenCommandHandler,
+];
 const Queries = [FindUserByIdQueryHandler];
 
 @Module({
@@ -35,6 +43,7 @@ const Queries = [FindUserByIdQueryHandler];
     }),
   ],
   providers: [
+    CreateApiAccessTokenUseCase,
     UploadWorkImageUseCase,
     AuthenticateUserUseCase,
     CreateUserUseCase,
@@ -44,6 +53,7 @@ const Queries = [FindUserByIdQueryHandler];
     ...Queries,
     UploadUserAvatarImage,
     FindUserByIdUseCase,
+    VerifyApiAccessTokenUseCase,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -52,6 +62,7 @@ const Queries = [FindUserByIdQueryHandler];
     JwtService,
     UploadWorkImageUseCase,
     FindUserByIdUseCase,
+    VerifyApiAccessTokenUseCase,
   ],
 })
 export class AuthModule {}
