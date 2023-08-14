@@ -4,6 +4,7 @@ import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
 import { WorkNotFoundError } from './errors/work-not-found';
+import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-updated';
 
 type UpdateWorkUseCaseInput = {
   id: string;
@@ -32,6 +33,8 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
     existsWork.name = data?.name ?? existsWork.name;
 
     await this.workRepository.save(existsWork);
+
+    existsWork.events.push(new WorkUpdatedEvent(existsWork));
 
     return right({ work: existsWork });
   }

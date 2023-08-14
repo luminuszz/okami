@@ -6,27 +6,18 @@ export type NotionDocument = {
   object: 'page';
 };
 
-type NotionStatus = 'Acompanhando' | 'Finzalizado' | 'Lendo' | 'Lerei';
-
 type NotionCategory = 'Anime' | 'Manga' | 'Webtoon';
 
 export class NotionMapper {
-  private static notionCategoryToDomainMapper: Record<
-    NotionCategory,
-    Category
-  > = {
+  private static notionCategoryToDomainMapper: Record<NotionCategory, Category> = {
     Anime: Category.ANIME,
     Manga: Category.MANGA,
     Webtoon: Category.MANGA,
   };
 
   static toDomain({ properties, id }: NotionPage): Work {
-    const category = NotionMapper.notionCategoryToDomainMapper?.[
-      properties.Tipo.select?.name as NotionCategory
-    ]
-      ? NotionMapper.notionCategoryToDomainMapper[
-          properties.Tipo.select.name || ('Manga' as NotionCategory)
-        ]
+    const category = NotionMapper.notionCategoryToDomainMapper?.[properties.Tipo.select?.name as NotionCategory]
+      ? NotionMapper.notionCategoryToDomainMapper[properties.Tipo.select.name || ('Manga' as NotionCategory)]
       : Category.MANGA;
 
     return Work.create({
@@ -41,9 +32,11 @@ export class NotionMapper {
     });
   }
 
-  static toNotion(document: Document): NotionDocument {
+  static toNotion(work: Work) {
     return {
-      ...(document as any),
+      cap: work.chapter.getChapter(),
+      Name: work.name,
+      URL: work.url,
     };
   }
 
