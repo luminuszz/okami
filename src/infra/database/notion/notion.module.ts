@@ -6,11 +6,13 @@ import { WorkMarkUnreadNotionEventHandler } from './handlers/work-mark-unread';
 import { NotionApiAdapter } from './notion-api-adapter.provider';
 import { NotionWorkRepository } from './notion-work.repository';
 import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
+import { WorkUpdatedHandler } from '@infra/database/notion/handlers/work-updated';
 
 const EventHandlers = [
   WorkMarkedNotionFinishedEventHandler,
   WorkMarkUnreadNotionEventHandler,
   WorkMarkReadNotionEventHandler,
+  WorkUpdatedHandler,
 ];
 
 @Module({

@@ -30,9 +30,22 @@ export class NotionWorkRepository implements WorkRepository {
   }
 
   async save(work: Work): Promise<void> {
+    const notionWork = NotionMapper.toNotion(work);
+
     await this.notion.pages.update({
-      page_id: work.id,
-      properties: { ...work, Notas: this.getUpdateMessage() } as any,
+      page_id: work.recipientId,
+      properties: {
+        title: [
+          {
+            type: 'text',
+            text: {
+              content: notionWork.Name,
+            },
+          },
+        ],
+        cap: notionWork.cap,
+        URL: notionWork.URL,
+      },
     });
   }
 
