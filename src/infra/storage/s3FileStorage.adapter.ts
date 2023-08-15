@@ -62,7 +62,7 @@ export class S3FileStorageAdapter implements StorageProvider {
     });
   }
 
-  static createWorkImageURL(fileName: string): string {
+  static createS3FileUrl(fileName: string): string {
     return `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/work-images/${fileName}`;
   }
 }

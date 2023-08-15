@@ -9,29 +9,20 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
   constructor(private commandBus: CommandBus, private configService: ConfigService) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
-    console.log('WorkMarkUnreadEventHandler', payload);
+    const content =
+      payload.category === Category.ANIME
+        ? `${payload.name} - Episódio Novo disponível !`
+        : `${payload.name} - Capítulo Novo disponível !`;
 
-    let content = '';
-
-    if (payload.category === Category.ANIME) {
-      content = `
-      ${payload.name} - Episódio Novo disponível !
-       link -> ${payload.url}
-       `;
-    }
-
-    if (payload.category === Category.MANGA) {
-      content = `
-      ${payload.name} - Capítulo Novo disponível !
-       link -> ${payload.url}
-       `;
-    }
-
-    this.commandBus.execute(
-      new CreateNotificationCommand({
-        content,
-        recipientId: this.configService.get('TELEGRAM_CHAT_ID'),
-      }),
+    await this.commandBus.execute(
+      new CreateNotificationCommand(
+        {
+          content,
+          recipientId: this.configService.get('TELEGRAM_CHAT_ID'),
+          workId: payload.id,
+        },
+        payload,
+      ),
     );
   }
 }

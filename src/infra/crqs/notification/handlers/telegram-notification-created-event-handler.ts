@@ -3,6 +3,7 @@ import { OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Telegraf } from 'telegraf';
+import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
 
 @EventsHandler(NotificationCreatedEvent)
 export class TelegramNotificationCreatedEventHandler
@@ -36,18 +37,16 @@ export class TelegramNotificationCreatedEventHandler
       .replaceAll('<', '\\<');
   }
 
-  async handle({ payload }: NotificationCreatedEvent) {
-    const message = this.parseContent(payload.content.toString());
+  async handle({ payload, workReference }: NotificationCreatedEvent) {
+    const { imageId, id, url } = workReference;
 
-    await this.telegraf.telegram.sendMessage(payload.recipientId, message, {
+    const caption = this.parseContent(`${payload.content.toString()}\n\n${url}`);
+
+    const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${id}-${imageId}`);
+
+    await this.telegraf.telegram.sendPhoto(payload.recipientId, imageUrl, {
       parse_mode: 'MarkdownV2',
-      entities: [
-        {
-          type: 'bold',
-          offset: 201,
-          length: 5,
-        },
-      ],
+      caption,
     });
   }
 }

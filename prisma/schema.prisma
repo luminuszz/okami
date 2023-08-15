@@ -29,6 +29,8 @@ model Work {
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
+
+  notifications Notification[]
 }
 
 model Notification {
@@ -37,6 +39,8 @@ model Notification {
   createdAt   DateTime  @map("created_at")
   readAt      DateTime? @map("read_at")
   recipientId String?   @map("recipent_id")
+  Work        Work?     @relation(fields: [workId], references: [id])
+  workId      String?   @db.ObjectId
 }
 
 model User {
