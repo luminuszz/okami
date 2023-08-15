@@ -1,6 +1,6 @@
 import { WorkMarkReadEvent } from '@domain/work/enterprise/entities/events/work-marked-read';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { NotionWorkRepository } from '../notion-work.repository';
+import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
 
 export class WorkMarkReadNotionEventHandlerError extends Error {
   constructor(message: string, public readonly originalEvent: WorkMarkReadEvent) {

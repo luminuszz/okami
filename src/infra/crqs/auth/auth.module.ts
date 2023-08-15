@@ -5,7 +5,6 @@ import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authe
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserCommandHandler } from '@infra/crqs/auth/commands/create-user.command';
-import { DatabaseModule } from '@infra/database/database.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
@@ -32,7 +31,6 @@ const Queries = [FindUserByIdQueryHandler];
     CqrsModule,
     StorageModule,
     EncryptModule,
-    DatabaseModule,
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         global: true,

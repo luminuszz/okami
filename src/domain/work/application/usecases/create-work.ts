@@ -2,7 +2,6 @@ import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter
 import { Category, Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
-import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 
 export interface CreateWorkInput {
   name: string;

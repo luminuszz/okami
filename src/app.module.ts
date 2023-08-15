@@ -3,19 +3,19 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { HttpModule } from '@infra/http/http.module';
-import { LoggerModule } from '@infra/logs/logs.module';
 import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
 import loadSecrets from '@infra/utils/getSecretsEnv';
+import { DatabaseModule } from '@infra/database/database.module';
+import { InfraModule } from '@infra/infra.module';
 
 @Module({
   imports: [
-    LoggerModule,
+    InfraModule,
+    DatabaseModule,
     ConfigModule.forRoot({
       load: [loadSecrets],
       isGlobal: true,
     }),
-    HttpModule,
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 20,

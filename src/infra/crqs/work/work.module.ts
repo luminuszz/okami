@@ -1,4 +1,3 @@
-import { DatabaseModule } from '@app/infra/database/database.module';
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { FetchForWorkersReadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-read';
 import { MarkWorkReadUseCase } from '@domain/work/application/usecases/mark-work-read';
@@ -45,7 +44,7 @@ const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQue
 const EventHandlers = [];
 
 @Module({
-  imports: [CqrsModule, DatabaseModule, StorageModule, QueueModule, TaskModule],
+  imports: [CqrsModule, StorageModule, QueueModule, TaskModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,

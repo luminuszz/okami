@@ -3,7 +3,7 @@ import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-u
 import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
 
 @EventsHandler(WorkUpdatedEvent)
-export class WorkUpdatedHandler implements IEventHandler<WorkUpdatedEvent> {
+export class WorkUpdatedEventHandler implements IEventHandler<WorkUpdatedEvent> {
   constructor(private readonly notionRepository: NotionWorkRepository) {}
 
   async handle({ payload }: WorkUpdatedEvent): Promise<void> {

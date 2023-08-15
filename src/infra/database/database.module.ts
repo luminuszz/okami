@@ -1,8 +1,8 @@
 import { NotificationRepository } from '@domain/notification/application/repositories/notification.repository';
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { BatchService } from './batchs/batch.service';
-import { NotionModule } from './notion/notion.module';
+import { NotionDatabaseModule } from './notion/notion-database.module';
 import { PrismaNotificationRepository } from './prisma/prisma-notification.repository';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
 import { QueueModule } from '@infra/queue/queue.module';
@@ -13,8 +13,9 @@ import { AccessTokenRepository } from '@domain/auth/application/useCases/reposit
 import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-access-token.repository';
 import { PrismaModule } from '@infra/database/prisma/prisma.module';
 
+@Global()
 @Module({
-  imports: [NotionModule, QueueModule, PrismaModule],
+  imports: [NotionDatabaseModule, QueueModule, PrismaModule],
   providers: [
     PrismaService,
     BatchService,

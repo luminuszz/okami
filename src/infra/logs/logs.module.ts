@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { NotionModule } from '../database/notion/notion.module';
+import { NotionDatabaseModule } from '../database/notion/notion-database.module';
 
 import { NotionHealtCheckIndicator } from './health/notion-healt.service';
 import { PrismaHealtCheckIndicator } from './health/prisma-healt.service';
@@ -9,7 +9,7 @@ import { PrometheusModule } from './prometheus/prometheus.module';
 import { PrismaModule } from '@infra/database/prisma/prisma.module';
 
 @Module({
-  imports: [PrometheusModule, TerminusModule.forRoot(), NotionModule, PrismaModule],
+  imports: [PrometheusModule, TerminusModule.forRoot(), NotionDatabaseModule, PrismaModule],
   controllers: [LoggerController],
   providers: [PrismaHealtCheckIndicator, NotionHealtCheckIndicator],
 })

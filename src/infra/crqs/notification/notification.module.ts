@@ -1,4 +1,3 @@
-import { DatabaseModule } from '@app/infra/database/database.module';
 import { CreateNotificationUseCase } from '@domain/notification/application/useCases/create-notification';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -18,7 +17,7 @@ const EventHandlers = [
 ];
 
 @Module({
-  imports: [CqrsModule, DatabaseModule, HttpModule],
+  imports: [CqrsModule, HttpModule],
   providers: [
     ...EventHandlers,
     ...CommandHandlers,

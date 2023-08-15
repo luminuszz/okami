@@ -1,4 +1,4 @@
-import { BatchService } from '@app/infra/database/batchs/batch.service';
+import { BatchService } from '@infra/database/batchs/batch.service';
 
 import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command';
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
@@ -8,9 +8,9 @@ import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-wor
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UpdateWorkCommand } from '../crqs/work/commands/update-work.command';
-import { WorkHttp, WorkModel } from './presentation/work.model';
-import { FindOneWorkQuery } from '../crqs/work/queries/find-one-work';
+import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
+import { WorkHttp, WorkModel } from '../presentation/work.model';
+import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
 import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
