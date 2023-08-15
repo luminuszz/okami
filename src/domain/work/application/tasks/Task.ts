@@ -12,17 +12,19 @@ export class Task {
     private readonly fetchWorksForScrappingUseCase: FetchWorksForScrappingUseCase,
     private readonly queue: Queue,
   ) {
-    this.scheduleProvider.createTask(
-      'refreshWorksStatus',
-      CronExpression.EVERY_6_HOURS,
-      this.createRefreshWorkChapterStatusTask.bind(this),
-    );
+    if (process.env.NODE_ENV === 'production') {
+      this.scheduleProvider.createTask(
+        'refreshWorksStatus',
+        CronExpression.EVERY_6_HOURS,
+        this.createRefreshWorkChapterStatusTask.bind(this),
+      );
 
-    this.scheduleProvider.createTask(
-      'sync-others-database',
-      CronExpression.EVERY_DAY_AT_10AM,
-      this.queue.syncWithOtherDatabases.bind(this.queue),
-    );
+      this.scheduleProvider.createTask(
+        'sync-others-database',
+        CronExpression.EVERY_DAY_AT_10AM,
+        this.queue.syncWithOtherDatabases.bind(this.queue),
+      );
+    }
   }
 
   public async createRefreshWorkChapterStatusTask() {

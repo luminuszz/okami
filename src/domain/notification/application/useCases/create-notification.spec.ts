@@ -16,6 +16,7 @@ describe('Send Notification', () => {
     const notificationInput = {
       content: "Novo capitulo de 'One Piece' disponível",
       recipientId: '1',
+      workId: '1',
     };
 
     const response = await stu.execute(notificationInput);

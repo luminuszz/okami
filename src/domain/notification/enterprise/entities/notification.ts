@@ -7,6 +7,7 @@ interface NotificationProps {
   recipientId: string;
   createdAt?: Date;
   readAt?: Date | null;
+  workId: string;
 }
 
 export class Notification extends Entity<NotificationProps> {
@@ -18,13 +19,15 @@ export class Notification extends Entity<NotificationProps> {
   }
 
   static create(props: NotificationProps, id?: UniqueEntityID) {
-    const notification = new Notification(props, id);
-
-    return notification;
+    return new Notification(props, id);
   }
 
   get recipientId(): string {
     return this.props.recipientId;
+  }
+
+  get workId(): string {
+    return this.props.workId;
   }
 
   get content(): Content {
@@ -41,6 +44,10 @@ export class Notification extends Entity<NotificationProps> {
 
   setRecipientId(recipientId: string): void {
     this.props.recipientId = recipientId;
+  }
+
+  setWorkId(workId: string): void {
+    this.props.workId = workId;
   }
 
   setReadAt(readAt: Date): void {

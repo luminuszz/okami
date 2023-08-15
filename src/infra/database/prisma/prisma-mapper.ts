@@ -56,6 +56,7 @@ export const parseNotificationEntityToPrisma = (notification: Notification): Pri
   id: notification.id.toString(),
   readAt: notification.readAt,
   recipientId: notification.recipientId,
+  workId: notification.workId,
 });
 
 export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotification): Notification =>
@@ -65,6 +66,7 @@ export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotifi
       recipientId: prismaNotification.recipientId,
       createdAt: prismaNotification.createdAt,
       readAt: prismaNotification.readAt,
+      workId: prismaNotification.workId,
     },
     new UniqueEntityID(prismaNotification.id),
   );

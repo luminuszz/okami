@@ -18,7 +18,7 @@ const workSchema = z
   .transform((data) => {
     return {
       ...data,
-      imageUrl: data.imageId ? S3FileStorageAdapter.createWorkImageURL(`${data.id}-${data.imageId}`) : null,
+      imageUrl: data.imageId ? S3FileStorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
     };
   });
 

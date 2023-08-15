@@ -7,6 +7,7 @@ import { NotificationRepository } from '../repositories/notification.repository'
 interface CreateNotificationInput {
   content: string;
   recipientId: string;
+  workId: string;
 }
 
 type CreateNotificationDtoOutput = Either<
@@ -20,11 +21,12 @@ type CreateNotificationDtoOutput = Either<
 export class CreateNotificationUseCase {
   constructor(private notificationRepository: NotificationRepository) {}
 
-  async execute({ content, recipientId }: CreateNotificationInput): Promise<CreateNotificationDtoOutput> {
+  async execute({ content, recipientId, workId }: CreateNotificationInput): Promise<CreateNotificationDtoOutput> {
     const notification = Notification.create({
       content: new Content(content),
       recipientId,
       readAt: null,
+      workId,
     });
 
     await this.notificationRepository.create(notification);
