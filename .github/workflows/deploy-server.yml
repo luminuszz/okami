@@ -43,7 +43,6 @@ jobs:
           script: |
             cd apps/okami
             docker compose down
-            docker system prune -f -a
             git pull origin master
             docker compose -f ./docker-compose.prd.yml up -d --build
             
