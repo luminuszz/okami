@@ -12,7 +12,7 @@ export class Task {
     private readonly fetchWorksForScrappingUseCase: FetchWorksForScrappingUseCase,
     private readonly queue: Queue,
   ) {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'prod') {
       this.scheduleProvider.createTask(
         'refreshWorksStatus',
         CronExpression.EVERY_6_HOURS,
