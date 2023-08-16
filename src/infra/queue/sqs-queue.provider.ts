@@ -1,14 +1,13 @@
 import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { CreateQueueCommand, ListQueuesCommand, SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Consumer } from 'sqs-consumer';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SqsQueueProvider implements QueueProvider {
-  private logger = new Logger(SqsQueueProvider.name);
-
+export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
   private consumers = new Map<string, Consumer>();
+  private logger = new Logger(SqsQueueProvider.name);
 
   private readonly sqs: SQSClient;
 
@@ -39,7 +38,6 @@ export class SqsQueueProvider implements QueueProvider {
         sqs: this.sqs,
         handleMessage: async (message) => {
           const payload = JSON.parse(message.Body);
-
           await callback(payload);
         },
       });
@@ -69,5 +67,12 @@ export class SqsQueueProvider implements QueueProvider {
     }
 
     return queueUrl;
+  }
+
+  async onModuleDestroy() {
+    this.consumers.forEach((consumer) => {
+      consumer.removeAllListeners();
+      consumer.stop();
+    });
   }
 }
