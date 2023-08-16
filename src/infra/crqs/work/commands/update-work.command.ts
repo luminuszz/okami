@@ -24,8 +24,6 @@ export class UpdateWorkCommandHandler implements ICommandHandler<UpdateWorkComma
     if (results.isRight()) {
       const { work } = results.value;
 
-      console.log({ work });
-
       await this.eventBus.publishAll(work.events);
     }
   }
