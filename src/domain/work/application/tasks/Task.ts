@@ -4,6 +4,7 @@ import { CronExpression } from '@nestjs/schedule';
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { Category } from '@domain/work/enterprise/entities/work';
+import getSecretsEnv from '@infra/utils/getSecretsEnv';
 
 @Injectable()
 export class Task {
@@ -12,19 +13,21 @@ export class Task {
     private readonly fetchWorksForScrappingUseCase: FetchWorksForScrappingUseCase,
     private readonly queue: Queue,
   ) {
-    if (process.env.NODE_ENV === 'prod') {
-      this.scheduleProvider.createTask(
-        'refreshWorksStatus',
-        CronExpression.EVERY_6_HOURS,
-        this.createRefreshWorkChapterStatusTask.bind(this),
-      );
+    getSecretsEnv().then((secrets) => {
+      if (secrets.DOCKERFILE === 'prod') {
+        this.scheduleProvider.createTask(
+          'refreshWorksStatus',
+          CronExpression.EVERY_6_HOURS,
+          this.createRefreshWorkChapterStatusTask.bind(this),
+        );
 
-      this.scheduleProvider.createTask(
-        'sync-others-database',
-        CronExpression.EVERY_DAY_AT_10AM,
-        this.queue.syncWithOtherDatabases.bind(this.queue),
-      );
-    }
+        this.scheduleProvider.createTask(
+          'sync-others-database',
+          CronExpression.EVERY_DAY_AT_10AM,
+          this.queue.syncWithOtherDatabases.bind(this.queue),
+        );
+      }
+    });
   }
 
   public async createRefreshWorkChapterStatusTask() {
