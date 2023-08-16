@@ -32,7 +32,6 @@
     "@nestjs/cqrs": "^9.0.4",
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/platform-fastify": "^9.4.2",
-    "@nestjs/schedule": "^3.0.1",
     "@nestjs/swagger": "^7.1.6",
     "@nestjs/terminus": "^9.2.2",
     "@nestjs/throttler": "^4.0.0",

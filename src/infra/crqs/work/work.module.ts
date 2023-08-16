@@ -25,8 +25,6 @@ import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { StorageModule } from '@infra/storage/storage.module';
 import { QueueModule } from '@infra/queue/queue.module';
-import { TaskModule } from '@infra/tasks/task.module';
-import { Task } from '@domain/work/application/tasks/Task';
 import { Queue } from '@domain/work/application/queue/Queue';
 
 const CommandHandlers = [
@@ -44,7 +42,7 @@ const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQue
 const EventHandlers = [];
 
 @Module({
-  imports: [CqrsModule, StorageModule, QueueModule, TaskModule],
+  imports: [CqrsModule, StorageModule, QueueModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,
@@ -60,7 +58,6 @@ const EventHandlers = [];
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
-    Task,
     Queue,
   ],
   exports: [
@@ -74,7 +71,6 @@ const EventHandlers = [];
     MarkWorkFinishedUseCase,
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
-    Task,
     Queue,
   ],
 })

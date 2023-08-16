@@ -9,9 +9,9 @@ export class BatchService {
   constructor(
     private readonly notionWorkRepository: NotionWorkRepository,
     private readonly prismaWorkRepository: PrismaWorkRepository,
-    private readonly QueueProvider: QueueProvider,
+    private readonly queueProvider: QueueProvider,
   ) {
-    this.QueueProvider.subscribe(QueueMessage.SYNC_WITH_OTHER_DATABASES, this.importNotionDatabaseToMongoDB.bind(this));
+    this.queueProvider.subscribe(QueueMessage.SYNC_WITH_OTHER_DATABASES, () => this.importNotionDatabaseToMongoDB());
   }
 
   async importNotionDatabaseToMongoDB() {

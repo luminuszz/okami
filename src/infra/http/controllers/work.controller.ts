@@ -17,9 +17,9 @@ import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
 import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
 import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
-import { Task } from '@domain/work/application/tasks/Task';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
+import { Queue } from '@domain/work/application/queue/Queue';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -29,7 +29,7 @@ export class WorkController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly batchService: BatchService,
-    private readonly task: Task,
+    private readonly queue: Queue,
   ) {}
 
   @Post()
@@ -83,7 +83,7 @@ export class WorkController {
 
   @Get('refresh-chapters')
   async refreshChapters() {
-    await this.task.createRefreshWorkChapterStatusTask();
+    await this.queue.refreshWorkStatus();
   }
 
   @Put('update-work/:id')
