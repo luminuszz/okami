@@ -42,11 +42,16 @@ export class TelegramNotificationCreatedEventHandler
 
     const caption = this.parseContent(`${payload.content.toString()}\n\n${url}`);
 
-    const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${id}-${imageId}`);
-
-    await this.telegraf.telegram.sendPhoto(payload.recipientId, imageUrl, {
-      parse_mode: 'MarkdownV2',
-      caption,
-    });
+    if (imageId) {
+      const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${id}-${imageId}`);
+      await this.telegraf.telegram.sendPhoto(payload.recipientId, imageUrl, {
+        parse_mode: 'MarkdownV2',
+        caption,
+      });
+    } else {
+      await this.telegraf.telegram.sendMessage(payload.recipientId, caption, {
+        parse_mode: 'MarkdownV2',
+      });
+    }
   }
 }

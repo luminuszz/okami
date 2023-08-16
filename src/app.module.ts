@@ -6,11 +6,11 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
 import loadSecrets from '@infra/utils/getSecretsEnv';
 import { DatabaseModule } from '@infra/database/database.module';
-import { InfraModule } from '@infra/infra.module';
+import { HttpModule } from '@infra/http/http.module';
 
 @Module({
   imports: [
-    InfraModule,
+    HttpModule,
     DatabaseModule,
     ConfigModule.forRoot({
       load: [loadSecrets],

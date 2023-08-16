@@ -4,16 +4,18 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { CreateNotificationCommandHandler } from './commands/createNotification.command';
 import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-notification-created-event-handler';
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
-import { HttpModule } from '@nestjs/axios';
 import { OneSignalApiProvider } from '@infra/crqs/notification/providers/oneSignal-api.provider';
 import { OneSignalNotificationHandler } from '@infra/crqs/notification/handlers/oneSignal-notification.handler';
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
+import { DatabaseModule } from '@infra/database/database.module';
+import { HttpModule } from '@nestjs/axios';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
   TelegramNotificationCreatedEventHandler,
   NotificationWorkMarkUnreadEventHandler,
   OneSignalNotificationHandler,
+  DatabaseModule,
 ];
 
 @Module({

@@ -8,7 +8,6 @@ import { WorkMarkReadNotionEventHandler } from '@infra/database/notion/handlers/
 import { WorkMarkUnreadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-unread';
 import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
 import { WorkUpdatedEventHandler } from '@infra/database/notion/handlers/work-updated';
-import { FailedNotionApiRetrySaga } from '@infra/database/notion/sagas/failed-notion-api-retry';
 
 @Module({
   imports: [CqrsModule, ConfigModule.forRoot()],
@@ -19,7 +18,6 @@ import { FailedNotionApiRetrySaga } from '@infra/database/notion/sagas/failed-no
     WorkMarkUnreadNotionEventHandler,
     WorkMarkedNotionFinishedEventHandler,
     WorkUpdatedEventHandler,
-    FailedNotionApiRetrySaga,
   ],
   exports: [NotionWorkRepository, NotionApiAdapter],
 })

@@ -4,9 +4,11 @@ import { WorkModule } from '../crqs/work/work.module';
 import { WorkController } from './controllers/work.controller';
 import { AuthModule } from '@infra/crqs/auth/auth.module';
 import { AuthController } from '@infra/http/controllers/auth.controller';
+import { NotificationModule } from '@infra/crqs/notification/notification.module';
+import { DatabaseModule } from '@infra/database/database.module';
 
 @Module({
-  imports: [CqrsModule, WorkModule, AuthModule],
+  imports: [CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule],
   controllers: [WorkController, AuthController],
 })
 export class HttpModule {}
