@@ -1,7 +1,5 @@
 import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from '@infra/http/validators/create-user.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateUserCommand } from '@infra/crqs/auth/commands/create-user.command';
 import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
 import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
@@ -18,11 +16,6 @@ import {
 @Controller('auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
-
-  @Post('register')
-  async createUser(@Body() data: CreateUserDto) {
-    await this.commandBus.execute(new CreateUserCommand(data));
-  }
 
   @Post('login')
   async makeSession(@Body() { password, email }: MakeSessionDto) {

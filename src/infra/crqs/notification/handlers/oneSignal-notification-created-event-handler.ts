@@ -6,8 +6,8 @@ import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
 import { AxiosError } from 'axios';
 
 @EventsHandler(NotificationCreatedEvent)
-export class OneSignalNotificationHandler implements IEventHandler<NotificationCreatedEvent> {
-  private logger = new Logger(OneSignalNotificationHandler.name);
+export class OneSignalNotificationCreatedEventHandler implements IEventHandler<NotificationCreatedEvent> {
+  private logger = new Logger(OneSignalNotificationCreatedEventHandler.name);
 
   constructor(private readonly oneSignalApiProvider: OneSignalApiProvider) {}
 
