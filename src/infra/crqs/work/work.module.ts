@@ -26,6 +26,8 @@ import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload
 import { StorageModule } from '@infra/storage/storage.module';
 import { QueueModule } from '@infra/queue/queue.module';
 import { Queue } from '@domain/work/application/queue/Queue';
+import { SubscribeToWorkUseCase } from '@domain/work/application/usecases/subscribe-to-work';
+import { SubscribeToWorkCommandHandler } from '@infra/crqs/work/commands/subscribe-to-work.command';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -35,6 +37,7 @@ const CommandHandlers = [
   UpdateWorkCommandHandler,
   MarkWorkFinishedCommandHandler,
   UploadWorkImageCommandHandler,
+  SubscribeToWorkCommandHandler,
 ];
 
 const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQueryHandler, FindOneWorkQueryHandler];
@@ -59,6 +62,7 @@ const EventHandlers = [];
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
     Queue,
+    SubscribeToWorkUseCase,
   ],
   exports: [
     CreateWorkUseCase,

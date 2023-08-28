@@ -1,6 +1,6 @@
 import { UniqueEntityID } from './unique-entity-id';
 
-export interface DomainEvent<Payload extends unknown = unknown> {
+export interface DomainEvent<Payload = unknown> {
   eventName: string;
   payload: Payload;
 }
@@ -18,6 +18,14 @@ export class Entity<EntityProps> {
 
   public get id() {
     return this._id.toValue();
+  }
+
+  public toUniqueEntityID() {
+    return this._id;
+  }
+
+  public equals(entity?: Entity<EntityProps>): boolean {
+    return this._id.equals(entity?._id);
   }
 
   public events: DomainEvent[] = [];
