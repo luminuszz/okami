@@ -1,11 +1,9 @@
 .github
 .git
 .dockerignore
-
 npm-debug.log
+./node_modules
 
-node_modules
-docker
 
 
 

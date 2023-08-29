@@ -39,3 +39,7 @@ lerna-debug.log*
 # Envs 
 .env
 data
+
+.yarn
+
+core.*

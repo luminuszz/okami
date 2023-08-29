@@ -2,7 +2,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SubscribeToWorkUseCase } from '@domain/work/application/usecases/subscribe-to-work';
 
 export class SubscribeToWorkCommand {
-  constructor(public readonly userId: string, public readonly workId: string) {}
+  constructor(
+    public readonly userId: string,
+    public readonly workId: string,
+  ) {}
 }
 
 @CommandHandler(SubscribeToWorkCommand)
