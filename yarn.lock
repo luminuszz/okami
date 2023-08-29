@@ -1584,32 +1584,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/bull-shared@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "@nestjs/bull-shared@npm:10.0.1"
-  dependencies:
-    tslib: 2.6.0
-  peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: d2b1e91e8afe797e34a23db5bc6fe49da3e423b120b42267503f50c4675957d3c15aec4b5e976e20096eab7743f9155f05f2282ca3a5e914292ae525c4f08683
-  languageName: node
-  linkType: hard
-
-"@nestjs/bull@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "@nestjs/bull@npm:10.0.1"
-  dependencies:
-    "@nestjs/bull-shared": ^10.0.1
-    tslib: 2.6.0
-  peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
-    bull: ^3.3 || ^4.0.0
-  checksum: 928f723977de2c8d7a9e5698583218eba1bbea3c296afbc906fb07a2033152f8906669c253a46799896bdd44db0196648fed1d5983c3aed90c76a2c408ed8c5c
-  languageName: node
-  linkType: hard
-
 "@nestjs/cli@npm:^10.1.16":
   version: 10.1.16
   resolution: "@nestjs/cli@npm:10.1.16"
@@ -8105,7 +8079,6 @@ __metadata:
     "@fastify/multipart": ^7.7.3
     "@fastify/static": ^6.10.2
     "@nestjs/axios": ^3.0.0
-    "@nestjs/bull": ^10.0.1
     "@nestjs/cli": ^10.1.16
     "@nestjs/common": ^10.2.2
     "@nestjs/config": ^3.0.0
@@ -10028,13 +10001,6 @@ __metadata:
     minimist: ^1.2.6
     strip-bom: ^3.0.0
   checksum: 28c5f7bbbcabc9dabd4117e8fdc61483f6872a1c6b02a4b1c4d68c5b79d06896c3cc9547610c4c3ba64658531caa2de13ead1ea1bf321c7b53e969c4752b98c7
-  languageName: node
-  linkType: hard
-
-"tslib@npm:2.6.0":
-  version: 2.6.0
-  resolution: "tslib@npm:2.6.0"
-  checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
   languageName: node
   linkType: hard
 

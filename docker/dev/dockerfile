@@ -4,8 +4,14 @@ WORKDIR app
 
 COPY package.json .
 
+COPY . .
+
+RUN corepack enable
+
+RUN yarn set version berry
+
 RUN yarn install
 
-COPY . .
+
 
 CMD ["yarn", "start:dev"]

@@ -3,7 +3,8 @@ version: '3.7'
 services:
   application:
     volumes:
-      - .:/app
+      - ./src/:/app/src
+      - /app/node_modules
     build: 
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
@@ -13,5 +14,5 @@ services:
     env_file:
       - .env
 
-    
+
 

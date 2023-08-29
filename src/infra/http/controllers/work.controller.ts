@@ -47,7 +47,7 @@ export class WorkController {
     return WorkModel.toHttp(work);
   }
 
-  @Patch(':id/update-chapater')
+  @Patch(':id/update-chapter')
   async updateChapter(@Param('id', ParseObjectIdPipe) id: string, @Body() { chapter }: UpdateChapterDto) {
     await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter));
   }

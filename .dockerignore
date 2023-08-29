@@ -1,9 +1,4 @@
+node_modules
 .github
 .git
-.dockerignore
-npm-debug.log
-./node_modules
-
-
-
-
+core.*
