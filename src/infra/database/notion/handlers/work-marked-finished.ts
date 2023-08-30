@@ -3,7 +3,10 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
 
 export class WorkMarkFinishedNotionEventHandlerError extends Error {
-  constructor(message: string, public readonly originalEvent: WorkMarkedFinishedEvent) {
+  constructor(
+    public readonly message: string,
+    public readonly originalEvent: WorkMarkedFinishedEvent,
+  ) {
     super(message);
   }
 }

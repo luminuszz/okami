@@ -1,8 +1,0 @@
-###
-POST http://0.0.0.0:3000/auth/login
-Content-Type: application/json
-
-{
-  "email": "okami-worker@okami.com",
-  "password": "kfh8L72gouU7e2ArbQRPcTLTd9Mp9XmcxAiRFrzZd9jhDxgTLAQJKrkewuBAvmrmXKejBgCDoHvsWkC6FLJKVmCGRhdnCP6RKoxH"
-}
