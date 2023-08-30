@@ -10,7 +10,6 @@ export default defineConfig({
       module: { type: 'es6' },
     }),
   ],
-
   test: {
     coverage: {
       provider: 'v8',

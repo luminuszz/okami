@@ -7,7 +7,10 @@ export class MarkWorkFinishedCommand {
 
 @CommandHandler(MarkWorkFinishedCommand)
 export class MarkWorkFinishedCommandHandler implements ICommandHandler<MarkWorkFinishedCommand> {
-  constructor(private readonly markWorkFinished: MarkWorkFinishedUseCase, private eventBus: EventBus) {}
+  constructor(
+    private readonly markWorkFinished: MarkWorkFinishedUseCase,
+    private eventBus: EventBus,
+  ) {}
 
   async execute({ workId }: MarkWorkFinishedCommand): Promise<void> {
     const results = await this.markWorkFinished.execute({ workId });
@@ -15,6 +18,8 @@ export class MarkWorkFinishedCommandHandler implements ICommandHandler<MarkWorkF
     if (results.isRight()) {
       const { work } = results.value;
       this.eventBus.publishAll(work.events);
+    } else {
+      throw results.value;
     }
   }
 }

@@ -12,6 +12,4 @@ RUN yarn set version berry
 
 RUN yarn install
 
-
-
 CMD ["yarn", "start:dev"]

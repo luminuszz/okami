@@ -17,7 +17,10 @@ type UploadWorkImageOutput = Either<WorkNotFoundError, Work>;
 
 @Injectable()
 export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkImageInput, UploadWorkImageOutput> {
-  constructor(private storageProvider: StorageProvider, private workRepository: WorkRepository) {}
+  constructor(
+    private storageProvider: StorageProvider,
+    private workRepository: WorkRepository,
+  ) {}
 
   async execute({ imageBuffer, workId, fileType }: UploadWorkImageInput): Promise<UploadWorkImageOutput> {
     const work = await this.workRepository.findOne(workId);

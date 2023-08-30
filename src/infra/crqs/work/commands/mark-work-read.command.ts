@@ -5,14 +5,8 @@ export class MarkWorkReadCommand {
   constructor(public readonly id: string) {}
 }
 
-
-
-
-
 @CommandHandler(MarkWorkReadCommand)
-export class MarkWorkReadCommandHandler
-  implements ICommandHandler<MarkWorkReadCommand>
-{
+export class MarkWorkReadCommandHandler implements ICommandHandler<MarkWorkReadCommand> {
   constructor(
     private readonly markRead: MarkWorkReadUseCase,
     private eventBus: EventBus,
@@ -25,8 +19,8 @@ export class MarkWorkReadCommandHandler
       const work = response.value;
 
       this.eventBus.publishAll(work.events);
+    } else {
+      throw response.value;
     }
-
-   
   }
 }

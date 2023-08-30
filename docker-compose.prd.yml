@@ -20,7 +20,7 @@ services:
       - "${PORT}:${PORT}"
     restart: always
     volumes:
-      - .:/app
+      - node_modules:/app/node_modules
     build:
       context: .
       dockerfile: "./docker/${DOCKERFILE}/dockerfile"
@@ -33,3 +33,6 @@ services:
 
 networks:
   base_network:
+
+volumes:
+  node_modules:

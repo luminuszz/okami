@@ -22,9 +22,7 @@
     "noFallthroughCasesInSwitch": false,
 
     "paths": {
-
      "@test/*": ["./test/*"],
-
       "@domain/*": [
         "src/domain/*"
       ],

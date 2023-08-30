@@ -45,7 +45,6 @@ import { writeFileSync } from 'node:fs';
   const config = new DocumentBuilder()
     .setTitle('Okami API')
     .setDescription('The Okami rest api')
-
     .setVersion('1.0')
     .addTag('okami')
     .build();

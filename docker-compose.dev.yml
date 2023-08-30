@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  application:
+  api:
     volumes:
       - ./src/:/app/src
       - /app/node_modules
@@ -13,6 +13,5 @@ services:
       - "${PORT}:${PORT}"
     env_file:
       - .env
-
 
 
