@@ -36,10 +36,13 @@ lerna-debug.log*
 .vscode
 
 
+.yarn/*
+
+
 # Envs 
 .env
 data
 
-.yarn
+
 
 core.*

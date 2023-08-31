@@ -8119,7 +8119,7 @@ __metadata:
     lodash: ^4.17.21
     newrelic: ^11.0.0
     prettier: ^3.0.2
-    prisma: ^5.2.0
+    prisma: 5.2.0
     prom-client: ^14.2.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
@@ -8558,7 +8558,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^5.2.0":
+"prisma@npm:5.2.0":
   version: 5.2.0
   resolution: "prisma@npm:5.2.0"
   dependencies:
