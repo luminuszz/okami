@@ -8132,6 +8132,7 @@ __metadata:
     tsconfig-paths: 4.2.0
     typescript: ^5.2.2
     unplugin-swc: ^1.4.2
+    vite: ^4.4.9
     vite-tsconfig-paths: ^4.2.0
     vitest: ^0.34.3
     zod: ^3.21.4
@@ -10305,7 +10306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0 || ^4.0.0":
+"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.4.9":
   version: 4.4.9
   resolution: "vite@npm:4.4.9"
   dependencies:
