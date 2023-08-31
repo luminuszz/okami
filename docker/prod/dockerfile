@@ -15,7 +15,7 @@ RUN yarn set version berry
 
 RUN yarn install
 
-RUN yarn global add pm2
+RUN yarn dlx pm2
 
 COPY . .
 
