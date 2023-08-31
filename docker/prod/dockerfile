@@ -15,12 +15,10 @@ RUN yarn set version berry
 
 RUN yarn install
 
-RUN yarn dlx -q pm2
-
 COPY . .
 
 RUN yarn prisma generate
 
 RUN yarn build
 
-CMD ["pm2-runtime", "./dist/src/main.js", "--name", "okami"]
+CMD ["node", "./dist/src/main.js"]
