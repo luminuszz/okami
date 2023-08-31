@@ -22,8 +22,8 @@ jobs:
       - name: "Install dependencies"
         run: |
           corepack enable
-          yarn set version berry
-          yarn install
+          corepack prepare pnpm@latest --activate
+          pnpm install
       - name: "Run tests"
         run: |
           yarn coverage
@@ -40,7 +40,7 @@ jobs:
           node-version: "latest"
       - name: "Install dependencies"
         run: |
-          yarn install
+          pnpm install
       - name: "Validate build"
         run: |
-          yarn build
+          pnpm exec build
