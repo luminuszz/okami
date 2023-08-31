@@ -26,7 +26,7 @@ jobs:
           pnpm install
       - name: "Run tests"
         run: |
-          yarn coverage
+          pnpm run coverage
 
   validate_build:
     name: "Validate build"
@@ -43,4 +43,4 @@ jobs:
           pnpm install
       - name: "Validate build"
         run: |
-          pnpm exec build
+          pnpm run build
