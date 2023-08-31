@@ -14,6 +14,8 @@ const workSchema = z
     isFinished: z.boolean(),
     imageId: z.string().optional().nullable(),
     imageUrl: z.string().url().nullable().default(null),
+    updatedAt: z.date().optional().nullable(),
+    category: z.string().optional().nullable(),
   })
   .transform((data) => {
     return {
@@ -41,6 +43,10 @@ export class WorkHttp implements WorkHttpType {
   name: string;
   @ApiProperty()
   url: string;
+  @ApiProperty()
+  updatedAt: Date;
+  @ApiProperty()
+  category: string;
 }
 
 export class WorkModel {
