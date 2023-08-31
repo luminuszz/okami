@@ -36,6 +36,13 @@ lerna-debug.log*
 .vscode
 
 
+.yarn/*
+
+
 # Envs 
 .env
 data
+
+
+
+core.*

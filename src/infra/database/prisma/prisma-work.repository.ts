@@ -27,7 +27,12 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         id: work.id.toString(),
       },
-      data: parsedData,
+      data: {
+        ...parsedData,
+        subscribersIds: {
+          set: parsedData.subscribersIds,
+        },
+      },
     });
   }
   async findById(id: string): Promise<Work> {

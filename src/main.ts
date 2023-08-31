@@ -12,6 +12,7 @@ import { writeFileSync } from 'node:fs';
 
 (async () => {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+
   app.useGlobalPipes(new ValidationPipe());
 
   await Promise.all([
@@ -54,5 +55,5 @@ import { writeFileSync } from 'node:fs';
 
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT, process.env.ADDRESS, (_, address) => console.log(address));
+  await app.listen(process.env.PORT, process.env.ADDRESS, (error, address) => console.log(address, { error }));
 })();

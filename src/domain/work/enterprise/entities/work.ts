@@ -4,6 +4,7 @@ import { WorkMarkReadEvent } from './events/work-marked-read';
 import { WorkMarkUnreadEvent } from './events/work-marked-unread';
 import { Chapter } from './values-objects/chapter';
 import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
+import { User } from '@domain/auth/enterprise/entities/User';
 
 interface WorkProps {
   name: string;
@@ -16,6 +17,7 @@ interface WorkProps {
   recipientId?: string;
   isFinished?: boolean;
   imageId?: string;
+  subscribers?: User[];
 }
 
 export enum Category {
@@ -29,6 +31,7 @@ export class Work extends Entity<WorkProps> {
 
     this.props.createdAt = props.createdAt ?? new Date();
     this.props.isFinished = props.isFinished ?? false;
+    this.props.subscribers = props.subscribers ?? [];
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -124,5 +127,18 @@ export class Work extends Entity<WorkProps> {
   public set imageId(imageUrl: string) {
     this.props.imageId = imageUrl;
     this.commit();
+  }
+
+  public get subscribers() {
+    return this.props.subscribers;
+  }
+
+  public addSubscriber(subscriber: User): void {
+    const alreadySubscribed = this.props.subscribers.find((current) => subscriber.equals(current));
+
+    if (!alreadySubscribed) {
+      this.props.subscribers.push(subscriber);
+      this.commit();
+    }
   }
 }

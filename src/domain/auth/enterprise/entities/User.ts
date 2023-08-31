@@ -1,5 +1,6 @@
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { Work } from '@domain/work/enterprise/entities/work';
 
 interface EntityProps {
   name: string;
@@ -8,6 +9,7 @@ interface EntityProps {
   createdAt?: Date;
   updatedAt?: Date;
   avatarImageId?: string;
+  works?: Work[];
 }
 
 export class User extends Entity<EntityProps> {
@@ -15,6 +17,7 @@ export class User extends Entity<EntityProps> {
     super(props, id);
 
     this.props.createdAt = props.createdAt ?? new Date();
+    this.props.works = props.works ?? [];
   }
 
   get email(): string {
@@ -43,6 +46,10 @@ export class User extends Entity<EntityProps> {
 
   set avatarImageId(url: string) {
     this.props.avatarImageId = url;
+  }
+
+  get works(): Work[] {
+    return this.props.works;
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {

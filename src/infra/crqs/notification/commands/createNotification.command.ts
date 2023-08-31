@@ -10,7 +10,10 @@ interface CreateNotificationCommandPayload {
 }
 
 export class CreateNotificationCommand {
-  constructor(public payload: CreateNotificationCommandPayload, public readonly work: Work) {}
+  constructor(
+    public payload: CreateNotificationCommandPayload,
+    public readonly work: Work,
+  ) {}
 }
 
 @CommandHandler(CreateNotificationCommand)

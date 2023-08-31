@@ -13,6 +13,7 @@ import {
 import { User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { AccessToken as PrismaAccessToken } from '@prisma/client';
+import { map } from 'lodash';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -30,6 +31,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   recipientId: work.recipientId,
   isFinished: work.isFinished,
   imageId: work.imageId,
+  subscribersIds: map(work.subscribers, (subscriber) => subscriber.id),
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -92,6 +94,7 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   createdAt: user.createdAt,
   id: user.id.toString(),
   imageUrl: user.avatarImageId,
+  worksId: map(user.works, (work) => work.id),
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({

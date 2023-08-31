@@ -8,12 +8,18 @@ type UpdateWorkInput = Partial<{
 }>;
 
 export class UpdateWorkCommand {
-  constructor(public id: string, public data: UpdateWorkInput) {}
+  constructor(
+    public id: string,
+    public data: UpdateWorkInput,
+  ) {}
 }
 
 @CommandHandler(UpdateWorkCommand)
 export class UpdateWorkCommandHandler implements ICommandHandler<UpdateWorkCommand> {
-  constructor(private readonly updateWorkUseCase: UpdateWorkUseCase, private eventBus: EventBus) {}
+  constructor(
+    private readonly updateWorkUseCase: UpdateWorkUseCase,
+    private eventBus: EventBus,
+  ) {}
 
   async execute({ id, data }: UpdateWorkCommand): Promise<any> {
     const results = await this.updateWorkUseCase.execute({
@@ -25,6 +31,8 @@ export class UpdateWorkCommandHandler implements ICommandHandler<UpdateWorkComma
       const { work } = results.value;
 
       await this.eventBus.publishAll(work.events);
+    } else {
+      throw results.value;
     }
   }
 }

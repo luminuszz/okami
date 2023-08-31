@@ -14,10 +14,14 @@ export class UploadWorkImageCommandHandler implements ICommandHandler<UploadWork
   constructor(private readonly uploadWorkImage: UploadWorkImageUseCase) {}
 
   async execute({ originalFileName, workId, image }: UploadWorkImageCommand): Promise<void> {
-    await this.uploadWorkImage.execute({
+    const results = await this.uploadWorkImage.execute({
       imageBuffer: image,
       workId: workId,
       fileType: originalFileName.split('.').pop(),
     });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
   }
 }

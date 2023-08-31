@@ -7,7 +7,10 @@ export class MarkWorkUnreadCommand {
 
 @CommandHandler(MarkWorkUnreadCommand)
 export class MarkWorkUnreadCommandHandler implements ICommandHandler<MarkWorkUnreadCommand> {
-  constructor(private readonly markUnread: MarkWorkUnreadUseCase, private eventBus: EventBus) {}
+  constructor(
+    private readonly markUnread: MarkWorkUnreadUseCase,
+    private eventBus: EventBus,
+  ) {}
 
   async execute({ id }: MarkWorkUnreadCommand): Promise<void> {
     const response = await this.markUnread.execute({ id });
@@ -16,6 +19,8 @@ export class MarkWorkUnreadCommandHandler implements ICommandHandler<MarkWorkUnr
       const work = response.value;
 
       this.eventBus.publishAll(work.events);
+    } else {
+      throw response.value;
     }
   }
 }

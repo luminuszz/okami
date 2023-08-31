@@ -28,28 +28,32 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
   }
 
   async subscribe<Payload = any>(name: string, callback: (payload: Payload) => Promise<void> | void): Promise<void> {
-    const endpoint = await this.createQueueIfNotExists(name);
+    try {
+      const endpoint = await this.createQueueIfNotExists(name);
 
-    let consumer: Consumer = this.consumers.get(endpoint);
+      let consumer: Consumer = this.consumers.get(endpoint);
 
-    if (!consumer) {
-      consumer = Consumer.create({
-        queueUrl: endpoint,
-        sqs: this.sqs,
-        handleMessage: async (message) => {
-          const payload = JSON.parse(message.Body);
-          await callback(payload);
-        },
-      });
+      if (!consumer) {
+        consumer = Consumer.create({
+          queueUrl: endpoint,
+          sqs: this.sqs,
+          handleMessage: async (message) => {
+            const payload = JSON.parse(message.Body);
+            await callback(payload);
+          },
+        });
 
-      this.consumers.set(endpoint, consumer);
-    }
+        this.consumers.set(endpoint, consumer);
+      }
 
-    if (!consumer.isRunning) {
-      consumer.start();
-      consumer.on('error', (err) => this.logger.error(err));
-      consumer.on('processing_error', (err) => this.logger.error(err));
-      consumer.on('message_received', (message) => this.logger.log(`Message received: ${JSON.parse(message.Body)}`));
+      if (!consumer.isRunning) {
+        consumer.start();
+        consumer.on('error', (err) => this.logger.error(err));
+        consumer.on('processing_error', (err) => this.logger.error(err));
+        consumer.on('message_received', (message) => this.logger.log(`Message received: ${JSON.parse(message.Body)}`));
+      }
+    } catch (e) {
+      this.logger.error(e);
     }
   }
 

@@ -20,6 +20,8 @@ import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { SubscribeToWorkCommand } from '@infra/crqs/work/commands/subscribe-to-work.command';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -45,7 +47,7 @@ export class WorkController {
     return WorkModel.toHttp(work);
   }
 
-  @Patch(':id/update-chapater')
+  @Patch(':id/update-chapter')
   async updateChapter(@Param('id', ParseObjectIdPipe) id: string, @Body() { chapter }: UpdateChapterDto) {
     await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter));
   }
@@ -109,5 +111,10 @@ export class WorkController {
     const imageData = await file.toBuffer();
 
     await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
+  }
+
+  @Post('subscribe/:workId')
+  async subscribeToWork(@Param('workId', ParseObjectIdPipe) workId: string, @Req() { user }: { user: UserTokenDto }) {
+    await this.commandBus.execute(new SubscribeToWorkCommand(user.id, workId));
   }
 }

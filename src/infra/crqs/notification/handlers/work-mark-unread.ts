@@ -6,7 +6,10 @@ import { CreateNotificationCommand } from '../commands/createNotification.comman
 
 @EventsHandler(WorkMarkUnreadEvent)
 export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<WorkMarkUnreadEvent> {
-  constructor(private commandBus: CommandBus, private configService: ConfigService) {}
+  constructor(
+    private commandBus: CommandBus,
+    private configService: ConfigService,
+  ) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
     const content =
