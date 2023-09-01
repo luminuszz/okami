@@ -3,6 +3,8 @@ import { InMemoryWorkRepository } from 'test/mocks/in-mermory-work-repository';
 import { CreateWorkUseCase } from './create-work';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { MarkWorkReadUseCase } from './mark-work-read';
+import { expect, test } from 'vitest';
+import { MarkWorkUnreadUseCase } from '@domain/work/application/usecases/mark-work-unread';
 
 describe('MarkWorkRead', () => {
   let stu: MarkWorkReadUseCase;
@@ -44,5 +46,29 @@ describe('MarkWorkRead', () => {
 
     expect(result.isLeft()).toBeTruthy();
     expect(result.value).toBeInstanceOf(WorkNotFoundError);
+  });
+
+  test('expect to nextChapter prop to be null on work marked read', async () => {
+    const createWork = new CreateWorkUseCase(workRepository);
+
+    const markUnread = new MarkWorkUnreadUseCase(workRepository);
+
+    const { work } = await createWork.execute({
+      category: Category.ANIME,
+      chapter: 1,
+      name: 'One Piece',
+      url: 'https://onepiece.com',
+    });
+
+    await markUnread.execute({ id: work.id, nextChapter: 2 });
+
+    const result = await stu.execute({ id: work.id });
+
+    expect(result.isRight()).toBeTruthy();
+
+    if (result.isRight()) {
+      expect(result.value.hasNewChapter).toBeFalsy();
+      expect(result.value.nextChapter).toBeNull();
+    }
   });
 });
