@@ -68,7 +68,7 @@ describe('MarkWorkRead', () => {
 
     if (result.isRight()) {
       expect(result.value.hasNewChapter).toBeFalsy();
-      expect(result.value.nextChapter).toBeNull();
+      expect(result.value.nextChapter.getChapter()).toBeNull();
     }
   });
 });

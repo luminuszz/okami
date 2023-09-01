@@ -62,7 +62,7 @@ describe('MarkWorkRead', () => {
     expect(result.isRight()).toBeTruthy();
 
     if (result.isRight()) {
-      expect(result.value.nextChapter).toBe(2);
+      expect(result.value.nextChapter.getChapter()).toBe(2);
       expect(result.value.hasNewChapter).toBeTruthy();
     }
   });

@@ -8,7 +8,7 @@ export class Chapter {
     this.updatedAt = updatedAt ?? null;
   }
 
-  public updateChapter(newChapter: number): void {
+  public updateChapter(newChapter: number | null): void {
     this.value = newChapter;
     this.updatedAt = new Date();
   }
