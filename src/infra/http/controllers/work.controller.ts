@@ -22,6 +22,7 @@ import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { SubscribeToWorkCommand } from '@infra/crqs/work/commands/subscribe-to-work.command';
+import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -58,8 +59,8 @@ export class WorkController {
   }
 
   @Patch(':id/mark-unread')
-  async markUnread(@Param('id', ParseObjectIdPipe) id: string) {
-    await this.commandBus.execute(new MarkWorkUnreadCommand(id));
+  async markUnread(@Param('id', ParseObjectIdPipe) id: string, @Body() data: MarkWorkUnreadDto) {
+    await this.commandBus.execute(new MarkWorkUnreadCommand(id, data?.nextChapter));
   }
 
   @Get('/fetch-for-workers-read')

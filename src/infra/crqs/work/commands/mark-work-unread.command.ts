@@ -2,7 +2,10 @@ import { MarkWorkUnreadUseCase } from '@domain/work/application/usecases/mark-wo
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
 export class MarkWorkUnreadCommand {
-  constructor(public readonly id: string) {}
+  constructor(
+    public readonly id: string,
+    public nextChapter?: number,
+  ) {}
 }
 
 @CommandHandler(MarkWorkUnreadCommand)
@@ -12,8 +15,8 @@ export class MarkWorkUnreadCommandHandler implements ICommandHandler<MarkWorkUnr
     private eventBus: EventBus,
   ) {}
 
-  async execute({ id }: MarkWorkUnreadCommand): Promise<void> {
-    const response = await this.markUnread.execute({ id });
+  async execute({ id, nextChapter }: MarkWorkUnreadCommand): Promise<void> {
+    const response = await this.markUnread.execute({ id, nextChapter });
 
     if (response.isRight()) {
       const work = response.value;

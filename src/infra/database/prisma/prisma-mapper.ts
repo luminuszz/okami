@@ -5,6 +5,7 @@ import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter
 import { Category, Work } from '@domain/work/enterprise/entities/work';
 
 import {
+  AccessToken as PrismaAccessToken,
   Category as PrismaCategory,
   Notification as PrismaNotification,
   User as PrismaUser,
@@ -12,7 +13,6 @@ import {
 } from '@prisma/client';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
-import { AccessToken as PrismaAccessToken } from '@prisma/client';
 import { map } from 'lodash';
 
 export const enumMapper = (category: Category): PrismaCategory => {
@@ -22,6 +22,8 @@ export const enumMapper = (category: Category): PrismaCategory => {
 export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   category: enumMapper(work.category),
   chapters: work.chapter.getChapter(),
+  nextChapter: work.nextChapter?.getChapter(),
+  nextChapterUpdatedAt: work.nextChapterUpdatedAt,
   hasNewChapter: work.hasNewChapter,
   name: work.name,
   createdAt: work.createdAt,
@@ -47,6 +49,8 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       recipientId: prismaWork.recipientId,
       isFinished: prismaWork.isFinished,
       imageId: prismaWork.imageId,
+      nextChapter: new Chapter(prismaWork.nextChapter),
+      nextChapterUpdatedAt: prismaWork.nextChapterUpdatedAt,
     },
     new UniqueEntityID(prismaWork.id),
   );

@@ -18,7 +18,7 @@ interface WorkProps {
   isFinished?: boolean;
   imageId?: string;
   subscribers?: User[];
-  nextChapter?: number;
+  nextChapter?: Chapter;
   nextChapterUpdatedAt?: Date;
 }
 
@@ -146,9 +146,9 @@ export class Work extends Entity<WorkProps> {
   }
 
   public updateNextChapter(nextChapter: number | null) {
-    this.props.nextChapter = nextChapter;
-    this.commit();
+    this.props.nextChapter.updateChapter(nextChapter);
     this.props.nextChapterUpdatedAt = new Date();
+    this.commit();
   }
 
   public addSubscriber(subscriber: User): void {

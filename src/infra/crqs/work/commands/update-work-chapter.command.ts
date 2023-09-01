@@ -2,13 +2,14 @@ import { UpdateWorkChapterUseCase } from '@domain/work/application/usecases/upda
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
 export class UpdateWorkChapterCommand {
-  constructor(public readonly id: string, public readonly chapter: number) {}
+  constructor(
+    public readonly id: string,
+    public readonly chapter: number,
+  ) {}
 }
 
 @CommandHandler(UpdateWorkChapterCommand)
-export class UpdateWorkChapterCommandHandler
-  implements ICommandHandler<UpdateWorkChapterCommand>
-{
+export class UpdateWorkChapterCommandHandler implements ICommandHandler<UpdateWorkChapterCommand> {
   constructor(
     private updateChapter: UpdateWorkChapterUseCase,
     private eventBus: EventBus,
