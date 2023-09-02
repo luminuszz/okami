@@ -17,10 +17,10 @@ RUN pnpm install
 
 RUN pnpm install pm2
 
-COPY . .
+COPY . ./
 
 RUN pnpm exec prisma generate
 
-RUN  pnpm run build
+RUN  pnpm build
 
-CMD ["pnpm", "exec", "pm2-runtime", "./ecosystem.config.js"]
+CMD ["pnpm", "exec", "pm2-runtime", "./dist/src/main.js"]
