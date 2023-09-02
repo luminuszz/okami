@@ -18,6 +18,8 @@ interface WorkProps {
   isFinished?: boolean;
   imageId?: string;
   subscribers?: User[];
+  nextChapter?: Chapter;
+  nextChapterUpdatedAt?: Date;
 }
 
 export enum Category {
@@ -32,6 +34,8 @@ export class Work extends Entity<WorkProps> {
     this.props.createdAt = props.createdAt ?? new Date();
     this.props.isFinished = props.isFinished ?? false;
     this.props.subscribers = props.subscribers ?? [];
+    this.props.nextChapter = props.nextChapter ?? null;
+    this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -131,6 +135,20 @@ export class Work extends Entity<WorkProps> {
 
   public get subscribers() {
     return this.props.subscribers;
+  }
+
+  public get nextChapter() {
+    return this.props.nextChapter;
+  }
+
+  public get nextChapterUpdatedAt() {
+    return this.props.nextChapterUpdatedAt;
+  }
+
+  public updateNextChapter(nextChapter: number | null) {
+    this.props.nextChapter.updateChapter(nextChapter);
+    this.props.nextChapterUpdatedAt = new Date();
+    this.commit();
   }
 
   public addSubscriber(subscriber: User): void {

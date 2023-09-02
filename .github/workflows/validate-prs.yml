@@ -40,6 +40,8 @@ jobs:
           node-version: "latest"
       - name: "Install dependencies"
         run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
           pnpm install
       - name: "Validate build"
         run: |

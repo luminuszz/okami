@@ -16,6 +16,8 @@ const workSchema = z
     imageUrl: z.string().url().nullable().default(null),
     updatedAt: z.date().optional().nullable(),
     category: z.string().optional().nullable(),
+    nextChapterUpdatedAt: z.date().optional().nullable(),
+    nextChapter: z.preprocess((value: Chapter) => value.getChapter(), z.number().nullable()),
   })
   .transform((data) => {
     return {
@@ -35,7 +37,7 @@ export class WorkHttp implements WorkHttpType {
   id: string;
   @ApiProperty()
   imageId: string;
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   imageUrl: string;
   @ApiProperty()
   isFinished: boolean;
@@ -47,6 +49,12 @@ export class WorkHttp implements WorkHttpType {
   updatedAt: Date;
   @ApiProperty()
   category: string;
+
+  @ApiProperty({ nullable: true })
+  nextChapterUpdatedAt: Date | null;
+
+  @ApiProperty({ nullable: true })
+  nextChapter: number | null;
 }
 
 export class WorkModel {

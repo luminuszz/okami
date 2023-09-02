@@ -6,6 +6,7 @@ import { WorkNotFoundError } from './errors/work-not-found';
 
 interface MarkWorkUnreadInput {
   id: string;
+  nextChapter?: number;
 }
 
 type MarkWorkUnreadOutput = Either<WorkNotFoundError, Work>;
@@ -14,11 +15,15 @@ type MarkWorkUnreadOutput = Either<WorkNotFoundError, Work>;
 export class MarkWorkUnreadUseCase {
   constructor(private workRepository: WorkRepository) {}
 
-  async execute({ id }: MarkWorkUnreadInput): Promise<MarkWorkUnreadOutput> {
+  async execute({ id, nextChapter }: MarkWorkUnreadInput): Promise<MarkWorkUnreadOutput> {
     const work = await this.workRepository.findById(id);
 
     if (!work) {
       return left(new WorkNotFoundError());
+    }
+
+    if (nextChapter) {
+      work.updateNextChapter(nextChapter);
     }
 
     work.markAsUnread();

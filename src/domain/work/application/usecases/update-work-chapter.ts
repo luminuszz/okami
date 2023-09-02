@@ -16,10 +16,7 @@ interface UpdateWorkChapterOutput {
 export class UpdateWorkChapterUseCase {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({
-    chapter,
-    id,
-  }: UpdateWorkChapterInput): Promise<UpdateWorkChapterOutput> {
+  async execute({ chapter, id }: UpdateWorkChapterInput): Promise<UpdateWorkChapterOutput> {
     const work = await this.workRepository.findById(id);
 
     if (!work) {
@@ -28,13 +25,11 @@ export class UpdateWorkChapterUseCase {
 
     const currentWorkChapter = work.chapter.getChapter();
 
-  
     work.updateChapter(chapter);
 
     if (chapter >= currentWorkChapter) {
       work.markAsRead();
     }
-
 
     await this.workRepository.save(work);
 

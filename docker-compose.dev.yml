@@ -5,9 +5,10 @@ services:
     volumes:
       - ./src/:/app/src
       - /app/node_modules
+      - ./prisma/schema.prisma/:/app/prisma/schema.prisma
     build: 
       context: .
-      dockerfile: "./docker/${DOCKERFILE}/dockerfile"
+      dockerfile: "./docker/dev/dockerfile"
     container_name: okami
     ports:
       - "${PORT}:${PORT}"

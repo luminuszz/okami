@@ -8,8 +8,8 @@ COPY . .
 
 RUN corepack enable
 
-RUN yarn set version berry
+RUN corepack prepare pnpm@latest --activate
 
-RUN yarn install
+RUN pnpm install
 
-CMD ["yarn", "start:dev"]
+CMD ["pnpm", "run", "start:dev"]

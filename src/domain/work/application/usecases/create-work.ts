@@ -26,6 +26,7 @@ export class CreateWorkUseCase {
     const work = Work.create({
       category,
       chapter: new Chapter(chapter),
+      nextChapter: new Chapter(null),
       hasNewChapter: false,
       name,
       url,
