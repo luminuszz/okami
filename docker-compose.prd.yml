@@ -19,8 +19,6 @@ services:
     ports:
       - "${PORT}:${PORT}"
     restart: always
-    volumes:
-      - /app/node_modules
     build:
       context: .
       dockerfile: "./docker/prod/dockerfile"
