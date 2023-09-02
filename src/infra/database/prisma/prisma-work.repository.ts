@@ -61,7 +61,7 @@ export class PrismaWorkRepository implements WorkRepository {
 
       this.logger.log(`Syncing document ${work.name} to prisma database category => ${work.name}}`);
 
-      const updateParsedData = omit(parsedData, ['id']);
+      const updateParsedData = omit(parsedData, ['id', 'nextChapterUpdatedAt', 'nextChapter']);
 
       return this.prisma.work.upsert({
         where: {
