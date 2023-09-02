@@ -2,6 +2,8 @@ version: '3.7'
 
 services:
   api:
+    networks:
+      - services
     volumes:
       - ./src/:/app/src
       - /app/node_modules
@@ -16,3 +18,7 @@ services:
       - .env
 
 
+
+networks:
+  services:
+    name: okami_services

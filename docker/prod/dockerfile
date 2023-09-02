@@ -15,10 +15,12 @@ RUN corepack prepare pnpm@latest --activate
 
 RUN pnpm install
 
+RUN pnpm install pm2
+
 COPY . .
 
 RUN pnpm exec prisma generate
 
 RUN  pnpm run build
 
-CMD ["node", "./dist/src/main.js"]
+CMD ["pnpm", "exec", "pm2-runtime", "./ecosystem.config.js"]
