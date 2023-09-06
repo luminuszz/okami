@@ -20,13 +20,9 @@ jobs:
         with:
           node-version: "latest"
       - name: "Install dependencies"
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          yarn install
+        run: yarn install
       - name: "Run tests"
-        run: |
-          yarn coverage
+        run: yarn coverage
 
   validate_build:
     name: "Validate build"
@@ -39,10 +35,8 @@ jobs:
         with:
           node-version: "latest"
       - name: "Install dependencies"
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          yarn install
+        run: yarn install
+
       - name: "Validate build"
         run: |
           yarn build
