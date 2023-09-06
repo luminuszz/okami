@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     tsConfigPaths(),
     swc.vite({
-      module: { type: 'es6' },
+      module: { type: 'es6', allowTopLevelThis: true, preserveImportMeta: true },
     }),
   ],
   test: {
