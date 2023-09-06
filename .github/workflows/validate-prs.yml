@@ -23,10 +23,10 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
-          pnpm install
+          yarn install
       - name: "Run tests"
         run: |
-          pnpm run coverage
+          yarn coverage
 
   validate_build:
     name: "Validate build"
@@ -42,7 +42,7 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
-          pnpm install
+          yarn install
       - name: "Validate build"
         run: |
-          pnpm run build
+          yarn build
