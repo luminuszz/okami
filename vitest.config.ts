@@ -8,6 +8,13 @@ export default defineConfig({
     tsConfigPaths(),
     swc.vite({
       module: { type: 'es6', allowTopLevelThis: true, preserveImportMeta: true },
+      jsc: {
+        parser: {
+          syntax: 'typescript',
+          decorators: true,
+          dynamicImport: true,
+        },
+      },
     }),
   ],
   test: {
