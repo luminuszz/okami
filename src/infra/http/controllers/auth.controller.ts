@@ -7,12 +7,12 @@ import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
 import { UserHttp, UserModel } from '@infra/http/models/user.model';
-import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateAccessTokenCommand,
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
-import { TokenModel } from '@infra/http/models/token.model';
+import { AccessToken, TokenModel } from '@infra/http/models/token.model';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,7 +23,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @ApiOkResponse({ type: TokenModel })
+  @ApiCreatedResponse({ type: TokenModel })
   async makeSession(@Body() data: MakeSessionDto) {
     const { email, password } = data;
 
@@ -85,7 +85,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('/access-token')
-  @ApiOkResponse({ type: CreateAccessTokenCommandResponse })
+  @ApiCreatedResponse({ type: AccessToken })
   async createAccessToken(@Req() { user }: { user: UserTokenDto }) {
     const { accessToken } = await this.commandBus.execute<CreateAccessTokenCommand, CreateAccessTokenCommandResponse>(
       new CreateAccessTokenCommand(user.id),
