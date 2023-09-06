@@ -18,16 +18,11 @@ jobs:
         with:
           node-version: "latest"
       - name: "Install dependencies"
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          pnpm install
+        run: yarn install
       - name: "Run tests"
-        run: |
-          pnpm run coverage
+        run: yarn coverage
       - name: "Validate build"
-        run: |
-          pnpm run build
+        run: yarn build
 
   build_and_deploy:
     name: "Build and deploy"
