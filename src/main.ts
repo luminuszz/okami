@@ -1,9 +1,9 @@
 import 'newrelic';
 
-import helmet from '@fastify/helmet';
+import * as helmet from '@fastify/helmet';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import fmp from '@fastify/multipart';
+import * as fmp from '@fastify/multipart';
 
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -16,7 +16,7 @@ import { writeFileSync } from 'node:fs';
   app.useGlobalPipes(new ValidationPipe());
 
   await Promise.all([
-    app.register(helmet, {
+    app.register(helmet as any, {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: [`'self'`],
@@ -26,7 +26,7 @@ import { writeFileSync } from 'node:fs';
         },
       },
     }),
-    app.register(fmp),
+    app.register(fmp as any),
   ]);
 
   app.enableCors({
