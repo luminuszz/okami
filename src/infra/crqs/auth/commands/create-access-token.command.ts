@@ -6,7 +6,7 @@ export class CreateAccessTokenCommand {
 }
 
 export class CreateAccessTokenCommandResponse {
-  public readonly token: string;
+  public readonly accessToken: string;
 }
 
 @CommandHandler(CreateAccessTokenCommand)
@@ -27,7 +27,7 @@ export class CreateAccessTokenCommandHandler
     const { accessToken } = results.value;
 
     return {
-      token: accessToken.token,
+      accessToken: accessToken.token,
     };
   }
 }

@@ -9,7 +9,7 @@ import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-w
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
-import { WorkHttp, WorkModel } from '../presentation/work.model';
+import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
@@ -17,7 +17,7 @@ import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
 import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
 import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
@@ -100,6 +100,18 @@ export class WorkController {
   }
 
   @Post('/upload-work-image/:id')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: 'object',
+    schema: {
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   async uploadWorkImage(@Param('id', ParseObjectIdPipe) id: string, @Req() req: any) {
     if (!req.isMultipart()) {
       return new BadRequestException({

@@ -6,19 +6,27 @@ import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
-import { UserHttp, UserModel } from '@infra/http/presentation/user.model';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { UserHttp, UserModel } from '@infra/http/models/user.model';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateAccessTokenCommand,
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
+import { TokenModel } from '@infra/http/models/token.model';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Post('login')
-  async makeSession(@Body() { password, email }: MakeSessionDto) {
+  @ApiOkResponse({ type: TokenModel })
+  async makeSession(@Body() data: MakeSessionDto) {
+    const { email, password } = data;
+
     const { token } = await this.commandBus.execute<unknown, { token: string }>(new LoginCommand(email, password));
 
     return {
@@ -28,6 +36,18 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('/user/avatar/upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: 'object',
+    schema: {
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   async uploadAvatarImage(@Req() req: any) {
     if (!req.isMultipart()) {
       return new BadRequestException({
@@ -67,12 +87,12 @@ export class AuthController {
   @Post('/access-token')
   @ApiOkResponse({ type: CreateAccessTokenCommandResponse })
   async createAccessToken(@Req() { user }: { user: UserTokenDto }) {
-    const { token } = await this.commandBus.execute<CreateAccessTokenCommand, CreateAccessTokenCommandResponse>(
+    const { accessToken } = await this.commandBus.execute<CreateAccessTokenCommand, CreateAccessTokenCommandResponse>(
       new CreateAccessTokenCommand(user.id),
     );
 
     return {
-      accessToken: token,
+      accessToken,
     };
   }
 }
