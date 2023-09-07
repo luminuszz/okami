@@ -6,7 +6,6 @@ services:
       - services
     volumes:
       - ./src/:/app/src
-      - /app/node_modules
       - ./prisma/schema.prisma/:/app/prisma/schema.prisma
     build: 
       context: .

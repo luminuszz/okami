@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "types": [
-      "vitest/globals"
+      "jest",
+      "node"
     ],
     "module": "commonjs",
     "declaration": true,
@@ -20,9 +21,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-
+    "resolveJsonModule": true,
     "paths": {
-     "@test/*": ["./test/*"],
+      "@test/*": [
+        "./test/*"
+      ],
       "@domain/*": [
         "src/domain/*"
       ],
@@ -34,7 +37,7 @@
       ],
       "@infra/*": [
         "src/infra/*"
-      ],
+      ]
     }
   }
 }

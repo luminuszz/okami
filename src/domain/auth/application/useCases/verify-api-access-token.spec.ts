@@ -1,9 +1,8 @@
-import { describe, expect } from 'vitest';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
-import { fakeHashProvider } from '../../../../../test/mocks/mocks';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
+import { fakeHashProvider } from '@test/mocks/mocks';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
-import { InMemoryAccessTokenRepository } from '../../../../../test/mocks/in-memory-access-token-repository';
+import { InMemoryAccessTokenRepository } from '@test/mocks/in-memory-access-token-repository';
 import { faker } from '@faker-js/faker';
 import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 import { TokenNotFoundError, TokenRevokedError } from '@domain/auth/application/errors/Token';

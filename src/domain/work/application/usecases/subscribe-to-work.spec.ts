@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect } from 'vitest';
 import { SubscribeToWorkUseCase } from '@domain/work/application/usecases/subscribe-to-work';
 import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';

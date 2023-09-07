@@ -1,13 +1,12 @@
 import { Category } from '@domain/work/enterprise/entities/work';
-import { InMemoryWorkRepository } from 'test/mocks/in-mermory-work-repository';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { expect, vi } from 'vitest';
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { faker } from '@faker-js/faker';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 
 const fakeStorageProvider = {
-  uploadWorkImage: vi.fn(),
+  uploadWorkImage: jest.fn(),
 };
 
 describe('UploadWorkImageUseCase', () => {

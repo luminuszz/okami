@@ -1,13 +1,12 @@
-import { expect, vi } from 'vitest';
 import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
-import { fakeHashProvider } from '../../../../../test/mocks/mocks';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
+import { fakeHashProvider } from '@test/mocks/mocks';
 import { faker } from '@faker-js/faker';
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 
 const fakeStorageProvider = {
-  uploadWorkImage: vi.fn(),
+  uploadWorkImage: jest.fn(),
 };
 
 describe('UploadWorkImageUseCase', () => {
@@ -22,7 +21,7 @@ describe('UploadWorkImageUseCase', () => {
   });
 
   it('should be able to upload user avatar image', async () => {
-    const spy = vi.spyOn(inMemoryUserRepository, 'save');
+    const spy = jest.spyOn(inMemoryUserRepository, 'save');
 
     const userResult = await createUserUseCase.execute({
       name: faker.person.firstName(),
@@ -48,8 +47,8 @@ describe('UploadWorkImageUseCase', () => {
 
     if (results.isRight()) {
       expect(results.value.user.avatarImageId).toBeDefined();
-      expect(results.value.user.avatarImageId).includes('.png');
-      expect(results.value.user.avatarImageId).includes(results.value.user.id.toString());
+      expect(results.value.user.avatarImageId.includes('.png')).toBe(true);
+      expect(results.value.user.avatarImageId.includes(results.value.user.id.toString())).toBeTruthy();
       expect(spy).toHaveBeenCalled();
     }
   });

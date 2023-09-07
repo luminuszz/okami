@@ -1,4 +1,4 @@
-import { InMemoryWorkRepository } from 'test/mocks/in-mermory-work-repository';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { FindOneWorkUseCase } from './fnd-one-work';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { CreateWorkUseCase } from './create-work';

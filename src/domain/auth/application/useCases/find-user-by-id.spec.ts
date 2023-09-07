@@ -1,7 +1,6 @@
-import { describe, expect } from 'vitest';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { fakeHashProvider } from '../../../../../test/mocks/mocks';
+import { fakeHashProvider } from '@test/mocks/mocks';
 import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
 import { faker } from '@faker-js/faker';
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';

@@ -16,7 +16,10 @@ export type CreateUserOutput = Either<UserAlreadyExists, { user: User }>;
 
 @Injectable()
 export class CreateUserUseCase implements UseCaseImplementation<CreateUserInput, CreateUserOutput> {
-  constructor(private readonly hashProvider: HashProvider, private readonly userRepository: UserRepository) {}
+  constructor(
+    private hashProvider: HashProvider,
+    private userRepository: UserRepository,
+  ) {}
 
   async execute({ password, email, name }: CreateUserInput): Promise<CreateUserOutput> {
     const userOrUndefined = await this.userRepository.findByEmail(email);

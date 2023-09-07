@@ -1,9 +1,8 @@
 import { Category } from '@domain/work/enterprise/entities/work';
-import { InMemoryWorkRepository } from 'test/mocks/in-mermory-work-repository';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { CreateWorkUseCase } from './create-work';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { MarkWorkReadUseCase } from './mark-work-read';
-import { expect, test } from 'vitest';
 import { MarkWorkUnreadUseCase } from '@domain/work/application/usecases/mark-work-unread';
 
 describe('MarkWorkRead', () => {

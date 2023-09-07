@@ -1,4 +1,4 @@
-import { InMemoryNotificationRepository } from 'test/mocks/in-mermory-notification-repository';
+import { InMemoryNotificationRepository } from '@test/mocks/in-mermory-notification-repository';
 import { NotificationRepository } from '../repositories/notification.repository';
 import { CreateNotificationUseCase } from './create-notification';
 

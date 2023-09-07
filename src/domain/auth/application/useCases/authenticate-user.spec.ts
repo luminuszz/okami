@@ -1,10 +1,9 @@
-import { beforeEach, expect } from 'vitest';
 import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authenticate-user';
 import { faker } from '@faker-js/faker';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
-import { fakeHashProvider } from '../../../../../test/mocks/mocks';
+import { fakeHashProvider } from '@test/mocks/mocks';
 
 describe('AuthenticateUser', () => {
   let stu: AuthenticateUserUseCase;
@@ -25,7 +24,7 @@ describe('AuthenticateUser', () => {
       password: faker.string.uuid(),
     };
 
-    const spy = vi.spyOn(hashProvider, 'compare');
+    const spy = jest.spyOn(hashProvider, 'compare');
 
     const userPayload = {
       name: faker.person.firstName(),

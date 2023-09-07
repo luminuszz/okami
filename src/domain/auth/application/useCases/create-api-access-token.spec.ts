@@ -1,9 +1,8 @@
-import { describe, expect, vi } from 'vitest';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
-import { fakeHashProvider } from '../../../../../test/mocks/mocks';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
+import { fakeHashProvider } from '@test/mocks/mocks';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
-import { InMemoryAccessTokenRepository } from '../../../../../test/mocks/in-memory-access-token-repository';
+import { InMemoryAccessTokenRepository } from '@test/mocks/in-memory-access-token-repository';
 import { faker } from '@faker-js/faker';
 
 describe('CreateApiAccessToken', () => {
@@ -20,7 +19,7 @@ describe('CreateApiAccessToken', () => {
   });
 
   it('should be to create a access token', async () => {
-    vi.spyOn(Date, 'now').mockReturnValue(1000);
+    jest.spyOn(Date, 'now').mockReturnValue(1000);
 
     const userResults = await createUser.execute({
       password: faker.internet.password(),
@@ -39,9 +38,9 @@ describe('CreateApiAccessToken', () => {
     expect(results.isRight()).toBe(true);
 
     if (results.isRight()) {
-      expect(results.value.accessToken.token).includes(userResults.value.user.id);
-      expect(results.value.accessToken.token).includes('--');
-      expect(results.value.accessToken.token).includes(1000);
+      expect(results.value.accessToken.token.includes(userResults.value.user.id)).toBeTruthy();
+      expect(results.value.accessToken.token.includes('--')).toBeTruthy();
+      expect(results.value.accessToken.token.includes('1000')).toBeTruthy();
     }
   });
 });

@@ -1,5 +1,4 @@
-import { describe, expect } from 'vitest';
-import { InMemoryWorkRepository } from '../../../../../test/mocks/in-mermory-work-repository';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { Category } from '@domain/work/enterprise/entities/work';

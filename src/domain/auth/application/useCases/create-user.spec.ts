@@ -1,29 +1,41 @@
-import { describe, expect, vi, vitest } from 'vitest';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
 import { faker } from '@faker-js/faker';
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
-import { InMemoryUserRepository } from '../../../../../test/mocks/in-memory-user-repository';
+import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
+import { Test } from '@nestjs/testing';
+import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 
 const fakeHashProvider: HashProvider = {
-  hash: vi.fn(),
-  compare: vi.fn(),
+  hash: jest.fn(),
+  compare: jest.fn(),
 };
 
 describe('Create User', () => {
   let stu: CreateUserUseCase;
   let hashProvider: HashProvider;
-  let userRepository: InMemoryUserRepository;
 
-  beforeEach(() => {
-    hashProvider = fakeHashProvider;
-    userRepository = new InMemoryUserRepository();
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        CreateUserUseCase,
+        {
+          provide: HashProvider,
+          useValue: fakeHashProvider,
+        },
+        {
+          provide: UserRepository,
+          useClass: InMemoryUserRepository,
+        },
+      ],
+    }).compile();
 
-    stu = new CreateUserUseCase(fakeHashProvider, userRepository);
+    stu = moduleRef.get<CreateUserUseCase>(CreateUserUseCase);
+    hashProvider = moduleRef.get<HashProvider>(HashProvider);
   });
 
   it('should create a user', async () => {
-    const hashMethod = vitest.spyOn(hashProvider, 'hash');
+    const hashMethod = jest.spyOn(hashProvider, 'hash');
     hashMethod.mockImplementation(() => Promise.resolve(faker.string.uuid()));
 
     const payload = {
