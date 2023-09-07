@@ -11,12 +11,19 @@ export default defineConfig({
       jsc: {
         parser: {
           syntax: 'typescript',
-          decorators: true,
           dynamicImport: true,
+          decorators: true,
+        },
+        target: 'es2021',
+        transform: {
+          decoratorMetadata: true,
         },
       },
     }),
   ],
+
+  esbuild: false,
+
   test: {
     coverage: {
       provider: 'v8',
