@@ -23,8 +23,6 @@ export class MarkWorkReadUseCase {
 
     work.markAsRead();
 
-    work.updateNextChapter(null);
-
     await this.workRepository.save(work);
 
     return right(work);

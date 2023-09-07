@@ -22,11 +22,7 @@ export class MarkWorkUnreadUseCase {
       return left(new WorkNotFoundError());
     }
 
-    if (nextChapter) {
-      work.updateNextChapter(nextChapter);
-    }
-
-    work.markAsUnread();
+    work.markAsUnread(nextChapter);
 
     await this.workRepository.save(work);
 
