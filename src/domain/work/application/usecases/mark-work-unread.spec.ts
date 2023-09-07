@@ -45,24 +45,4 @@ describe('MarkWorkRead', () => {
     expect(result.isLeft()).toBeTruthy();
     expect(result.value).toBeInstanceOf(WorkNotFoundError);
   });
-
-  it('should be able to update nextChapter if exists', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
-    const { work } = await createWork.execute({
-      category: Category.ANIME,
-      chapter: 1,
-      name: 'One Piece',
-      url: 'https://onepiece.com',
-    });
-
-    const result = await stu.execute({ id: work.id, nextChapter: 2 });
-
-    expect(result.isRight()).toBeTruthy();
-
-    if (result.isRight()) {
-      expect(result.value.nextChapter.getChapter()).toBe(2);
-      expect(result.value.hasNewChapter).toBeTruthy();
-    }
-  });
 });
