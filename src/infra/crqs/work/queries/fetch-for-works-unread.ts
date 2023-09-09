@@ -8,7 +8,7 @@ export class FetchForWorkersUnreadQueryHandler implements IQueryHandler<FetchFor
   constructor(private fetchForWorkersUnread: FetchForWorkersUnreadUseCase) {}
 
   async execute({}: FetchForWorkersUnreadQuery) {
-    const results = await this.fetchForWorkersUnread.execute({});
+    const results = await this.fetchForWorkersUnread.execute();
 
     if (results.isLeft()) throw results.value;
 
