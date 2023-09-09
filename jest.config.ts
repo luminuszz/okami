@@ -6,7 +6,7 @@ const config: JestConfigWithTsJest = {
   globals: {
     __DEV__: true,
   },
-  testMatch: ['**/useCases/**/*.spec.ts', '**/usecases/**/*.spec.ts'],
+  testMatch: ['**/useCases/**/*.spec.ts', '**/usecases/**/*.spec.ts', '**/domain/**/*.spec.ts'],
   preset: 'ts-jest',
   transform: {
     '^.+\\.(t|j)s?$': ['@swc/jest'] as any,
@@ -18,7 +18,7 @@ const config: JestConfigWithTsJest = {
   }),
 
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
-  collectCoverageFrom: ['**/useCases/**/*.ts', '**/usecases/**/*.ts'],
+  collectCoverageFrom: ['src/**/useCases/**/*.ts', 'src/**/domain/**/*.ts'],
 };
 
 export default config;

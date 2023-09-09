@@ -8,8 +8,10 @@ export class FetchForWorkersReadQueryHandler implements IQueryHandler<FetchForWo
   constructor(private readonly fetchForWorkersRead: FetchForWorkersReadUseCase) {}
 
   async execute({}: FetchForWorkersReadQuery) {
-    const { works } = await this.fetchForWorkersRead.execute();
+    const results = await this.fetchForWorkersRead.execute();
 
-    return works;
+    if (results.isLeft()) throw results.value;
+
+    return results.value.works;
   }
 }

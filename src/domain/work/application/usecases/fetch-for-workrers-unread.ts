@@ -1,23 +1,18 @@
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
+import { Either, right } from '@core/either';
+import { UseCaseImplementation } from '@core/use-case';
 
-interface FetchForWorkersUnreadInput {}
-
-interface FetchForWorkersUnreadOutput {
-  works: Work[];
-}
+type FetchForWorkersUnreadOutput = Either<void, { works: Work[] }>;
 
 @Injectable()
-export class FetchForWorkersUnreadUseCase {
+export class FetchForWorkersUnreadUseCase implements UseCaseImplementation<void, FetchForWorkersUnreadOutput> {
   constructor(private workRepository: WorkRepository) {}
 
-  async execute({}: FetchForWorkersUnreadInput): Promise<FetchForWorkersUnreadOutput> {
-    const works =
-      await this.workRepository.fetchForWorkersWithHasNewChapterTrue();
+  async execute(): Promise<FetchForWorkersUnreadOutput> {
+    const works = await this.workRepository.fetchForWorkersWithHasNewChapterTrue();
 
-    return {
-      works,
-    };
+    return right({ works });
   }
 }

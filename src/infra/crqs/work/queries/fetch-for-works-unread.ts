@@ -4,14 +4,14 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 export class FetchForWorkersUnreadQuery {}
 
 @QueryHandler(FetchForWorkersUnreadQuery)
-export class FetchForWorkersUnreadQueryHandler
-  implements IQueryHandler<FetchForWorkersUnreadQuery>
-{
+export class FetchForWorkersUnreadQueryHandler implements IQueryHandler<FetchForWorkersUnreadQuery> {
   constructor(private fetchForWorkersUnread: FetchForWorkersUnreadUseCase) {}
 
   async execute({}: FetchForWorkersUnreadQuery) {
-    const { works } = await this.fetchForWorkersUnread.execute({});
+    const results = await this.fetchForWorkersUnread.execute({});
 
-    return works;
+    if (results.isLeft()) throw results.value;
+
+    return results.value.works;
   }
 }

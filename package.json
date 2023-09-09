@@ -16,6 +16,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "dev": "docker compose -f ./docker-compose.dev.yml up",
+    "test:watch": "jest --watch --coverage",
     "prestart:dev": "yarn install && yarn prisma generate"
   },
   "dependencies": {
@@ -57,7 +58,6 @@
     "telegraf": "^4.12.2",
     "ts-jest": "^29.1.1",
     "unplugin-swc": "^1.4.2",
-    "vitest": "^0.34.3",
     "zod": "^3.21.4"
   },
   "devDependencies": {
