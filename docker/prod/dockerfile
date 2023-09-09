@@ -1,26 +1,34 @@
-FROM node:alpine
+FROM node:alpine AS base
 ENV NEW_RELIC_NO_CONFIG_FILE=true
 ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true \
 NEW_RELIC_LOG=stdout
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+
+COPY . /app
 
 WORKDIR /app
 
 
-COPY  package.json ./
-COPY pnpm-lock.yaml ./
 
-RUN corepack enable
 
-RUN corepack prepare pnpm@latest --activate
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-RUN pnpm install
-
-RUN pnpm install pm2
-
-COPY . ./
-
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm exec prisma generate
+RUN pnpm build
 
-RUN  pnpm build
+
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+RUN npx prisma db push
+RUN npx prisma generate
+
 
 CMD ["pnpm", "exec", "pm2-runtime", "./dist/src/main.js"]

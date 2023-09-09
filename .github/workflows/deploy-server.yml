@@ -44,8 +44,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY}}
           script: |
             cd apps/okami
-            docker compose -f docker-compose.prd.yml down
-            docker system prune -f --volumes
             git pull origin master
             docker compose -f docker-compose.prd.yml up --build -d 
             

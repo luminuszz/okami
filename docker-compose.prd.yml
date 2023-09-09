@@ -15,8 +15,6 @@ services:
 
 
   application:
-    volumes:
-      - /app
     hostname: okami
     ports:
       - "${PORT}:${PORT}"
