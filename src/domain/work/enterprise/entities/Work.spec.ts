@@ -51,13 +51,17 @@ describe('WorkEntity', () => {
   });
 
   it('should be able to markAsUnread', () => {
-    const work = Work.create(makeWorkModk());
+    const workData = makeWorkModk();
+
+    const work = Work.create(workData);
 
     const randomChapter = faker.number.int({ max: 1000, min: 1 });
 
     work.markAsUnread(randomChapter);
 
     expect(work.hasNewChapter).toEqual(true);
+    expect(work.nextChapter.getChapter()).toEqual(randomChapter);
+    expect(work.chapter.getChapter()).toBe(workData.chapter.getChapter());
 
     expect(work.events[0]).toBeInstanceOf(WorkMarkUnreadEvent);
   });

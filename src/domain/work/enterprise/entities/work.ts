@@ -109,7 +109,7 @@ export class Work extends Entity<WorkProps> {
 
   markAsUnread(nextChapter: number): void {
     this.props.hasNewChapter = true;
-    this.updateChapter(nextChapter);
+    this.updateNextChapter(nextChapter);
     this.events.push(new WorkMarkUnreadEvent(this));
     this.commit();
   }

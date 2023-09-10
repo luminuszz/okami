@@ -37,10 +37,6 @@ describe('FetchForWorksUnread', () => {
 
     const results = await stu.execute();
 
-    console.log({
-      results,
-    });
-
     expect(results.isRight()).toBeTruthy();
 
     if (results.isRight()) {
