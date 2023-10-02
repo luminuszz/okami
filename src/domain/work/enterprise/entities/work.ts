@@ -20,6 +20,7 @@ interface WorkProps {
   subscribers?: User[];
   nextChapter?: Chapter;
   nextChapterUpdatedAt?: Date;
+  userId: string;
 }
 
 export enum Category {
@@ -86,6 +87,10 @@ export class Work extends Entity<WorkProps> {
     return this.props.recipientId;
   }
 
+  public get userId() {
+    return this.props.userId;
+  }
+
   public setRecipientId(recipientId: string) {
     this.props.recipientId = recipientId;
     this.commit();
@@ -133,10 +138,6 @@ export class Work extends Entity<WorkProps> {
     this.commit();
   }
 
-  public get subscribers() {
-    return this.props.subscribers;
-  }
-
   public get nextChapter() {
     return this.props.nextChapter;
   }
@@ -149,14 +150,5 @@ export class Work extends Entity<WorkProps> {
     this.props.nextChapter.updateChapter(nextChapter);
     this.props.nextChapterUpdatedAt = new Date();
     this.commit();
-  }
-
-  public addSubscriber(subscriber: User): void {
-    const alreadySubscribed = this.props.subscribers.find((current) => subscriber.equals(current));
-
-    if (!alreadySubscribed) {
-      this.props.subscribers.push(subscriber);
-      this.commit();
-    }
   }
 }

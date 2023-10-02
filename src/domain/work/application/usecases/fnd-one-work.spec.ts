@@ -2,6 +2,7 @@ import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { FindOneWorkUseCase } from './fnd-one-work';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { CreateWorkUseCase } from './create-work';
+import { faker } from '@faker-js/faker';
 
 describe('FindOneWork', () => {
   let stu: FindOneWorkUseCase;
@@ -15,14 +16,17 @@ describe('FindOneWork', () => {
   it('should be able return a work', async () => {
     const createWork = new CreateWorkUseCase(workRepository);
 
-    const { work } = await createWork.execute({
+    const response = await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
-    const result = await stu.execute({ id: work.id });
+    if (response.isLeft()) throw response.value;
+
+    const result = await stu.execute({ id: response.value.work.id });
 
     expect(result.isRight()).toBeTruthy();
     expect(result.value.work.name).toBe('One Piece');
@@ -36,6 +40,7 @@ describe('FindOneWork', () => {
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
     const result = await stu.execute({ id: 'fake id' });

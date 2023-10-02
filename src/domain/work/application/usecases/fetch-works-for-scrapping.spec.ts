@@ -23,37 +23,46 @@ describe('FetchWorksForScrapping', () => {
         name: faker.person.fullName(),
         chapter: faker.number.int({ max: 100 }),
         url: faker.internet.url(),
+        userId: faker.string.uuid(),
       });
     });
 
-    const { work: workWithMarkFinished } = await createWork.execute({
+    const results = await createWork.execute({
       category: Category.ANIME,
       name: faker.person.fullName(),
       chapter: faker.number.int({ max: 100 }),
       url: faker.internet.url(),
+      userId: faker.string.uuid(),
     });
 
-    workWithMarkFinished.markAsFinished();
+    if (results.isLeft()) throw results.value;
 
-    await workRepository.save(workWithMarkFinished);
+    results.value.work.markAsFinished();
 
-    const { work: workWithMarkHasNewChapterTrue } = await createWork.execute({
+    await workRepository.save(results.value.work);
+
+    const createWorkResponse = await createWork.execute({
       category: Category.ANIME,
       name: faker.person.fullName(),
       chapter: faker.number.int({ max: 100 }),
       url: faker.internet.url(),
+      userId: faker.string.uuid(),
     });
+
+    if (createWorkResponse.isLeft()) throw createWorkResponse.value;
+
+    const { work: workWithMarkHasNewChapterTrue } = createWorkResponse.value;
 
     workWithMarkHasNewChapterTrue.markAsFinished();
 
     await workRepository.save(workWithMarkHasNewChapterTrue);
 
-    const results = await stu.execute();
+    const stuResults = await stu.execute();
 
     expect(results.isRight()).toBeTruthy();
 
-    if (results.isRight()) {
-      expect(results.value.works.length).toBe(5);
+    if (stuResults.isRight()) {
+      expect(stuResults.value.works.length).toBe(5);
     }
   });
 });

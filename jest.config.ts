@@ -1,6 +1,8 @@
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from './tsconfig.json';
 
+import 'jest';
+
 const config: JestConfigWithTsJest = {
   moduleFileExtensions: ['js', 'ts'],
   globals: {

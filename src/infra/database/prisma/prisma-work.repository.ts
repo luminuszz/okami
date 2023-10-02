@@ -27,12 +27,7 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         id: work.id.toString(),
       },
-      data: {
-        ...parsedData,
-        subscribersIds: {
-          set: parsedData.subscribersIds,
-        },
-      },
+      data: parsedData,
     });
   }
   async findById(id: string): Promise<Work> {
@@ -67,8 +62,8 @@ export class PrismaWorkRepository implements WorkRepository {
         where: {
           recipientId: work.recipientId,
         },
-        create: parsedData,
-        update: updateParsedData,
+        create: { ...parsedData, userId: '64d13f0978a515e634ac1384' },
+        update: { ...updateParsedData, userId: '64d13f0978a515e634ac1384' },
       });
     });
 

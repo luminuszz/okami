@@ -23,7 +23,9 @@ export class PrismaUserRepository implements UserRepository {
       },
     });
 
-    return results ? parsePrismaUserToDomainUser(results) : undefined;
+    const { readingWorksCount, finishedWorksCount } = await this.findUserWorkMetaData(results.id);
+
+    return results ? parsePrismaUserToDomainUser({ ...results, finishedWorksCount, readingWorksCount }) : undefined;
   }
 
   async findById(id: string): Promise<User | undefined> {
@@ -32,8 +34,15 @@ export class PrismaUserRepository implements UserRepository {
         id,
       },
     });
+    const { readingWorksCount, finishedWorksCount } = await this.findUserWorkMetaData(results.id);
 
-    return results ? parsePrismaUserToDomainUser(results) : undefined;
+    return results
+      ? parsePrismaUserToDomainUser({
+          ...results,
+          finishedWorksCount: readingWorksCount,
+          readingWorksCount: finishedWorksCount,
+        })
+      : undefined;
   }
 
   async save(user: User): Promise<void> {
@@ -45,5 +54,17 @@ export class PrismaUserRepository implements UserRepository {
       },
       data,
     });
+  }
+
+  async findUserWorkMetaData(id: string): Promise<{ readingWorksCount: number; finishedWorksCount: number }> {
+    const [totalOfWorksReading, totalOfWorksRead] = await Promise.all([
+      this.prisma.work.count({ where: { userId: id, isFinished: false } }),
+      this.prisma.work.count({ where: { userId: id } }),
+    ]);
+
+    return {
+      readingWorksCount: totalOfWorksReading,
+      finishedWorksCount: totalOfWorksRead,
+    };
   }
 }

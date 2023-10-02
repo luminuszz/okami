@@ -3,25 +3,31 @@ import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { CreateWorkUseCase } from './create-work';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { UpdateWorkUseCase } from './update-work';
+import { faker } from '@faker-js/faker';
 
 describe('UpdateWorkChapterUseCase', () => {
   let stu: UpdateWorkUseCase;
   let workRepository: InMemoryWorkRepository;
+  let createWork: CreateWorkUseCase;
 
   beforeEach(() => {
     workRepository = new InMemoryWorkRepository();
     stu = new UpdateWorkUseCase(workRepository);
+    createWork = new CreateWorkUseCase(workRepository);
   });
 
   it('should mark work as read', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
-    const { work } = await createWork.execute({
+    const workCreatedResponse = await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
+
+    if (workCreatedResponse.isLeft()) throw workCreatedResponse.value;
+
+    const { work } = workCreatedResponse.value;
 
     const result = await stu.execute({
       id: work.id,
@@ -49,6 +55,7 @@ describe('UpdateWorkChapterUseCase', () => {
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
     const result = await stu.execute({ id: 'NOT_EXISTS_ID', data: { chapter: 10 } });

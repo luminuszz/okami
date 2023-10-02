@@ -19,6 +19,11 @@ export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
 };
 
+interface PrismaUserWithMeta extends PrismaUser {
+  readingWorksCount: number;
+  finishedWorksCount: number;
+}
+
 export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   category: enumMapper(work.category),
   chapters: work.chapter.getChapter(),
@@ -33,7 +38,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   recipientId: work.recipientId,
   isFinished: work.isFinished,
   imageId: work.imageId,
-  subscribersIds: map(work.subscribers, (subscriber) => subscriber.id),
+  userId: work.userId,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -51,6 +56,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       imageId: prismaWork.imageId,
       nextChapter: new Chapter(prismaWork.nextChapter),
       nextChapterUpdatedAt: prismaWork.nextChapterUpdatedAt,
+      userId: prismaWork.userId,
     },
     new UniqueEntityID(prismaWork.id),
   );
@@ -77,7 +83,7 @@ export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotifi
     new UniqueEntityID(prismaNotification.id),
   );
 
-export const parsePrismaUserToDomainUser = (prismaUser: PrismaUser): User =>
+export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta): User =>
   User.create(
     {
       name: prismaUser.name,
@@ -86,6 +92,8 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUser): User =>
       passwordHash: prismaUser.passwordHash,
       email: prismaUser.email,
       avatarImageId: prismaUser.imageUrl,
+      readingWorksCount: prismaUser.readingWorksCount,
+      finishedWorksCount: prismaUser.finishedWorksCount,
     },
     new UniqueEntityID(prismaUser.id),
   );

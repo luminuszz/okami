@@ -1,0 +1,6 @@
+GET http://localhost:3000/work/sync-database
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvbnRhdG9AZGF2aXJpYmVpcm8uY29tIiwiaWQiOiI2NGQxM2YwOTc4YTUxNWU2MzRhYzEzODQiLCJuYW1lIjoiZGF2aXJpYmVpcm8iLCJpYXQiOjE2OTYyNjg1NjR9.aZ-jB2HfDMMnQ9eclnRym5g73vw-yHOH-FgTvT3WjOs
+Accept: application/json
+Content-Type: application/json
+
+

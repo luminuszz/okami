@@ -10,6 +10,8 @@ interface EntityProps {
   updatedAt?: Date;
   avatarImageId?: string;
   works?: Work[];
+  readingWorksCount?: number;
+  finishedWorksCount?: number;
 }
 
 export class User extends Entity<EntityProps> {
@@ -18,6 +20,8 @@ export class User extends Entity<EntityProps> {
 
     this.props.createdAt = props.createdAt ?? new Date();
     this.props.works = props.works ?? [];
+    this.props.readingWorksCount = props.readingWorksCount ?? 0;
+    this.props.finishedWorksCount = props.finishedWorksCount ?? 0;
   }
 
   get email(): string {

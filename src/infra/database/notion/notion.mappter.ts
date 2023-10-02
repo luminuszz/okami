@@ -29,6 +29,7 @@ export class NotionMapper {
       recipientId: id,
       url: properties.URL.url,
       updatedAt: new Date(properties['last edited'].last_edited_time),
+      userId: '64d13f0978a515e634ac1384',
     });
   }
 

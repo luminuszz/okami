@@ -31,6 +31,7 @@ describe('FetchForWorksUnread', () => {
           chapter: new Chapter(1),
           name: 'One Piece',
           url: 'https://onepiece.com',
+          userId: faker.string.uuid(),
         }),
       );
     }
