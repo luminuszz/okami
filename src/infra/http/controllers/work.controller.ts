@@ -123,4 +123,9 @@ export class WorkController {
 
     await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
   }
+
+  @Get('replace-image-from-notion')
+  async setWorkImageFromNotion() {
+    await this.batchService.setWorkImageFromNotion();
+  }
 }

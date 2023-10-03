@@ -39,6 +39,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   isFinished: work.isFinished,
   imageId: work.imageId,
   userId: work.userId,
+  isUpserted: null,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {

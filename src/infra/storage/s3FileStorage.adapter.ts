@@ -1,4 +1,4 @@
-import { FiletoUpload, StorageProvider } from '@domain/work/application/contracts/storageProvider';
+import { FiletoUpload, FiletoUploadWithUrl, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
 import { ListObjectsV2Command, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
@@ -64,5 +64,17 @@ export class S3FileStorageAdapter implements StorageProvider {
 
   static createS3FileUrl(fileName: string): string {
     return `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/work-images/${fileName}`;
+  }
+
+  async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<void> {
+    const response = await fetch(file.fileData);
+
+    const buffer = await response.arrayBuffer();
+
+    await this.uploadWorkImage({
+      fileName: file.fileName,
+      fileData: buffer,
+      fileMimeType: file.fileMimeType,
+    });
   }
 }

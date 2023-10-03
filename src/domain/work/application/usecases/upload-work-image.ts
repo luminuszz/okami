@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { Work } from '@domain/work/enterprise/entities/work';
 
 interface UploadWorkImageInput {
-  imageBuffer: ArrayBuffer;
+  imageBuffer: ArrayBuffer | string;
   fileType: string;
   workId: string;
 }
@@ -33,11 +33,19 @@ export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkI
 
     await this.workRepository.save(work);
 
-    await this.storageProvider.uploadWorkImage({
-      fileName: `${work.id}-${imageId}`,
-      fileData: imageBuffer,
-      fileMimeType: fileType,
-    });
+    if (typeof imageBuffer === 'string') {
+      await this.storageProvider.uploadWorkImageWithUrl({
+        fileName: `${work.id}-${imageId}`,
+        fileData: imageBuffer,
+        fileMimeType: fileType,
+      });
+    } else {
+      await this.storageProvider.uploadWorkImage({
+        fileName: `${work.id}-${imageId}`,
+        fileData: imageBuffer,
+        fileMimeType: fileType,
+      });
+    }
 
     return right(work);
   }

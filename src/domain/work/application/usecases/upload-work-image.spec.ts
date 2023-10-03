@@ -7,6 +7,7 @@ import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work
 
 const fakeStorageProvider = {
   uploadWorkImage: jest.fn(),
+  uploadWorkImageWithUrl: jest.fn(),
 };
 
 describe('UploadWorkImageUseCase', () => {
