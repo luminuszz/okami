@@ -4,41 +4,48 @@ import { CreateWorkUseCase } from './create-work';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { MarkWorkReadUseCase } from './mark-work-read';
 import { MarkWorkUnreadUseCase } from '@domain/work/application/usecases/mark-work-unread';
+import { faker } from '@faker-js/faker';
 
 describe('MarkWorkRead', () => {
   let stu: MarkWorkReadUseCase;
   let workRepository: InMemoryWorkRepository;
+  let createWork: CreateWorkUseCase;
 
   beforeEach(() => {
     workRepository = new InMemoryWorkRepository();
     stu = new MarkWorkReadUseCase(workRepository);
+    createWork = new CreateWorkUseCase(workRepository);
   });
 
   it('should mark work as read', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
-    const work = await createWork.execute({
+    const response = await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
-    const result = await stu.execute({ id: work.work.id });
-    const response = await workRepository.findById(work.work.id);
+    if (response.isLeft()) throw response.value;
+
+    const { work: workCreated } = response.value;
+
+    const result = await stu.execute({ id: workCreated.id });
+
+    const work = await workRepository.findById(workCreated.id);
 
     expect(result.isRight()).toBeTruthy();
-    expect(response.hasNewChapter).toBeFalsy();
+
+    expect(work.hasNewChapter).toBeFalsy();
   });
 
   it('should not mark work as read if work not exists', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
     await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
     const result = await stu.execute({ id: 'NOT_EXISTS_ID' });
@@ -48,20 +55,23 @@ describe('MarkWorkRead', () => {
   });
 
   test('expect to nextChapter prop to be null on work marked read', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
     const markUnread = new MarkWorkUnreadUseCase(workRepository);
 
-    const { work } = await createWork.execute({
+    const response = await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
-    await markUnread.execute({ id: work.id, nextChapter: 2 });
+    if (response.isLeft()) throw response.value;
 
-    const result = await stu.execute({ id: work.id });
+    const { work: workCreated } = response.value;
+
+    await markUnread.execute({ id: workCreated.id, nextChapter: 2 });
+
+    const result = await stu.execute({ id: workCreated.id });
 
     expect(result.isRight()).toBeTruthy();
 

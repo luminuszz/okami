@@ -46,6 +46,9 @@ export interface Properties {
   Gêneros: Gêneros;
   Name: Name;
   image: any;
+  sync_id: {
+    rich_text: any[];
+  };
 }
 
 export interface CapituloNovo {

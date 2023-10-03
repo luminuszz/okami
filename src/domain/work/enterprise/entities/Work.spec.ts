@@ -4,7 +4,6 @@ import { faker } from '@faker-js/faker';
 import { WorkMarkReadEvent } from '@domain/work/enterprise/entities/events/work-marked-read';
 import { WorkMarkUnreadEvent } from '@domain/work/enterprise/entities/events/work-marked-unread';
 import { WorkMarkedFinishedEvent } from '@domain/work/enterprise/entities/events/work-marked-finished-event';
-import { User } from '@domain/auth/enterprise/entities/User';
 
 const makeWorkModk = () => ({
   category: Category.MANGA,
@@ -14,6 +13,7 @@ const makeWorkModk = () => ({
   createdAt: new Date(),
   name: faker.name.firstName(),
   url: faker.internet.url(),
+  userId: faker.string.uuid(),
 });
 
 describe('WorkEntity', () => {
@@ -86,13 +86,5 @@ describe('WorkEntity', () => {
     expect(work.isFinished).toBe(true);
 
     expect(work.events[0]).toBeInstanceOf(WorkMarkedFinishedEvent);
-  });
-
-  it('should be able to addSubscriber', () => {
-    const work = Work.create(makeWorkModk());
-
-    work.addSubscriber(User.create({ name: 'user', createdAt: new Date(), works: [], email: '', passwordHash: '' }));
-
-    expect(work.subscribers.length).toBe(1);
   });
 });

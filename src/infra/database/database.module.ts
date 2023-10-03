@@ -12,13 +12,17 @@ import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { AccessTokenRepository } from '@domain/auth/application/useCases/repositories/access-token-repository';
 import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-access-token.repository';
 import { PrismaModule } from '@infra/database/prisma/prisma.module';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { StorageModule } from '@infra/storage/storage.module';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Global()
 @Module({
-  imports: [NotionDatabaseModule, QueueModule, PrismaModule],
+  imports: [NotionDatabaseModule, QueueModule, PrismaModule, StorageModule, CqrsModule],
   providers: [
     PrismaService,
     BatchService,
+    UploadWorkImageUseCase,
     { provide: WorkRepository, useClass: PrismaWorkRepository },
     { provide: NotificationRepository, useClass: PrismaNotificationRepository },
     { provide: UserRepository, useClass: PrismaUserRepository },

@@ -8,9 +8,15 @@ import { WorkMarkReadNotionEventHandler } from '@infra/database/notion/handlers/
 import { WorkMarkUnreadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-unread';
 import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
 import { WorkUpdatedEventHandler } from '@infra/database/notion/handlers/work-updated';
+import {
+  SetSyncIdOnNotionPageEventHandler,
+  UploadNotionWorkImageFromNotionEventHandler,
+} from '@infra/database/notion/handlers/work-created';
+import { StorageModule } from '@infra/storage/storage.module';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 
 @Module({
-  imports: [CqrsModule, ConfigModule.forRoot()],
+  imports: [CqrsModule, ConfigModule.forRoot(), StorageModule],
   providers: [
     NotionApiAdapter,
     NotionWorkRepository,
@@ -18,6 +24,9 @@ import { WorkUpdatedEventHandler } from '@infra/database/notion/handlers/work-up
     WorkMarkUnreadNotionEventHandler,
     WorkMarkedNotionFinishedEventHandler,
     WorkUpdatedEventHandler,
+    SetSyncIdOnNotionPageEventHandler,
+    UploadWorkImageUseCase,
+    UploadNotionWorkImageFromNotionEventHandler,
   ],
   exports: [NotionWorkRepository, NotionApiAdapter],
 })

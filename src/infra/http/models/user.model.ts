@@ -9,6 +9,8 @@ const userSchema = z
     name: z.string().nonempty(),
     email: z.string().email(),
     avatarImageId: z.string().optional().nullable(),
+    finishedWorksCount: z.number().default(0),
+    readingWorksCount: z.number().default(0),
   })
   .transform((data) => ({
     ...data,
@@ -28,6 +30,10 @@ export class UserHttp implements UserHttpType {
   avatarImageUrl: string | null;
   @ApiProperty()
   avatarImageId?: string;
+  @ApiProperty()
+  finishedWorksCount: number;
+  @ApiProperty()
+  readingWorksCount: number;
 }
 
 export class UserModel {

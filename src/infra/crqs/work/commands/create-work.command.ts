@@ -1,7 +1,4 @@
-import {
-  CreateWorkInput,
-  CreateWorkUseCase,
-} from '@domain/work/application/usecases/create-work';
+import { CreateWorkInput, CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
@@ -21,8 +18,10 @@ export class CreateWorkHandler implements ICommandHandler<CreateWorkCommand> {
   ) {}
 
   async execute({ payload }: CreateWorkCommand): Promise<any> {
-    const { work } = await this.createWork.execute(payload);
+    const response = await this.createWork.execute(payload);
 
-    this.publisher.publish(new WorkAsCreatedEvent(work));
+    if (response.isLeft()) throw response.value;
+
+    this.publisher.publish(new WorkAsCreatedEvent(response.value.work));
   }
 }

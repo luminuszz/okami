@@ -20,8 +20,6 @@ import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
-import { SubscribeToWorkCommand } from '@infra/crqs/work/commands/subscribe-to-work.command';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 
 @UseGuards(AuthGuard)
@@ -126,8 +124,8 @@ export class WorkController {
     await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
   }
 
-  @Post('subscribe/:workId')
-  async subscribeToWork(@Param('workId', ParseObjectIdPipe) workId: string, @Req() { user }: { user: UserTokenDto }) {
-    await this.commandBus.execute(new SubscribeToWorkCommand(user.id, workId));
+  @Get('replace-image-from-notion')
+  async setWorkImageFromNotion() {
+    await this.batchService.setWorkImageFromNotion();
   }
 }

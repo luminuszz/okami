@@ -4,27 +4,31 @@ import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work
 import { Category } from '@domain/work/enterprise/entities/work';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { WorkMarkedFinishedEvent } from '@domain/work/enterprise/entities/events/work-marked-finished-event';
+import { faker } from '@faker-js/faker';
 
 describe('MarkWorkFinished', () => {
   let stu: MarkWorkFinishedUseCase;
   let workRepository: InMemoryWorkRepository;
+  let createWorkUseCase: CreateWorkUseCase;
 
   beforeEach(() => {
     workRepository = new InMemoryWorkRepository();
     stu = new MarkWorkFinishedUseCase(workRepository);
+    createWorkUseCase = new CreateWorkUseCase(workRepository);
   });
 
   it('should be able to mark work as finished', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
-    const { work } = await createWork.execute({
+    const response = await createWorkUseCase.execute({
       category: Category.ANIME,
       chapter: 1,
-      name: 'kimi no na wa',
-      url: 'https://kiminonawa.com',
+      name: 'One Piece',
+      url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
-    const result = await stu.execute({ workId: work.id });
+    if (response.isLeft()) throw response.value;
+
+    const result = await stu.execute({ workId: response.value.work.id });
 
     expect(result.isRight()).toBeTruthy();
     expect(result.value).toHaveProperty('work');
@@ -42,6 +46,7 @@ describe('MarkWorkFinished', () => {
       chapter: 1,
       name: 'kimi no na wa',
       url: 'https://kiminonawa.com',
+      userId: faker.string.uuid(),
     });
 
     const result = await stu.execute({ workId: 'INVALID_ID' });
@@ -51,16 +56,17 @@ describe('MarkWorkFinished', () => {
   });
 
   it('should be able to MarkWorkFinishedEvent has been dispatched', async () => {
-    const createWork = new CreateWorkUseCase(workRepository);
-
-    const { work } = await createWork.execute({
+    const response = await createWorkUseCase.execute({
       category: Category.ANIME,
       chapter: 1,
-      name: 'kimi no na wa',
-      url: 'https://kiminonawa.com',
+      name: 'One Piece',
+      url: 'https://onepiece.com',
+      userId: faker.string.uuid(),
     });
 
-    const result = await stu.execute({ workId: work.id });
+    if (response.isLeft()) throw response.value;
+
+    const result = await stu.execute({ workId: response.value.work.id });
 
     expect(result.isRight()).toBeTruthy();
 

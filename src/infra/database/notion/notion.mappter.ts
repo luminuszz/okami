@@ -1,6 +1,7 @@
 import { Category, Work } from '@app/domain/work/enterprise/entities/work';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { NotionPage } from './dto/notion-page.dto';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
 
 export type NotionDocument = {
   object: 'page';
@@ -20,16 +21,20 @@ export class NotionMapper {
       ? NotionMapper.notionCategoryToDomainMapper[properties.Tipo.select.name || ('Manga' as NotionCategory)]
       : Category.MANGA;
 
-    return Work.create({
-      category,
-      chapter: new Chapter(properties.cap.number || 0),
-      createdAt: new Date(properties.Created.created_time),
-      hasNewChapter: properties['CAPITULO NOVO'].checkbox,
-      name: properties?.Name?.title?.[0]?.text?.content,
-      recipientId: id,
-      url: properties.URL.url,
-      updatedAt: new Date(properties['last edited'].last_edited_time),
-    });
+    return Work.create(
+      {
+        category,
+        chapter: new Chapter(properties.cap.number || 0),
+        createdAt: new Date(properties.Created.created_time),
+        hasNewChapter: properties['CAPITULO NOVO'].checkbox,
+        name: properties?.Name?.title?.[0]?.text?.content,
+        recipientId: id,
+        url: properties.URL.url,
+        updatedAt: new Date(properties['last edited'].last_edited_time),
+        userId: '64d13f0978a515e634ac1384',
+      },
+      new UniqueEntityID(properties?.sync_id?.rich_text?.[0]?.text?.content || null),
+    );
   }
 
   static toNotion(work: Work) {

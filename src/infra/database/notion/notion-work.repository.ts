@@ -177,4 +177,29 @@ export class NotionWorkRepository implements WorkRepository {
 
     return results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
+
+  async getNotionPageContent(page_id: string) {
+    const response = await this.notion.blocks.children.list({
+      block_id: page_id,
+      page_size: 100,
+    });
+
+    return response.results;
+  }
+
+  async setSyncIdInNotionPage(page_id: string, sync_id: string) {
+    await this.notion.pages.update({
+      page_id,
+      properties: {
+        sync_id: [
+          {
+            type: 'text',
+            text: {
+              content: sync_id,
+            },
+          },
+        ],
+      },
+    });
+  }
 }

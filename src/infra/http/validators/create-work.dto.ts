@@ -1,6 +1,7 @@
-import { IsUrl, IsNumber, IsString, IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsObjectId } from '@infra/utils/IsObjectId';
 
 const categoryEnumArray = ['ANIME', 'MANGA'];
 
@@ -27,4 +28,9 @@ export class CreateWorkDto {
   @IsEnum(categoryEnumArray)
   @IsNotEmpty()
   category: Category;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsObjectId()
+  userId: string;
 }

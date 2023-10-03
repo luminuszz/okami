@@ -7,6 +7,7 @@ import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work
 
 const fakeStorageProvider = {
   uploadWorkImage: jest.fn(),
+  uploadWorkImageWithUrl: jest.fn(),
 };
 
 describe('UploadWorkImageUseCase', () => {
@@ -21,12 +22,17 @@ describe('UploadWorkImageUseCase', () => {
   });
 
   it('should be able to upload file ', async () => {
-    const { work } = await createWork.execute({
+    const createWorkResponse = await createWork.execute({
       chapter: 1,
       name: 'Naruto',
       url: 'https://naruto.com',
       category: Category.ANIME,
+      userId: faker.string.uuid(),
     });
+
+    if (createWorkResponse.isLeft()) throw createWorkResponse.value;
+
+    const { work } = createWorkResponse.value;
 
     fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce(null);
 
@@ -53,6 +59,7 @@ describe('UploadWorkImageUseCase', () => {
       name: faker.person.firstName(),
       url: faker.internet.url(),
       category: Category.ANIME,
+      userId: faker.string.uuid(),
     });
 
     fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce({});
