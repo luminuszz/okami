@@ -17,11 +17,13 @@ export class Queue {
     private readonly queueProvider: QueueProvider,
     private readonly fetchForWorkScraping: FetchWorksForScrappingUseCase,
   ) {
-    this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
+    this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, (payload: { userId: string }) =>
+      this.refreshWorkStatus(payload.userId),
+    );
   }
 
-  async refreshWorkStatus() {
-    const results = await this.fetchForWorkScraping.execute();
+  async refreshWorkStatus(userId: string) {
+    const results = await this.fetchForWorkScraping.execute({ userId });
 
     if (results.isLeft()) {
       throw results.value;

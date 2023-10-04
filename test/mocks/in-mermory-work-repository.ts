@@ -19,19 +19,22 @@ export class InMemoryWorkRepository implements WorkRepository {
     return this.works.find((work) => work.id === id);
   }
 
-  async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
-    return this.works.filter((work) => work.hasNewChapter === false);
+  async fetchForWorkersWithHasNewChapterFalse(userId: string): Promise<Work[]> {
+    return this.works.filter((work) => work.hasNewChapter === false && work.userId === userId);
   }
 
-  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
-    return this.works.filter((work) => work.hasNewChapter);
+  async fetchForWorkersWithHasNewChapterTrue(userId: string): Promise<Work[]> {
+    return this.works.filter((work) => work.hasNewChapter && work.userId === userId);
   }
 
   async findOne(id: string): Promise<Work> {
     return this.works.find((work) => work.id === id);
   }
 
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
-    return this.works.filter((item) => !item.isFinished).filter((item) => !item.hasNewChapter);
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(userId: string): Promise<Work[]> {
+    return this.works
+      .filter((item) => !item.isFinished)
+      .filter((item) => !item.hasNewChapter)
+      .filter((item) => item.userId === userId);
   }
 }

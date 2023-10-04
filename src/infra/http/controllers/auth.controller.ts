@@ -1,9 +1,8 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
 import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
 import { UserHttp, UserModel } from '@infra/http/models/user.model';
@@ -13,6 +12,7 @@ import {
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
 import { AccessToken, TokenModel } from '@infra/http/models/token.model';
+import { CurrentUser, WithAuth } from '@infra/crqs/auth/decorators';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,7 +34,7 @@ export class AuthController {
     };
   }
 
-  @UseGuards(AuthGuard)
+  @WithAuth()
   @Post('/user/avatar/upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -70,10 +70,10 @@ export class AuthController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @WithAuth()
   @ApiOkResponse({ type: UserHttp })
   @Get('user/me')
-  async getMe(@Req() { user }: { user: UserTokenDto }) {
+  async getMe(@CurrentUser() user: UserTokenDto) {
     const results = await this.queryBus.execute(new FindUserByIdQuery(user.id));
 
     console.log({
@@ -83,10 +83,10 @@ export class AuthController {
     return UserModel.toHttp(results);
   }
 
-  @UseGuards(AuthGuard)
+  @WithAuth()
   @Post('/access-token')
   @ApiCreatedResponse({ type: AccessToken })
-  async createAccessToken(@Req() { user }: { user: UserTokenDto }) {
+  async createAccessToken(@CurrentUser() user: UserTokenDto) {
     const { accessToken } = await this.commandBus.execute<CreateAccessTokenCommand, CreateAccessTokenCommandResponse>(
       new CreateAccessTokenCommand(user.id),
     );

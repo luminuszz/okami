@@ -20,6 +20,8 @@ describe('FetchForWorksUnread', () => {
   });
 
   it('should be able o get all works unread', async () => {
+    const fakeUserId = faker.string.uuid();
+
     const randomNumber = faker.number.int({ min: 1, max: 10 });
 
     for (let i = 0; i < randomNumber; i++) {
@@ -31,12 +33,12 @@ describe('FetchForWorksUnread', () => {
           chapter: new Chapter(1),
           name: 'One Piece',
           url: 'https://onepiece.com',
-          userId: faker.string.uuid(),
+          userId: fakeUserId,
         }),
       );
     }
 
-    const results = await stu.execute();
+    const results = await stu.execute({ userId: fakeUserId });
 
     expect(results.isRight()).toBeTruthy();
 

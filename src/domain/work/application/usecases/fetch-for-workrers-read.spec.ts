@@ -22,6 +22,8 @@ describe('FetchForWorksRead', () => {
   it('should be able o get all works read', async () => {
     const randomNumber = faker.number.int({ min: 1, max: 10 });
 
+    const fakeUserId = faker.string.uuid();
+
     for (let i = 0; i < randomNumber; i++) {
       await workRepository.create(
         Work.create({
@@ -31,11 +33,12 @@ describe('FetchForWorksRead', () => {
           chapter: new Chapter(1),
           name: 'One Piece',
           url: 'https://onepiece.com',
+          userId: fakeUserId,
         }),
       );
     }
 
-    const results = await stu.execute();
+    const results = await stu.execute({ userId: fakeUserId });
 
     expect(results.isRight()).toBeTruthy();
 

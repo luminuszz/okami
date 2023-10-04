@@ -16,6 +16,7 @@ describe('FetchWorksForScrapping', () => {
 
   it('should fetch works for scrapping', async () => {
     const createWork = new CreateWorkUseCase(workRepository);
+    const fakeUserId = faker.string.uuid();
 
     Array.from({ length: 5 }).map(async () => {
       await createWork.execute({
@@ -23,7 +24,7 @@ describe('FetchWorksForScrapping', () => {
         name: faker.person.fullName(),
         chapter: faker.number.int({ max: 100 }),
         url: faker.internet.url(),
-        userId: faker.string.uuid(),
+        userId: fakeUserId,
       });
     });
 
@@ -32,7 +33,7 @@ describe('FetchWorksForScrapping', () => {
       name: faker.person.fullName(),
       chapter: faker.number.int({ max: 100 }),
       url: faker.internet.url(),
-      userId: faker.string.uuid(),
+      userId: fakeUserId,
     });
 
     if (results.isLeft()) throw results.value;
@@ -46,7 +47,7 @@ describe('FetchWorksForScrapping', () => {
       name: faker.person.fullName(),
       chapter: faker.number.int({ max: 100 }),
       url: faker.internet.url(),
-      userId: faker.string.uuid(),
+      userId: fakeUserId,
     });
 
     if (createWorkResponse.isLeft()) throw createWorkResponse.value;
@@ -57,7 +58,7 @@ describe('FetchWorksForScrapping', () => {
 
     await workRepository.save(workWithMarkHasNewChapterTrue);
 
-    const stuResults = await stu.execute();
+    const stuResults = await stu.execute({ userId: fakeUserId });
 
     expect(results.isRight()).toBeTruthy();
 

@@ -6,7 +6,7 @@ import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unrea
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
@@ -18,11 +18,12 @@ import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
 import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
+import { CurrentUser, WithAuth } from '@infra/crqs/auth/decorators';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 
-@UseGuards(AuthGuard)
+@WithAuth()
 @ApiTags('work')
 @Controller('work')
 export class WorkController {
@@ -63,16 +64,16 @@ export class WorkController {
 
   @Get('/fetch-for-workers-read')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorkersRead() {
-    const works = await this.queryBus.execute(new FetchForWorkersReadQuery());
+  async fetchForWorkersRead(@CurrentUser() user: UserTokenDto) {
+    const works = await this.queryBus.execute(new FetchForWorkersReadQuery(user.id));
 
     return WorkModel.toHttpList(works);
   }
 
   @Get('/fetch-for-workers-unread')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorkersUnread() {
-    const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery());
+  async fetchForWorkersUnread(@CurrentUser() user: UserTokenDto) {
+    const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery(user.id));
 
     return WorkModel.toHttpList(works);
   }
@@ -83,8 +84,8 @@ export class WorkController {
   }
 
   @Get('refresh-chapters')
-  async refreshChapters() {
-    await this.queue.refreshWorkStatus();
+  async refreshChapters(@CurrentUser() user: UserTokenDto) {
+    await this.queue.refreshWorkStatus(user.id);
   }
 
   @Put('update-work/:id')
