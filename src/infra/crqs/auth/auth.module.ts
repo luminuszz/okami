@@ -35,7 +35,9 @@ const Queries = [FindUserByIdQueryHandler];
       useFactory: (config: ConfigService) => ({
         global: true,
         secret: config.get('JWT_SECRET'),
-        signOptions: { expiresIn: '3d' },
+        signOptions: {
+          expiresIn: '10s',
+        },
       }),
       inject: [ConfigService],
     }),

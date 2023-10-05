@@ -56,6 +56,14 @@ export class User extends Entity<EntityProps> {
     return this.props.works;
   }
 
+  get readingWorksCount() {
+    return this.props.readingWorksCount;
+  }
+
+  get finishedWorksCount() {
+    return this.props.finishedWorksCount;
+  }
+
   public static create(props: EntityProps, id?: UniqueEntityID): User {
     return new User(props, id);
   }

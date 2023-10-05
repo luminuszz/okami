@@ -9,8 +9,8 @@ const userSchema = z
     name: z.string().nonempty(),
     email: z.string().email(),
     avatarImageId: z.string().optional().nullable(),
-    finishedWorksCount: z.number().default(0),
-    readingWorksCount: z.number().default(0),
+    finishedWorksCount: z.number().min(0).default(0),
+    readingWorksCount: z.number().min(0).default(0),
   })
   .transform((data) => ({
     ...data,

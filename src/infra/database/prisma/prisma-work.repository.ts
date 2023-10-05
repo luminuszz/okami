@@ -40,10 +40,11 @@ export class PrismaWorkRepository implements WorkRepository {
     return prismaWorkToEntityMapper(results);
   }
 
-  async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
+  async fetchForWorkersWithHasNewChapterFalse(userId: string): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
         hasNewChapter: false,
+        userId,
       },
     });
 
@@ -71,10 +72,11 @@ export class PrismaWorkRepository implements WorkRepository {
     return results.filter((result) => !result.isUpserted).map(prismaWorkToEntityMapper);
   }
 
-  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
+  async fetchForWorkersWithHasNewChapterTrue(userId: string): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
         hasNewChapter: true,
+        userId,
       },
     });
 
@@ -91,11 +93,12 @@ export class PrismaWorkRepository implements WorkRepository {
     return results ? prismaWorkToEntityMapper(results) : null;
   }
 
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(userId: string): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
         hasNewChapter: false,
         isFinished: false,
+        userId,
       },
     });
 
