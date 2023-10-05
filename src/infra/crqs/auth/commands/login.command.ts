@@ -6,7 +6,10 @@ import { ConfigService } from '@nestjs/config';
 import { EnvSecrets } from '@infra/utils/getSecretsEnv';
 
 export class LoginCommand {
-  constructor(public readonly email: string, public readonly password: string) {}
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+  ) {}
 }
 
 @CommandHandler(LoginCommand)
@@ -34,6 +37,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.config.get('JWT_SECRET'),
+      expiresIn: '3d',
     });
 
     return {
