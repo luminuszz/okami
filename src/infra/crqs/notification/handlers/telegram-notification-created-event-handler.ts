@@ -42,7 +42,9 @@ export class TelegramNotificationCreatedEventHandler
 
     const caption = this.parseContent(`${payload.content.toString()}\n\n${url}`);
 
-    if (imageId) {
+    const isAllowedImageFiletype = ['png', 'jpg', 'jpeg'].includes(imageId?.split('.').pop());
+
+    if (imageId && isAllowedImageFiletype) {
       const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${id}-${imageId}`);
       await this.telegraf.telegram.sendPhoto(payload.recipientId, imageUrl, {
         parse_mode: 'MarkdownV2',

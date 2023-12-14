@@ -41,8 +41,6 @@ export class BatchService {
 
       const { image }: any = results.find((item: any) => item.type === 'image');
 
-      this.logger.debug(image);
-
       const imageUrl = image.type === 'external' ? image.external.url : image.file.url;
 
       const response = await this.uploadWorkImage.execute({
