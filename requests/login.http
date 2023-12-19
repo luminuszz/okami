@@ -1,10 +1,6 @@
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
-{
-  "email": "contato@daviribeiro.com",
-  "password": "8RENoaghPHW9oJqpgRR7v3HzRB8ij3pYLfdyfjxFtimoxKEgpprKqQHKGoUBPiFcJ2k6yyTZuz7jyPWR9Mkcj4Xm7urjvqGcK3Ec"
-}
 
 
 
