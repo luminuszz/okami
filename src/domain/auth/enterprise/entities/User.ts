@@ -12,6 +12,7 @@ interface EntityProps {
   works?: Work[];
   readingWorksCount?: number;
   finishedWorksCount?: number;
+  adminHashCodeKey?: string | null;
 }
 
 export class User extends Entity<EntityProps> {
@@ -22,6 +23,7 @@ export class User extends Entity<EntityProps> {
     this.props.works = props.works ?? [];
     this.props.readingWorksCount = props.readingWorksCount ?? 0;
     this.props.finishedWorksCount = props.finishedWorksCount ?? 0;
+    this.props.adminHashCodeKey = props.adminHashCodeKey ?? null;
   }
 
   get email(): string {
@@ -50,10 +52,24 @@ export class User extends Entity<EntityProps> {
 
   set avatarImageId(url: string) {
     this.props.avatarImageId = url;
+    this.refresh();
   }
 
   get works(): Work[] {
     return this.props.works;
+  }
+
+  get adminHashCodeKey(): string | null {
+    return this.props.adminHashCodeKey;
+  }
+
+  set adminHashCodeKey(key: string | null) {
+    this.props.adminHashCodeKey = key;
+    this.refresh();
+  }
+
+  private refresh() {
+    this.props.updatedAt = new Date();
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {
