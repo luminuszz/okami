@@ -23,17 +23,22 @@ export class PrismaUserRepository implements UserRepository {
       },
     });
 
+    if (!results) return null;
+
     const { readingWorksCount, finishedWorksCount } = await this.findUserWorkMetaData(results.id);
 
-    return results ? parsePrismaUserToDomainUser({ ...results, finishedWorksCount, readingWorksCount }) : undefined;
+    return parsePrismaUserToDomainUser({ ...results, finishedWorksCount, readingWorksCount });
   }
 
-  async findById(id: string): Promise<User | undefined> {
+  async findById(id: string): Promise<User | null> {
     const results = await this.prisma.user.findUnique({
       where: {
         id,
       },
     });
+
+    if (!results) return null;
+
     const { readingWorksCount, finishedWorksCount } = await this.findUserWorkMetaData(results.id);
 
     return results
