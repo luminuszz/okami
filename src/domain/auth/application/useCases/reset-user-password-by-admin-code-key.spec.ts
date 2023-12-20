@@ -34,8 +34,6 @@ describe('ResetUserPasswordByAdminCodeKey', () => {
 
     if (userResults.isLeft()) throw userResults.value;
 
-    jest.spyOn(hashProvider, 'hash').mockImplementation(() => Promise.resolve('HASHED_CODE_KEY'));
-
     await setAdminHashCodeKeyUseCase.execute({
       hashCodeKey: 'HASH_CODE_KEY',
       userId: userResults.value.user.id,
@@ -49,12 +47,17 @@ describe('ResetUserPasswordByAdminCodeKey', () => {
       email: authPayload.email,
     });
 
+    if (results.isLeft()) throw results.value;
+
     expect(results.isRight()).toBeTruthy();
-    expect(results.value).toBeNull();
+    expect(results.value).toHaveProperty('user');
   });
 
   it('not should be able to reset user password by adminHashCode if user not found', async () => {
-    jest.spyOn(hashProvider, 'compare').mockImplementation(() => Promise.resolve(true));
+    jest
+      .spyOn(hashProvider, 'compare')
+      .mockClear()
+      .mockImplementation(() => Promise.resolve(true));
 
     const results = await stu.execute({
       newPassword: faker.internet.password(),
@@ -77,7 +80,10 @@ describe('ResetUserPasswordByAdminCodeKey', () => {
 
     if (userResults.isLeft()) throw userResults.value;
 
-    jest.spyOn(hashProvider, 'hash').mockImplementation(() => Promise.resolve('HASHED_CODE_KEY'));
+    jest
+      .spyOn(hashProvider, 'hash')
+      .mockClear()
+      .mockImplementation(() => Promise.resolve('NEW_PASSOWORD_HASHED'));
 
     await setAdminHashCodeKeyUseCase.execute({
       hashCodeKey: 'HASH_CODE_KEY',

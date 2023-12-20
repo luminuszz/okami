@@ -4,5 +4,5 @@ Authorization: Bearer {{sessionToken}}
 
 
 {
-    "hashCodeKey": "RFo6KvVceh72TUHL8d43oKYxTY9ww8EQPGiMFDGkvyZpxCEymCJrFzyit6XF7r6J6DnrF3Jdd3FHzurciGHRgFAEGjbBsvQtbe8u"
+    "hashCodeKey": ""
 }

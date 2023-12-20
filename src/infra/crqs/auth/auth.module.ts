@@ -20,6 +20,7 @@ import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/v
 import { CreateAdminHashCodeCommandHandler } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
 import { SetAdminHashCodeKeyUseCase } from '@domain/auth/application/useCases/set-admin-hash-code-key';
 import { ResetUserPasswordByAdminCodeKey } from '@domain/auth/application/useCases/reset-user-password-by-admin-code-key';
+import { ResetPasswordCommandHandler } from '@infra/crqs/auth/commands/reset-password.command';
 
 const Commands = [
   LoginCommandHandler,
@@ -27,6 +28,7 @@ const Commands = [
   CreateUserCommandHandler,
   CreateAccessTokenCommandHandler,
   CreateAdminHashCodeCommandHandler,
+  ResetPasswordCommandHandler,
 ];
 const Queries = [FindUserByIdQueryHandler];
 

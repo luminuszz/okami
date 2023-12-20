@@ -68,6 +68,11 @@ export class User extends Entity<EntityProps> {
     this.refresh();
   }
 
+  set passwordHash(passwordHash: string) {
+    this.props.passwordHash = passwordHash;
+    this.refresh();
+  }
+
   private refresh() {
     this.props.updatedAt = new Date();
   }

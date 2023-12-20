@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
 import { InvalidCodeKey } from '@domain/auth/application/errors/InvalidCodeKey';
+import { User } from '@domain/auth/enterprise/entities/User';
 
 interface ResetUserPasswordByAdminCodeKeyInput {
   email: string;
@@ -12,7 +13,7 @@ interface ResetUserPasswordByAdminCodeKeyInput {
   newPassword: string;
 }
 
-type ResetUserPasswordByAdminCodeKeyOutput = Either<UserNotFound | InvalidCodeKey, void>;
+type ResetUserPasswordByAdminCodeKeyOutput = Either<UserNotFound | InvalidCodeKey, { user: User }>;
 
 @Injectable()
 export class ResetUserPasswordByAdminCodeKey
@@ -38,10 +39,10 @@ export class ResetUserPasswordByAdminCodeKey
 
     if (!isCodeKeyValid) return left(new InvalidCodeKey());
 
-    userOrNull.adminHashCodeKey = await this.hashProvider.hash(newPassword);
+    userOrNull.passwordHash = await this.hashProvider.hash(newPassword);
 
     await this.userRepository.save(userOrNull);
 
-    return right(null);
+    return right({ user: userOrNull });
   }
 }

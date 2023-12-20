@@ -17,6 +17,8 @@ import { CreateUserDto } from '@infra/http/validators/create-user.dto';
 import { CreateUserCommand } from '@infra/crqs/auth/commands/create-user.command';
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
+import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
+import { ResetPasswordCommand } from '@infra/crqs/auth/commands/reset-password.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -100,6 +102,10 @@ export class AuthController {
     };
   }
 
+  /**
+   * @todo disable this endpoint in production
+   */
+
   @Post('/register')
   async register(@Body() data: CreateUserDto) {
     await this.commandBus.execute(
@@ -111,5 +117,10 @@ export class AuthController {
   @Post('/admin-hash-code')
   async createAdminHashCode(@Req() @Req() { user }: { user: UserTokenDto }, @Body() data: CreateAdminHashCodeDto) {
     await this.commandBus.execute(new CreateAdminHashCodeCommand(user.id, data.hashCodeKey));
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() data: ResetPasswordDto) {
+    await this.commandBus.execute(new ResetPasswordCommand(data.email, data.newPassword, data.adminHashCode));
   }
 }
