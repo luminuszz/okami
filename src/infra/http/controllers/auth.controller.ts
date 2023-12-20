@@ -13,8 +13,6 @@ import {
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
 import { AccessToken, TokenModel } from '@infra/http/models/token.model';
-import { CreateUserDto } from '@infra/http/validators/create-user.dto';
-import { CreateUserCommand } from '@infra/crqs/auth/commands/create-user.command';
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
@@ -102,16 +100,14 @@ export class AuthController {
     };
   }
 
-  /**
-   * @todo disable this endpoint in production
-   */
-
+  /*
   @Post('/register')
   async register(@Body() data: CreateUserDto) {
     await this.commandBus.execute(
       new CreateUserCommand({ email: data.email, password: data.password, name: data.name }),
     );
   }
+*/
 
   @UseGuards(AuthGuard)
   @Post('/admin-hash-code')
