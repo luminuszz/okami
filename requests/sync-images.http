@@ -1,2 +1,2 @@
 GET http://localhost:3000/work/replace-image-from-notion
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvbnRhdG9AZGF2aXJpYmVpcm8uY29tIiwiaWQiOiI2NGQxM2YwOTc4YTUxNWU2MzRhYzEzODQiLCJuYW1lIjoiZGF2aXJpYmVpcm8iLCJpYXQiOjE3MDIzODkwOTh9.rFCxzfOqaSg_nfcjHPf4VuNBvBXRjKxmf93Q2z0rR50
+Authorization: Bearer {{sessionToken}}

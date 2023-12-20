@@ -95,6 +95,7 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta): Use
       avatarImageId: prismaUser.imageUrl,
       readingWorksCount: prismaUser.readingWorksCount,
       finishedWorksCount: prismaUser.finishedWorksCount,
+      adminHashCodeKey: prismaUser.adminHashCodeKey,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -108,6 +109,7 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   id: user.id.toString(),
   imageUrl: user.avatarImageId,
   worksId: map(user.works, (work) => work.id),
+  adminHashCodeKey: user.adminHashCodeKey,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({

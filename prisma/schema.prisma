@@ -49,13 +49,14 @@ model Notification {
 }
 
 model User {
-  id           String    @id @map("_id") @db.ObjectId
-  email        String    @unique
-  name         String
-  passwordHash String
-  createdAt    DateTime  @map("created_at")
-  updatedAt    DateTime? @map("updated_at")
-  imageUrl     String?   @default("") @map("image_url")
+  id               String    @id @map("_id") @db.ObjectId
+  email            String    @unique
+  name             String
+  passwordHash     String
+  createdAt        DateTime  @map("created_at")
+  updatedAt        DateTime? @map("updated_at")
+  imageUrl         String?   @default("") @map("image_url")
+  adminHashCodeKey String?   @map("admin_hash_code_key")
 
   accessToken AccessToken?
   worksId     String[]     @map("works_id") @db.ObjectId

@@ -49,8 +49,6 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractAccessTokenFromHeader(request: FastifyRequest): string | undefined {
-    console.log(request.headers);
-
     return request.headers[this.accessTokenHeaderKey] as string;
   }
 

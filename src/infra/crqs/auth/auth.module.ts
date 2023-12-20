@@ -17,12 +17,18 @@ import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user
 import { CreateAccessTokenCommandHandler } from '@infra/crqs/auth/commands/create-access-token.command';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
 import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
+import { CreateAdminHashCodeCommandHandler } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
+import { SetAdminHashCodeKeyUseCase } from '@domain/auth/application/useCases/set-admin-hash-code-key';
+import { ResetUserPasswordByAdminCodeKey } from '@domain/auth/application/useCases/reset-user-password-by-admin-code-key';
+import { ResetPasswordCommandHandler } from '@infra/crqs/auth/commands/reset-password.command';
 
 const Commands = [
   LoginCommandHandler,
   UploadUserImageUrlCommandHandler,
   CreateUserCommandHandler,
   CreateAccessTokenCommandHandler,
+  CreateAdminHashCodeCommandHandler,
+  ResetPasswordCommandHandler,
 ];
 const Queries = [FindUserByIdQueryHandler];
 
@@ -52,6 +58,8 @@ const Queries = [FindUserByIdQueryHandler];
     UploadUserAvatarImage,
     FindUserByIdUseCase,
     VerifyApiAccessTokenUseCase,
+    SetAdminHashCodeKeyUseCase,
+    ResetUserPasswordByAdminCodeKey,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -61,6 +69,8 @@ const Queries = [FindUserByIdQueryHandler];
     UploadWorkImageUseCase,
     FindUserByIdUseCase,
     VerifyApiAccessTokenUseCase,
+    SetAdminHashCodeKeyUseCase,
+    ResetUserPasswordByAdminCodeKey,
   ],
 })
 export class AuthModule {}
