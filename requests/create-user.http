@@ -1,11 +1,8 @@
-POST http://localhost:3000/auth/login
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
+  "name": "daviribeiro",
   "email": "contato@daviribeiro.com",
   "password": "McmHEfdqaLynNgyaLwe99Li9AyEDJvLbHu72XmUky8VHVrvgZuhEiizA4eugsmgnrBRGea3aQCpZojvDaDhtxwYakUqMKM62vLXj"
 }
-
-
-
-

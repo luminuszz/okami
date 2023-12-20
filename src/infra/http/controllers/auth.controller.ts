@@ -13,6 +13,10 @@ import {
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
 import { AccessToken, TokenModel } from '@infra/http/models/token.model';
+import { CreateUserDto } from '@infra/http/validators/create-user.dto';
+import { CreateUserCommand } from '@infra/crqs/auth/commands/create-user.command';
+import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
+import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -94,5 +98,18 @@ export class AuthController {
     return {
       accessToken,
     };
+  }
+
+  @Post('/register')
+  async register(@Body() data: CreateUserDto) {
+    await this.commandBus.execute(
+      new CreateUserCommand({ email: data.email, password: data.password, name: data.name }),
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/admin-hash-code')
+  async createAdminHashCode(@Req() @Req() { user }: { user: UserTokenDto }, @Body() data: CreateAdminHashCodeDto) {
+    await this.commandBus.execute(new CreateAdminHashCodeCommand(user.id, data.hashCodeKey));
   }
 }

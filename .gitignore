@@ -46,4 +46,7 @@ data
 
 
 
+requests/*.env.json
+
+
 core.*
