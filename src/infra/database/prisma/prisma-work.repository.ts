@@ -62,8 +62,8 @@ export class PrismaWorkRepository implements WorkRepository {
         where: {
           recipientId: work.recipientId,
         },
-        create: { ...parsedData, userId: '64d13f0978a515e634ac1384' },
-        update: { ...updateParsedData, userId: '64d13f0978a515e634ac1384', isUpserted: true },
+        create: { ...parsedData, userId: '658226ff35d5c694026fa4f5' },
+        update: { ...updateParsedData, userId: '658226ff35d5c694026fa4f5', isUpserted: true },
       });
     });
     const results = await this.prisma.$transaction(operations);

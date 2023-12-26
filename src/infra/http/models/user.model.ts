@@ -30,6 +30,7 @@ export class UserHttp implements UserHttpType {
   avatarImageUrl: string | null;
   @ApiProperty()
   avatarImageId?: string;
+
   @ApiProperty()
   finishedWorksCount: number;
   @ApiProperty()
