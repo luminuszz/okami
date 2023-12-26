@@ -39,8 +39,6 @@ export class UserHttp implements UserHttpType {
 
 export class UserModel {
   static toHttp(user: User): UserHttpType {
-    console.log(user);
-
     return userSchema.parse(user);
   }
 }
