@@ -44,8 +44,8 @@ export class PrismaUserRepository implements UserRepository {
     return results
       ? parsePrismaUserToDomainUser({
           ...results,
-          finishedWorksCount: readingWorksCount,
-          readingWorksCount: finishedWorksCount,
+          finishedWorksCount: finishedWorksCount,
+          readingWorksCount: readingWorksCount,
         })
       : undefined;
   }

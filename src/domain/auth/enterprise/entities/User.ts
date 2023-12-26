@@ -63,6 +63,14 @@ export class User extends Entity<EntityProps> {
     return this.props.adminHashCodeKey;
   }
 
+  get readingWorksCount(): number {
+    return this.props.readingWorksCount;
+  }
+
+  get finishedWorksCount(): number {
+    return this.props.finishedWorksCount;
+  }
+
   set adminHashCodeKey(key: string | null) {
     this.props.adminHashCodeKey = key;
     this.refresh();

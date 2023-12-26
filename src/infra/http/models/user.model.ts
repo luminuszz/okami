@@ -30,6 +30,7 @@ export class UserHttp implements UserHttpType {
   avatarImageUrl: string | null;
   @ApiProperty()
   avatarImageId?: string;
+
   @ApiProperty()
   finishedWorksCount: number;
   @ApiProperty()
@@ -38,6 +39,8 @@ export class UserHttp implements UserHttpType {
 
 export class UserModel {
   static toHttp(user: User): UserHttpType {
+    console.log(user);
+
     return userSchema.parse(user);
   }
 }
