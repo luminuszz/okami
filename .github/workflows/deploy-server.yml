@@ -45,5 +45,5 @@ jobs:
           script: |
             cd ./okami
             git pull origin master
-            docker compose -f docker-compose.prd.yml compose up -d
+            docker compose -f docker-compose.prd.yml up -d
             
