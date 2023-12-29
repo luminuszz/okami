@@ -5,6 +5,7 @@ import { WorkMarkUnreadEvent } from './events/work-marked-unread';
 import { Chapter } from './values-objects/chapter';
 import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { User } from '@domain/auth/enterprise/entities/User';
+import { WorkRefreshStatusMarkedFailedEvent } from '@domain/work/enterprise/entities/events/work-refreshStatus-marked-failed';
 
 interface WorkProps {
   name: string;
@@ -21,11 +22,17 @@ interface WorkProps {
   nextChapter?: Chapter;
   nextChapterUpdatedAt?: Date;
   userId: string;
+  refreshStatus?: RefreshStatus | null;
 }
 
 export enum Category {
   MANGA = 'MANGA',
   ANIME = 'ANIME',
+}
+
+export enum RefreshStatus {
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
 }
 
 export class Work extends Entity<WorkProps> {
@@ -37,6 +44,7 @@ export class Work extends Entity<WorkProps> {
     this.props.subscribers = props.subscribers ?? [];
     this.props.nextChapter = props.nextChapter ?? null;
     this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
+    this.props.refreshStatus = props.refreshStatus ?? null;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -144,6 +152,20 @@ export class Work extends Entity<WorkProps> {
 
   public get nextChapterUpdatedAt() {
     return this.props.nextChapterUpdatedAt;
+  }
+
+  public get refreshStatus() {
+    return this.props.refreshStatus;
+  }
+
+  public set refreshStatus(refreshStatus: RefreshStatus | null) {
+    this.props.refreshStatus = refreshStatus;
+
+    if (refreshStatus === RefreshStatus.FAILED) {
+      this.events.push(new WorkRefreshStatusMarkedFailedEvent(this));
+    }
+
+    this.commit();
   }
 
   public updateNextChapter(nextChapter: number | null) {
