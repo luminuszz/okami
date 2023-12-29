@@ -16,19 +16,25 @@ enum Category {
   ANIME
 }
 
+enum RefreshStatus {
+  SUCCESS
+  FAILED
+}
+
 model Work {
-  id                   String    @id @map("_id") @db.ObjectId
+  id                   String         @id @map("_id") @db.ObjectId
   name                 String
   category             Category
-  hasNewChapter        Boolean   @map("has_new_chapter")
+  hasNewChapter        Boolean        @map("has_new_chapter")
   chapters             Float
   url                  String
-  recipientId          String?   @unique @map("recipient_id")
-  isFinished           Boolean   @default(false) @map("is_finished")
-  imageId              String?   @map("image_id")
-  nextChapter          Float?    @map("next_chapter")
-  nextChapterUpdatedAt DateTime? @map("next_chapter_updated_at")
-  isUpserted           Boolean?  @default(false) @map("is_upserted")
+  recipientId          String?        @unique @map("recipient_id")
+  isFinished           Boolean        @default(false) @map("is_finished")
+  imageId              String?        @map("image_id")
+  nextChapter          Float?         @map("next_chapter")
+  nextChapterUpdatedAt DateTime?      @map("next_chapter_updated_at")
+  isUpserted           Boolean?       @default(false) @map("is_upserted")
+  refreshStatus        RefreshStatus? @map("refresh_status")
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")

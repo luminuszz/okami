@@ -2,7 +2,7 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Notification } from '@domain/notification/enterprise/entities/notification';
 import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, RefreshStatus, Work } from '@domain/work/enterprise/entities/work';
 
 import {
   AccessToken as PrismaAccessToken,
@@ -10,6 +10,7 @@ import {
   Notification as PrismaNotification,
   User as PrismaUser,
   Work as PrismaWork,
+  RefreshStatus as PrismaRefreshStatus,
 } from '@prisma/client';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
@@ -17,6 +18,10 @@ import { map } from 'lodash';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
+};
+
+export const refreshStatusEnumMapper = (refreshStatus?: RefreshStatus): PrismaRefreshStatus => {
+  return refreshStatus ? PrismaRefreshStatus[refreshStatus] : null;
 };
 
 interface PrismaUserWithMeta extends PrismaUser {
@@ -40,6 +45,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   imageId: work.imageId,
   userId: work.userId,
   isUpserted: null,
+  refreshStatus: refreshStatusEnumMapper(work.refreshStatus),
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -58,6 +64,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       nextChapter: new Chapter(prismaWork.nextChapter),
       nextChapterUpdatedAt: prismaWork.nextChapterUpdatedAt,
       userId: prismaWork.userId,
+      refreshStatus: prismaWork.refreshStatus as RefreshStatus,
     },
     new UniqueEntityID(prismaWork.id),
   );
