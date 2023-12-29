@@ -17,7 +17,10 @@ type UploadAvatarUrlOutput = Either<UserNotFound, { user: User }>;
 
 @Injectable()
 export class UploadUserAvatarImage implements UseCaseImplementation<UploadAvatarUrlInput, UploadAvatarUrlOutput> {
-  constructor(private readonly userRepository: UserRepository, private readonly storageProvider: StorageProvider) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly storageProvider: StorageProvider,
+  ) {}
 
   async execute({ user_id, image, imageType }: UploadAvatarUrlInput): Promise<UploadAvatarUrlOutput> {
     const userOrUndefined = await this.userRepository.findById(user_id);

@@ -15,7 +15,10 @@ type AuthenticateUserOutput = Either<UserNotFound, { isAuthenticated: boolean; u
 
 @Injectable()
 export class AuthenticateUserUseCase implements UseCaseImplementation<AuthenticateUserInput, AuthenticateUserOutput> {
-  constructor(private readonly hashProvider: HashProvider, private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly hashProvider: HashProvider,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async execute({ password, email }: AuthenticateUserInput): Promise<AuthenticateUserOutput> {
     const userOrUndefined = await this.userRepository.findByEmail(email);

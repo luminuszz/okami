@@ -17,7 +17,10 @@ type CreateApiAccessTokenOutput = Either<UserNotFound, { accessToken: AccessToke
 export class CreateApiAccessTokenUseCase
   implements UseCaseImplementation<CreateApiAccessTokenInput, CreateApiAccessTokenOutput>
 {
-  constructor(private readonly userRepository: UserRepository, private accessTokenRepository: AccessTokenRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private accessTokenRepository: AccessTokenRepository,
+  ) {}
 
   async execute({ user_id }: CreateApiAccessTokenInput): Promise<CreateApiAccessTokenOutput> {
     const userOrUndefined = await this.userRepository.findById(user_id);

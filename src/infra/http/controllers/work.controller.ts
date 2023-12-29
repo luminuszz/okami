@@ -21,6 +21,9 @@ import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
+import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
+import { RefreshStatus } from '@domain/work/enterprise/entities/work';
+import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -127,5 +130,12 @@ export class WorkController {
   @Get('replace-image-from-notion')
   async setWorkImageFromNotion() {
     await this.batchService.setWorkImageFromNotion();
+  }
+
+  @Post('scrapping-report')
+  async scrappingFallback(@Body() { workId, status }: ScrappingReportDto) {
+    const refreshStatus = status === 'success' ? RefreshStatus.SUCCESS : RefreshStatus.FAILED;
+
+    await this.commandBus.execute(new UpdateWorkRefreshStatusCommand(workId, refreshStatus));
   }
 }

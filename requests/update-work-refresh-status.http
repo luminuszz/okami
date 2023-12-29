@@ -1,0 +1,8 @@
+POST {{baseUrl}}/work/scrapping-report
+content-type: application/json
+Authorization: Bearer {{sessionToken}}
+
+{
+  "workId": "651b0aa5c68658ee975a02ac",
+  "status": "error"
+}

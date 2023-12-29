@@ -17,7 +17,8 @@
     "coverage": "jest --coverage",
     "dev": "docker compose -f ./docker-compose.dev.yml up",
     "test:watch": "jest --watch --coverage",
-    "prestart:dev": "yarn install && yarn prisma generate"
+    "prestart:dev": "yarn install && yarn prisma generate",
+    "studio": "pnpm exec prisma studio"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
