@@ -9,6 +9,7 @@ import { OneSignalNotificationCreatedEventHandler } from '@infra/crqs/notificati
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
 import { DatabaseModule } from '@infra/database/database.module';
 import { HttpModule } from '@nestjs/axios';
+import { WorkRefreshStatusEventHandler } from '@infra/crqs/notification/handlers/work-refresh-status-updated';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
@@ -16,6 +17,7 @@ const EventHandlers = [
   NotificationWorkMarkUnreadEventHandler,
   OneSignalNotificationCreatedEventHandler,
   DatabaseModule,
+  WorkRefreshStatusEventHandler,
 ];
 
 @Module({
