@@ -42,8 +42,6 @@ describe('UploadWorkImageUseCase', () => {
       fileType: 'png',
     });
 
-    console.log(results.value);
-
     expect(fakeStorageProvider.uploadWorkImage).toHaveBeenCalled();
     expect(results.isRight()).toBe(true);
 
