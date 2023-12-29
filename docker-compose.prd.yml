@@ -14,7 +14,7 @@ services:
       - ./prisma/schema.prisma/:/app/prisma/schema.prisma
     networks:
       - base_network
-      -
+
   application:
     hostname: okami
     ports:
