@@ -5,7 +5,7 @@ import { WorkMarkUnreadEvent } from './events/work-marked-unread';
 import { Chapter } from './values-objects/chapter';
 import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { User } from '@domain/auth/enterprise/entities/User';
-import { WorkRefreshStatusMarkedFailedEvent } from '@domain/work/enterprise/entities/events/work-refreshStatus-marked-failed';
+import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
 
 interface WorkProps {
   name: string;
@@ -160,11 +160,7 @@ export class Work extends Entity<WorkProps> {
 
   public set refreshStatus(refreshStatus: RefreshStatus | null) {
     this.props.refreshStatus = refreshStatus;
-
-    if (refreshStatus === RefreshStatus.FAILED) {
-      this.events.push(new WorkRefreshStatusMarkedFailedEvent(this));
-    }
-
+    this.events.push(new WorkRefreshStatusUpdatedEvent(this));
     this.commit();
   }
 

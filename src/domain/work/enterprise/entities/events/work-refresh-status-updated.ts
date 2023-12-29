@@ -1,12 +1,12 @@
 import { DomainEvent } from '@core/entities/entity';
 import { Work } from '@domain/work/enterprise/entities/work';
 
-export class WorkRefreshStatusMarkedFailedEvent implements DomainEvent<Work> {
+export class WorkRefreshStatusUpdatedEvent implements DomainEvent<Work> {
   eventName: string;
   payload: Work;
 
   constructor(payload: Work) {
-    this.eventName = WorkRefreshStatusMarkedFailedEvent.name;
+    this.eventName = WorkRefreshStatusUpdatedEvent.name;
     this.payload = payload;
   }
 }

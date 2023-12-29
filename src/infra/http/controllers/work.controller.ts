@@ -21,6 +21,7 @@ import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
+import { CreateNotificationCommand } from '@infra/crqs/notification/commands/createNotification.command';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -128,4 +129,7 @@ export class WorkController {
   async setWorkImageFromNotion() {
     await this.batchService.setWorkImageFromNotion();
   }
+
+  @Post('scrapping-fallback/:id')
+  async scrappingFallback(@Param('id', ParseObjectIdPipe) id: string) {}
 }

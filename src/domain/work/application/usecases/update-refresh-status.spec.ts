@@ -2,7 +2,7 @@ import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { UpdateRefreshStatusUseCase } from '@domain/work/application/usecases/update-refresh-status';
 import { Category, RefreshStatus } from '@domain/work/enterprise/entities/work';
-import { WorkRefreshStatusMarkedFailedEvent } from '@domain/work/enterprise/entities/events/work-refreshStatus-marked-failed';
+import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
 
 describe('UpdateRefreshStatusUseCase', () => {
   let stu: UpdateRefreshStatusUseCase;
@@ -38,6 +38,7 @@ describe('UpdateRefreshStatusUseCase', () => {
       });
 
       expect(results.value.refreshStatus).toBe(RefreshStatus.SUCCESS);
+      expect(results.value.events.some((event) => event instanceof WorkRefreshStatusUpdatedEvent)).toBeTruthy();
     }
   });
 
@@ -60,7 +61,7 @@ describe('UpdateRefreshStatusUseCase', () => {
 
     if (results.isRight()) {
       expect(results.value.refreshStatus).toBe(RefreshStatus.FAILED);
-      expect(results.value.events.some((event) => event instanceof WorkRefreshStatusMarkedFailedEvent)).toBeTruthy();
+      expect(results.value.events.some((event) => event instanceof WorkRefreshStatusUpdatedEvent)).toBeTruthy();
     }
   });
 });
