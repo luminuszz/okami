@@ -24,6 +24,7 @@ import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
 import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
+import { MarkWorkAsDroppedCommand } from '@app/infra/crqs/work/commands/mark-work-as-dropped.command';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -137,5 +138,10 @@ export class WorkController {
     const refreshStatus = status === 'success' ? RefreshStatus.SUCCESS : RefreshStatus.FAILED;
 
     await this.commandBus.execute(new UpdateWorkRefreshStatusCommand(workId, refreshStatus));
+  }
+
+  @Patch('dropped/:workId')
+  async markWorkAsDropped(@Param('workId', ParseObjectIdPipe) workId: string) {
+    await this.commandBus.execute(new MarkWorkAsDroppedCommand(workId));
   }
 }

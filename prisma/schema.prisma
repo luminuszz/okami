@@ -35,6 +35,7 @@ model Work {
   nextChapterUpdatedAt DateTime?      @map("next_chapter_updated_at")
   isUpserted           Boolean?       @default(false) @map("is_upserted")
   refreshStatus        RefreshStatus? @map("refresh_status")
+  isDropped           Boolean?       @default(false) @map("is_dropped")
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
