@@ -23,6 +23,7 @@ interface WorkProps {
   nextChapterUpdatedAt?: Date;
   userId: string;
   refreshStatus?: RefreshStatus | null;
+  isDropped?: boolean;
 }
 
 export enum Category {
@@ -45,6 +46,7 @@ export class Work extends Entity<WorkProps> {
     this.props.nextChapter = props.nextChapter ?? null;
     this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
     this.props.refreshStatus = props.refreshStatus ?? null;
+    this.props.isDropped = props.isDropped ?? false;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -97,6 +99,10 @@ export class Work extends Entity<WorkProps> {
 
   public get userId() {
     return this.props.userId;
+  }
+
+  public get isDropped() {
+    return this.props.isDropped;
   }
 
   public setRecipientId(recipientId: string) {
@@ -161,6 +167,11 @@ export class Work extends Entity<WorkProps> {
   public set refreshStatus(refreshStatus: RefreshStatus | null) {
     this.props.refreshStatus = refreshStatus;
     this.events.push(new WorkRefreshStatusUpdatedEvent(this));
+    this.commit();
+  }
+
+  public set isDropped(isDropped: boolean) {
+    this.props.isDropped = isDropped;
     this.commit();
   }
 
