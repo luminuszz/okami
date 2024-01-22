@@ -1,8 +1,0 @@
-POST {{baseUrl}}/auth/admin-hash-code
-Content-Type: application/json
-Authorization: Bearer {{sessionToken}}
-
-
-{
-    "hashCodeKey": ""
-}
