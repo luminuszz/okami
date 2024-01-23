@@ -14,20 +14,22 @@ import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
 import { UpdateWorkCommandHandler } from './commands/update-work.command';
 
+import { Queue } from '@domain/work/application/queue/Queue';
+import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
+import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
+import { MarkWorkAsDroppedUseCase } from '@domain/work/application/usecases/mark-work-as-dropped';
+import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
+import { UpdateRefreshStatusUseCase } from '@domain/work/application/usecases/update-refresh-status';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { MarkWorkFinishedCommandHandler } from '@infra/crqs/work/commands/mark-work-finished.command';
+import { UpdateWorkRefreshStatusCommandHandler } from '@infra/crqs/work/commands/update-work-refresh-status.command';
+import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
+import { QueueModule } from '@infra/queue/queue.module';
+import { StorageModule } from '@infra/storage/storage.module';
+import { MarkWorkAsDroppedCommandHandler } from './commands/mark-work-as-dropped.command';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
-import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
-import { MarkWorkFinishedCommandHandler } from '@infra/crqs/work/commands/mark-work-finished.command';
-import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
-import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
-import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
-import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { StorageModule } from '@infra/storage/storage.module';
-import { QueueModule } from '@infra/queue/queue.module';
-import { Queue } from '@domain/work/application/queue/Queue';
-import { UpdateWorkRefreshStatusCommandHandler } from '@infra/crqs/work/commands/update-work-refresh-status.command';
-import { UpdateRefreshStatusUseCase } from '@domain/work/application/usecases/update-refresh-status';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -38,6 +40,7 @@ const CommandHandlers = [
   MarkWorkFinishedCommandHandler,
   UploadWorkImageCommandHandler,
   UpdateWorkRefreshStatusCommandHandler,
+  MarkWorkAsDroppedCommandHandler,
 ];
 
 const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQueryHandler, FindOneWorkQueryHandler];
@@ -62,6 +65,7 @@ const EventHandlers = [];
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
     UpdateRefreshStatusUseCase,
+    MarkWorkAsDroppedUseCase,
     Queue,
   ],
   exports: [

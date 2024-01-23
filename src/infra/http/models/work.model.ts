@@ -18,6 +18,7 @@ const workSchema = z
     category: z.string().optional().nullable(),
     nextChapterUpdatedAt: z.date().optional().nullable(),
     nextChapter: z.preprocess((value: Chapter) => value.getChapter(), z.number().nullable()),
+    isDropped: z.boolean(),
   })
   .transform((data) => {
     return {
@@ -49,6 +50,9 @@ export class WorkHttp implements WorkHttpType {
   updatedAt: Date;
   @ApiProperty()
   category: string;
+
+  @ApiProperty()
+  isDropped: boolean;
 
   @ApiProperty({ nullable: true })
   nextChapterUpdatedAt: Date | null;
