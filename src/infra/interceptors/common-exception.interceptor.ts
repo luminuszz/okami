@@ -4,6 +4,7 @@ import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
 import { InvalidCodeKey } from '@domain/auth/application/errors/InvalidCodeKey';
+import { InvalidWorkOperationError } from '@domain/work/application/usecases/errors/invalid-work-operation';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
@@ -23,6 +24,10 @@ export class CommonExceptionInterceptor implements NestInterceptor {
         }
 
         if (err instanceof InvalidCodeKey) {
+          throw new BadRequestException(err.message);
+        }
+
+        if (err instanceof InvalidWorkOperationError) {
           throw new BadRequestException(err.message);
         }
 

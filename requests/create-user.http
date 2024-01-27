@@ -1,8 +1,0 @@
-POST {{baseUrl}}/auth/register
-Content-Type: application/json
-
-{
-  "name": "",
-  "email": "",
-  "password": ""
-}

@@ -46,6 +46,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   userId: work.userId,
   isUpserted: null,
   refreshStatus: refreshStatusEnumMapper(work.refreshStatus),
+  isDropped: work.isDropped,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -65,6 +66,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       nextChapterUpdatedAt: prismaWork.nextChapterUpdatedAt,
       userId: prismaWork.userId,
       refreshStatus: prismaWork.refreshStatus as RefreshStatus,
+      isDropped: prismaWork.isDropped,
     },
     new UniqueEntityID(prismaWork.id),
   );

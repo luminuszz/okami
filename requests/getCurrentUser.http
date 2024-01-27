@@ -1,2 +1,0 @@
-GET {{baseUrl}}/auth/user/me
-Authorization: Bearer {{sessionToken}}
