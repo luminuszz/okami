@@ -20,6 +20,8 @@ export interface EnvSecrets {
   AWS_SECRET_KEY_ACCESS: string;
   REDIS_HOST: string;
   JWT_SECRET: string;
+  WEB_PUSH_PRIVATE_KEY: string;
+  WEB_PUSH_PUBLIC_KEY: string;
 }
 
 const secret_name = 'okami-server-envs';
