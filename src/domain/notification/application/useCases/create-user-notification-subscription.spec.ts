@@ -15,7 +15,7 @@ describe('CreateUserNotificationSubscriptionUseCase', () => {
   it('should be able to create a new userNotificationSubscriber', async () => {
     const result = await stu.execute({
       userId: faker.string.uuid(),
-      notificationType: NotificationType.PUSH,
+      notificationType: NotificationType.BROWSER,
       subscriptionId: faker.string.uuid(),
     });
 
@@ -32,7 +32,7 @@ describe('CreateUserNotificationSubscriptionUseCase', () => {
   it('should be able to create a new userNotificationSubscriber', async () => {
     const result = await stu.execute({
       userId: faker.string.uuid(),
-      notificationType: NotificationType.PUSH,
+      notificationType: NotificationType.BROWSER,
       subscriptionId: faker.string.uuid(),
     });
 

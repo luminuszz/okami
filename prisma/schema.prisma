@@ -21,6 +21,11 @@ enum RefreshStatus {
   FAILED
 }
 
+enum NotificationType {
+  BROWSER
+  MOBILE
+}
+
 model Work {
   id                   String         @id @map("_id") @db.ObjectId
   name                 String
@@ -35,7 +40,7 @@ model Work {
   nextChapterUpdatedAt DateTime?      @map("next_chapter_updated_at")
   isUpserted           Boolean?       @default(false) @map("is_upserted")
   refreshStatus        RefreshStatus? @map("refresh_status")
-  isDropped           Boolean?       @default(false) @map("is_dropped")
+  isDropped            Boolean?       @default(false) @map("is_dropped")
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
@@ -65,9 +70,10 @@ model User {
   imageUrl         String?   @default("") @map("image_url")
   adminHashCodeKey String?   @map("admin_hash_code_key")
 
-  accessToken AccessToken?
-  worksId     String[]     @map("works_id") @db.ObjectId
-  works       Work[]
+  accessToken                  AccessToken?
+  worksId                      String[]                       @map("works_id") @db.ObjectId
+  works                        Work[]
+  UserNotificationSubscription UserNotificationSubscription[]
 }
 
 model AccessToken {
@@ -80,4 +86,14 @@ model AccessToken {
   userId String @unique @db.ObjectId
 
   user User? @relation(fields: [userId], references: [id])
+}
+
+model UserNotificationSubscription {
+  id         String   @id @map("_id") @db.ObjectId
+  createdAt  DateTime @map("created_at")
+  userId     String   @db.ObjectId
+  credentials Json
+  notificationType NotificationType @map("notification_type")
+
+  user User @relation(fields: [userId], references: [id])
 }

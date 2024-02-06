@@ -15,6 +15,8 @@ import { PrismaModule } from '@infra/database/prisma/prisma.module';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { StorageModule } from '@infra/storage/storage.module';
 import { CqrsModule } from '@nestjs/cqrs';
+import { UserNotificationSubscriptionRepository } from '@domain/notification/application/repositories/user-notification-subscription.repository';
+import { PrismaUserNotificationSubscriptionRepository } from './prisma/ prisma-user-notification-subscription.repository';
 
 @Global()
 @Module({
@@ -27,7 +29,16 @@ import { CqrsModule } from '@nestjs/cqrs';
     { provide: NotificationRepository, useClass: PrismaNotificationRepository },
     { provide: UserRepository, useClass: PrismaUserRepository },
     { provide: AccessTokenRepository, useClass: PrismaAccessTokenRepository },
+    { provide: UserNotificationSubscriptionRepository, useClass: PrismaUserNotificationSubscriptionRepository },
   ],
-  exports: [WorkRepository, NotificationRepository, BatchService, UserRepository, PrismaService, AccessTokenRepository],
+  exports: [
+    WorkRepository,
+    NotificationRepository,
+    BatchService,
+    UserRepository,
+    PrismaService,
+    AccessTokenRepository,
+    UserNotificationSubscriptionRepository,
+  ],
 })
 export class DatabaseModule {}

@@ -4,6 +4,7 @@ import { PrismaWorkRepository } from './prisma-work.repository';
 import { PrismaService } from './prisma.service';
 import { PrismaUserRepository } from '@infra/database/prisma/prisma-user.repository';
 import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-access-token.repository';
+import { PrismaUserNotificationSubscriptionRepository } from './ prisma-user-notification-subscription.repository';
 
 @Module({
   providers: [
@@ -12,6 +13,7 @@ import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-acces
     PrismaNotificationRepository,
     PrismaUserRepository,
     PrismaAccessTokenRepository,
+    PrismaUserNotificationSubscriptionRepository,
   ],
   exports: [
     PrismaService,
@@ -19,6 +21,7 @@ import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-acces
     PrismaNotificationRepository,
     PrismaUserRepository,
     PrismaAccessTokenRepository,
+    PrismaUserNotificationSubscriptionRepository,
   ],
 })
 export class PrismaModule {}

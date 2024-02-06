@@ -11,10 +11,16 @@ import {
   User as PrismaUser,
   Work as PrismaWork,
   RefreshStatus as PrismaRefreshStatus,
+  UserNotificationSubscription as PrismaUserNotificationSubscription,
+  NotificationType as PrismaNotificationType,
 } from '@prisma/client';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
+import {
+  UserNotificationSubscription,
+  NotificationType,
+} from '@domain/notification/enterprise/entities/user-notification-subscription';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -135,4 +141,19 @@ export const parsePrismaAccessTokenToDomainAccessToken = (prismaAccessToken: Pri
     createdAt: prismaAccessToken.createdAt,
     revokedAt: prismaAccessToken.revokedAt,
     userId: prismaAccessToken.userId,
+  });
+
+export const notificationTypeEnumMapper = (notificationType?: NotificationType): PrismaNotificationType => {
+  return notificationType ? PrismaNotificationType[notificationType] : null;
+};
+
+export const parsePrismaUserNotificationSubscriptionToDomain = (
+  data: PrismaUserNotificationSubscription,
+): UserNotificationSubscription =>
+  UserNotificationSubscription.create({
+    notificationType: data.notificationType as any,
+    subscriptionId: data.id,
+    userId: data.userId,
+    createdAt: data.createdAt,
+    credentials: data.credentials as Record<string, any>,
   });

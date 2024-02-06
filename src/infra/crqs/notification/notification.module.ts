@@ -10,14 +10,19 @@ import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-wo
 import { DatabaseModule } from '@infra/database/database.module';
 import { HttpModule } from '@nestjs/axios';
 import { WorkRefreshStatusEventHandler } from '@infra/crqs/notification/handlers/work-refresh-status-updated';
+import { CreateBrowserUserNotificationSubscriptionCommandHandler } from './commands/create-user-notification-subscription.command';
+import { CreateUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/create-user-notification-subscription';
+import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notification-created-handler';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
   TelegramNotificationCreatedEventHandler,
   NotificationWorkMarkUnreadEventHandler,
   OneSignalNotificationCreatedEventHandler,
+  WebPushNotificationCreatedEventHandler,
   DatabaseModule,
   WorkRefreshStatusEventHandler,
+  CreateBrowserUserNotificationSubscriptionCommandHandler,
 ];
 
 @Module({
@@ -28,6 +33,7 @@ const EventHandlers = [
     CreateNotificationUseCase,
     OneSignalApiProvider,
     FindOneWorkUseCase,
+    CreateUserNotificationSubscriptionUseCase,
   ],
 })
 export class NotificationModule {}
