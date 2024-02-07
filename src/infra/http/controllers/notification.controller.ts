@@ -14,7 +14,7 @@ export class NotificationController {
   ) {}
 
   @UseGuards(AuthGuard)
-  @Post('/push/subscribe/browser')
+  @Post('/push/browser/subscribe')
   async registerBrowserSubscriber(
     @Body() { auth, endpoint, p256dh }: SubscribeUserBrowserNotificationDto,
     @Req() { user }: { user: UserTokenDto },

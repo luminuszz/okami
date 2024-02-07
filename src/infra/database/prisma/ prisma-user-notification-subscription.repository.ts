@@ -2,7 +2,7 @@ import { UserNotificationSubscriptionRepository } from '@domain/notification/app
 import { UserNotificationSubscription } from '@domain/notification/enterprise/entities/user-notification-subscription';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { notificationTypeEnumMapper } from './prisma-mapper';
+import { notificationTypeEnumMapper, parsePrismaUserNotificationSubscriptionToDomain } from './prisma-mapper';
 
 @Injectable()
 export class PrismaUserNotificationSubscriptionRepository implements UserNotificationSubscriptionRepository {
@@ -18,5 +18,15 @@ export class PrismaUserNotificationSubscriptionRepository implements UserNotific
         notificationType: notificationTypeEnumMapper(userNotificationSubscription.notificationType),
       },
     });
+  }
+
+  async getAllUserSubscriptions(userId: string): Promise<UserNotificationSubscription[]> {
+    const results = await this.prisma.userNotificationSubscription.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return results.map(parsePrismaUserNotificationSubscriptionToDomain);
   }
 }

@@ -2,4 +2,5 @@ import { UserNotificationSubscription } from '@domain/notification/enterprise/en
 
 export abstract class UserNotificationSubscriptionRepository {
   abstract create(userNotificationSubscription: UserNotificationSubscription): Promise<void>;
+  abstract getAllUserSubscriptions(userId: string): Promise<UserNotificationSubscription[]>;
 }
