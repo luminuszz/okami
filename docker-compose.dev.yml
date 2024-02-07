@@ -16,8 +16,3 @@ services:
     env_file:
       - .env
 
-
-
-networks:
-  services:
-    name: okami_services
