@@ -36,6 +36,7 @@ import { writeFileSync } from 'node:fs';
       'http://localhost:5000',
       'http://69.55.54.168',
       'http://45.79.222.162',
+      'http://localhost:5173',
     ],
     allowedHeaders: '*',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],

@@ -10,7 +10,10 @@ interface NotificationDto {
 
 @Injectable()
 export class OneSignalApiProvider {
-  constructor(private readonly config: ConfigService, private readonly httpService: HttpService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly httpService: HttpService,
+  ) {
     this.httpService.axiosRef.defaults.headers['Authorization'] = `Basic ${this.config.get('ONE_SIGNAL_API_TOKEN')}`;
     this.httpService.axiosRef.defaults.baseURL = this.config.get('ONE_SIGNAL_SERVICE_ENDPOINT');
   }
