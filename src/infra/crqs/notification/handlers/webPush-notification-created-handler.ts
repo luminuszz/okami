@@ -3,7 +3,7 @@ import { NotificationCreatedEvent } from '@domain/notification/enterprise/events
 import { OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import WebPush from 'web-push';
+import * as WebPush from 'web-push';
 
 import { FetchUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/fetch-user-notification-subscription-by-userId';
 
