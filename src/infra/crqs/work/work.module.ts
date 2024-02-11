@@ -31,6 +31,8 @@ import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read'
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
 import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecases/mark-works-on-pending-status';
+import { FetchWorksScrapingPaginatedReportQueryHandler } from './queries/fetch-for-works-scraping-report-paginated';
+import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -44,7 +46,12 @@ const CommandHandlers = [
   MarkWorkAsDroppedCommandHandler,
 ];
 
-const QueryHandlers = [FetchForWorkersReadQueryHandler, FetchForWorkersUnreadQueryHandler, FindOneWorkQueryHandler];
+const QueryHandlers = [
+  FetchForWorkersReadQueryHandler,
+  FetchForWorkersUnreadQueryHandler,
+  FindOneWorkQueryHandler,
+  FetchWorksScrapingPaginatedReportQueryHandler,
+];
 
 const EventHandlers = [];
 
@@ -68,6 +75,7 @@ const EventHandlers = [];
     UpdateRefreshStatusUseCase,
     MarkWorkAsDroppedUseCase,
     MarkWorksOnPendingStatusUseCase,
+    FetchWorksScrapingPaginatedReportUseCase,
     Queue,
   ],
   exports: [

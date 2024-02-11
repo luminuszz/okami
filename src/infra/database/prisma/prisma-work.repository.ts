@@ -124,4 +124,20 @@ export class PrismaWorkRepository implements WorkRepository {
 
     await this.prisma.$transaction(operations);
   }
+
+  async fetchWorksScrapingPaginated(page: number): Promise<{ data: Work[]; totalOfPages: number }> {
+    const totalOfWorks = await this.prisma.work.count();
+
+    const limit = 10;
+
+    const results = await this.prisma.work.findMany({
+      take: limit,
+      skip: page * limit,
+    });
+
+    return {
+      data: results.map(prismaWorkToEntityMapper),
+      totalOfPages: Math.ceil(totalOfWorks / limit),
+    };
+  }
 }

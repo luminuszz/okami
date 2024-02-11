@@ -9,4 +9,5 @@ export abstract class WorkRepository {
   abstract fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]>;
   abstract findOne(id: string): Promise<Work>;
   abstract saveMany(works: Work[]): Promise<void>;
+  abstract fetchWorksScrapingPaginated(page: number): Promise<{ data: Work[]; totalOfPages: number }>;
 }
