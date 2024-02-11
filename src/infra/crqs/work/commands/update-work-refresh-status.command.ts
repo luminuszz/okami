@@ -22,8 +22,6 @@ export class UpdateWorkRefreshStatusCommandHandler implements ICommandHandler<Up
       workId,
     });
 
-    console.log('results', results);
-
     if (results.isRight()) {
       await this.eventBus.publishAll(results.value.events);
     } else {

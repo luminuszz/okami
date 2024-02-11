@@ -11,3 +11,8 @@ export interface CheckWithExistsNewChapterDto {
   cap: number;
   name: string;
 }
+
+export interface RefreshWorkScrappingStatusDto {
+  workId: string;
+  status: 'success' | 'error';
+}
