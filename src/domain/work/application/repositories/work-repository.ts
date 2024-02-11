@@ -8,4 +8,5 @@ export abstract class WorkRepository {
   abstract fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]>;
   abstract fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]>;
   abstract findOne(id: string): Promise<Work>;
+  abstract saveMany(works: Work[]): Promise<void>;
 }

@@ -202,4 +202,13 @@ export class NotionWorkRepository implements WorkRepository {
       },
     });
   }
+
+  async saveMany(works: Work[]): Promise<void> {
+    for (const work of works) {
+      await this.notion.pages.update({
+        page_id: work.recipientId,
+        properties: NotionMapper.toNotion(work),
+      });
+    }
+  }
 }

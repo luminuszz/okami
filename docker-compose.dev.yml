@@ -2,8 +2,6 @@ version: '3.7'
 
 services:
   api:
-    networks:
-      - services
     volumes:
       - ./src/:/app/src
       - ./prisma/schema.prisma/:/app/prisma/schema.prisma

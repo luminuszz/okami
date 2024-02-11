@@ -107,4 +107,21 @@ export class PrismaWorkRepository implements WorkRepository {
 
     return results.map(prismaWorkToEntityMapper);
   }
+
+  async saveMany(works: Work[]): Promise<void> {
+    const operations = works.map((work) => {
+      const data = workEntityToPrismaMapper(work);
+
+      delete data.id;
+
+      return this.prisma.work.update({
+        where: {
+          id: work.id.toString(),
+        },
+        data,
+      });
+    });
+
+    await this.prisma.$transaction(operations);
+  }
 }
