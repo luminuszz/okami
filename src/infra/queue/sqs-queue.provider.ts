@@ -50,7 +50,9 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         consumer.start();
         consumer.on('error', (err) => this.logger.error(err));
         consumer.on('processing_error', (err) => this.logger.error(err));
-        consumer.on('message_received', (message) => this.logger.log(`Message received: ${JSON.parse(message.Body)}`));
+        consumer.on('message_received', (message) =>
+          this.logger.log(`Message received: ${JSON.stringify(message.Body)}`),
+        );
       }
     } catch (e) {
       this.logger.error(e);

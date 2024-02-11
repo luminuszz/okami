@@ -34,6 +34,7 @@ export enum Category {
 export enum RefreshStatus {
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
+  PENDING = 'PENDING',
 }
 
 export class Work extends Entity<WorkProps> {

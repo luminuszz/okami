@@ -30,6 +30,7 @@ import { MarkWorkAsDroppedCommandHandler } from './commands/mark-work-as-dropped
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
+import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecases/mark-works-on-pending-status';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -66,6 +67,7 @@ const EventHandlers = [];
     UploadWorkImageUseCase,
     UpdateRefreshStatusUseCase,
     MarkWorkAsDroppedUseCase,
+    MarkWorksOnPendingStatusUseCase,
     Queue,
   ],
   exports: [
@@ -80,6 +82,7 @@ const EventHandlers = [];
     FetchWorksForScrappingUseCase,
     UploadWorkImageUseCase,
     Queue,
+    MarkWorksOnPendingStatusUseCase,
   ],
 })
 export class WorkModule {}
