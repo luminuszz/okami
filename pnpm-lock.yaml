@@ -92,6 +92,9 @@ dependencies:
   jest:
     specifier: ^29.6.4
     version: 29.6.4(@types/node@20.5.7)(ts-node@10.9.1)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   newrelic:
     specifier: ^11.0.0
     version: 11.0.0
@@ -160,6 +163,9 @@ devDependencies:
   '@types/jest':
     specifier: 29.5.4
     version: 29.5.4
+  '@types/lodash':
+    specifier: ^4.14.202
+    version: 4.14.202
   '@types/multer':
     specifier: ^1.4.7
     version: 1.4.7
@@ -3789,6 +3795,10 @@ packages:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
       '@types/node': 20.5.7
+    dev: true
+
+  /@types/lodash@4.14.202:
+    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
     dev: true
 
   /@types/luxon@3.3.2:
