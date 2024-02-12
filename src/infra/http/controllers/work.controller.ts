@@ -95,14 +95,14 @@ export class WorkController {
     return WorkModel.toHttpList(works);
   }
 
-  @Get('sync-database')
+  @Post('sync-database')
   async syncDatabase() {
-    await this.batchService.importNotionDatabaseToMongoDB();
+    this.batchService.importNotionDatabaseToMongoDB();
   }
 
-  @Get('refresh-chapters')
+  @Post('refresh-chapters')
   async refreshChapters() {
-    await this.queue.refreshWorkStatus();
+    this.queue.refreshWorkStatus();
   }
 
   @Put('update-work/:id')
@@ -148,6 +148,7 @@ export class WorkController {
   }
 
   @Get('fetch-for-works-scraping-report')
+  @ApiOkResponse({ type: WorkHttp, isArray: true })
   async fetchForWorksScrapingReportPaginated(@Query('page', ParseIntPipe) page: number) {
     const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(page));
 
@@ -167,5 +168,10 @@ export class WorkController {
   @Patch('dropped/:workId')
   async markWorkAsDropped(@Param('workId', ParseObjectIdPipe) workId: string) {
     await this.commandBus.execute(new MarkWorkAsDroppedCommand(workId));
+  }
+
+  @Post('sync-work')
+  async syncWork(@Body('workId', ParseObjectIdPipe) workId: string) {
+    await this.queue.refreshWorkStatusOfOneWork(workId);
   }
 }
