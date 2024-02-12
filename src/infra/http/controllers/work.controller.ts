@@ -6,7 +6,20 @@ import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unrea
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
@@ -25,6 +38,7 @@ import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto'
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
 import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
 import { MarkWorkAsDroppedCommand } from '@app/infra/crqs/work/commands/mark-work-as-dropped.command';
+import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -131,6 +145,16 @@ export class WorkController {
   @Get('replace-image-from-notion')
   async setWorkImageFromNotion() {
     await this.batchService.setWorkImageFromNotion();
+  }
+
+  @Get('fetch-for-works-scraping-report')
+  async fetchForWorksScrapingReportPaginated(@Query('page', ParseIntPipe) page: number) {
+    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(page));
+
+    return {
+      data: WorkModel.toHttpList(result.data),
+      totalOfPages: result.totalOfPages,
+    };
   }
 
   @Post('scrapping-report')

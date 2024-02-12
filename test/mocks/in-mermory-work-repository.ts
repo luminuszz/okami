@@ -44,4 +44,15 @@ export class InMemoryWorkRepository implements WorkRepository {
       }
     });
   }
+
+  async fetchWorksScrapingPaginated(page: number): Promise<{ data: Work[]; totalOfPages: number }> {
+    const limit = 10;
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return {
+      data: this.works.slice(start, end),
+      totalOfPages: Math.ceil(this.works.length / limit),
+    };
+  }
 }

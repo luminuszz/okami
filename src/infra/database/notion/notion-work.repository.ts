@@ -1,4 +1,3 @@
-import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { NotionPage } from './dto/notion-page.dto';
@@ -6,7 +5,7 @@ import { NotionApiAdapter } from './notion-api-adapter.provider';
 import { NotionMapper } from './notion.mappter';
 
 @Injectable()
-export class NotionWorkRepository implements WorkRepository {
+export class NotionWorkRepository {
   constructor(private readonly notion: NotionApiAdapter) {}
 
   private getUpdateMessage = () => ({
