@@ -42,11 +42,6 @@ export class PrometheusService {
     return this.register;
   }
   public getMetric(name: string) {
-    console.log(
-      'this.metrics',
-      this.metrics.get(`${this.service_prefix}${name}`),
-    );
-
     return this.metrics.get(name);
   }
 }

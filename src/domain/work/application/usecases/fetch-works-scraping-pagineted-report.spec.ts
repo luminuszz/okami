@@ -30,7 +30,6 @@ describe('FetchWorksScrapingPaginatedReportUseCase', () => {
     expect(result.isRight()).toBeTruthy();
 
     if (result.isRight()) {
-      console.log(result.value.totalOfPages);
       expect(result.value.data.length).toBe(10);
       expect(result.value.totalOfPages).toBe(5);
 

@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
 import {
   CheckWithExistsNewChapterDto,
@@ -6,7 +5,9 @@ import {
   RefreshWorkScrappingStatusDto,
 } from '@domain/work/application/queue/dto';
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
-import { Category, RefreshStatus } from '@domain/work/enterprise/entities/work';
+import { Category, RefreshStatus, Work } from '@domain/work/enterprise/entities/work';
+import { Injectable } from '@nestjs/common';
+import { FindOneWorkUseCase } from '../usecases/fnd-one-work';
 import { MarkWorksOnPendingStatusUseCase } from '../usecases/mark-works-on-pending-status';
 import { UpdateRefreshStatusUseCase } from '../usecases/update-refresh-status';
 
@@ -25,6 +26,7 @@ export class Queue {
     private readonly fetchForWorkScraping: FetchWorksForScrappingUseCase,
     private readonly markWorksOnPendingStatus: MarkWorksOnPendingStatusUseCase,
     private readonly updateRefreshStatus: UpdateRefreshStatusUseCase,
+    private readonly findOneWork: FindOneWorkUseCase,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
@@ -44,32 +46,55 @@ export class Queue {
     await this.markWorksOnPendingStatus.execute({ works });
 
     for (const work of works) {
-      if (work.category === Category.ANIME) {
-        await this.sendToRefreshWorkAnimeChapter({
-          id: work.id,
-          url: work.url,
-          name: work.name,
-          episode: work.chapter.getChapter(),
-        });
-      }
-
-      if (work.category === Category.MANGA) {
-        await this.sendToRefreshWorkMangaChapter({
-          id: work.id,
-          url: work.url,
-          name: work.name,
-          cap: work.chapter.getChapter(),
-        });
-      }
+      await this.sendWorkToSyncWorkQueue(work);
     }
   }
 
-  async sendToRefreshWorkAnimeChapter(payload: FindSerieEpisodeDTO) {
-    await this.queueProvider.publish(QueueMessage.FIND_SERIE_EPISODE, payload);
+  async refreshWorkStatusOfOneWork(workId: string) {
+    const workOrNullResults = await this.findOneWork.execute({ id: workId });
+
+    if (workOrNullResults.isLeft()) {
+      return;
+    }
+
+    const { work } = workOrNullResults.value;
+
+    const response = await this.updateRefreshStatus.execute({
+      workId: work.id,
+      refreshStatus: RefreshStatus.PENDING,
+    });
+
+    if (response.isLeft()) {
+      throw response.value;
+    }
+
+    await this.sendWorkToSyncWorkQueue(response.value);
   }
 
-  async sendToRefreshWorkMangaChapter(payload: CheckWithExistsNewChapterDto) {
-    await this.queueProvider.publish(QueueMessage.FIND_COMIC_CAP_BY_URL, payload);
+  async sendWorkToSyncWorkQueue(work: Work) {
+    let payload: CheckWithExistsNewChapterDto | FindSerieEpisodeDTO;
+
+    if (work.category === Category.ANIME) {
+      payload = {
+        episode: work.chapter.getChapter(),
+        id: work.id,
+        name: work.name,
+        url: work.url,
+      } satisfies FindSerieEpisodeDTO;
+
+      await this.queueProvider.publish(QueueMessage.FIND_SERIE_EPISODE, payload);
+    }
+
+    if (work.category === Category.MANGA) {
+      payload = {
+        cap: work.chapter.getChapter(),
+        id: work.id,
+        name: work.name,
+        url: work.url,
+      } satisfies CheckWithExistsNewChapterDto;
+
+      await this.queueProvider.publish(QueueMessage.FIND_COMIC_CAP_BY_URL, payload);
+    }
   }
 
   async refreshScrappingChapterStatus(payload: RefreshWorkScrappingStatusDto) {
