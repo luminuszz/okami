@@ -133,6 +133,9 @@ export class PrismaWorkRepository implements WorkRepository {
     const results = await this.prisma.work.findMany({
       take: limit,
       skip: page * limit,
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
 
     return {
