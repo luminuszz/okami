@@ -80,10 +80,6 @@ export class AuthController {
   async getMe(@Req() { user }: { user: UserTokenDto }) {
     const results = await this.queryBus.execute(new FindUserByIdQuery(user.id));
 
-    console.log({
-      results,
-    });
-
     return UserModel.toHttp(results);
   }
 

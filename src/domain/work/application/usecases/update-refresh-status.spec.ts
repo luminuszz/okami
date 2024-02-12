@@ -33,10 +33,6 @@ describe('UpdateRefreshStatusUseCase', () => {
     expect(results.isRight()).toBe(true);
 
     if (results.isRight()) {
-      console.log({
-        results: results.value.refreshStatus,
-      });
-
       expect(results.value.refreshStatus).toBe(RefreshStatus.SUCCESS);
       expect(results.value.events.some((event) => event instanceof WorkRefreshStatusUpdatedEvent)).toBeTruthy();
     }
