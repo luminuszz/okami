@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
@@ -17,6 +17,7 @@ import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash
 import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
 import { ResetPasswordCommand } from '@infra/crqs/auth/commands/reset-password.command';
+import { FastifyReply } from 'fastify';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,14 +29,19 @@ export class AuthController {
 
   @Post('login')
   @ApiCreatedResponse({ type: TokenModel })
-  async makeSession(@Body() data: MakeSessionDto) {
+  async makeSession(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
     const { email, password } = data;
 
     const { token } = await this.commandBus.execute<unknown, { token: string }>(new LoginCommand(email, password));
 
-    return {
-      token,
-    };
+    return res
+      .setCookie('@okami-web:token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        path: '/',
+      })
+      .send()
+      .status(201);
   }
 
   @UseGuards(AuthGuard)
@@ -114,5 +120,10 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() data: ResetPasswordDto) {
     await this.commandBus.execute(new ResetPasswordCommand(data.email, data.newPassword, data.adminHashCode));
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: FastifyReply) {
+    return res.clearCookie('@okami-web:token').status(201).send();
   }
 }

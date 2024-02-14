@@ -44,8 +44,9 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: FastifyRequest): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const token = request.cookies['@okami-web:token'];
+
+    return token;
   }
 
   private extractAccessTokenFromHeader(request: FastifyRequest): string | undefined {
