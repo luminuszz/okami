@@ -6,7 +6,10 @@ import { ConfigService } from '@nestjs/config';
 import { EnvSecrets } from '@infra/utils/getSecretsEnv';
 
 export class LoginCommand {
-  constructor(public readonly email: string, public readonly password: string) {}
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+  ) {}
 }
 
 @CommandHandler(LoginCommand)
