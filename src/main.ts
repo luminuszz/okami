@@ -11,15 +11,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
 import type { FastifyCookieOptions } from '@fastify/cookie';
-import fasitfyCors, { FastifyCorsOptions } from '@fastify/cors';
 
 (async () => {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
-
-  app.useGlobalPipes(new ValidationPipe());
+  const adapter = new FastifyAdapter();
 
   await Promise.all([
-    app.register(helmet as any, {
+    adapter.register(helmet as any, {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: [`'self'`],
@@ -29,8 +26,8 @@ import fasitfyCors, { FastifyCorsOptions } from '@fastify/cors';
         },
       },
     }),
-    app.register(fmp as any),
-    app.register(
+    adapter.register(fmp as any),
+    adapter.register(
       fastifyCookie as any,
       {
         parseOptions: {
@@ -38,23 +35,23 @@ import fasitfyCors, { FastifyCorsOptions } from '@fastify/cors';
         },
       } as FastifyCookieOptions,
     ),
-    app.register(
-      fasitfyCors as any,
-      {
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type'],
-        methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE'],
-        credentials: true,
-        origin: [
-          'https://okami.daviribeiro.com',
-          'http://localhost:3008',
-          'http://localhost:5000',
-          'http://69.55.54.168',
-          'http://45.79.222.162',
-          'http://localhost:5173',
-        ],
-      } as FastifyCorsOptions,
-    ),
   ]);
+  adapter.enableCors({
+    allowedHeaders: [
+      'Access-Control-Allow-Origin',
+      'Origin',
+      'X-Requested-With',
+      'Accept',
+      'Content-Type',
+      'Authorization',
+    ],
+    credentials: true,
+    methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE', 'PATCH'],
+  });
+
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Okami API')
