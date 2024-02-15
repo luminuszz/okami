@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const jwtToken = this.extractTokenFromHeader(request);
+    const jwtToken = this.extractTokenFormRequest(request);
 
     try {
       if (!jwtToken) {
@@ -43,8 +43,18 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromHeader(request: FastifyRequest): string | undefined {
-    const token = request.cookies['@okami-web:token'];
+  private extractTokenFormRequest(request: FastifyRequest): string | undefined {
+    let token: string;
+
+    if (request.cookies['@okami-web:token']) {
+      token = request.cookies['@okami-web:token'];
+    }
+
+    if (request.headers['authorization']) {
+      const bearerToken = request.headers.authorization.split(' ')[1];
+
+      token = bearerToken;
+    }
 
     return token;
   }

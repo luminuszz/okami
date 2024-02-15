@@ -126,4 +126,15 @@ export class AuthController {
   async logout(@Res({ passthrough: true }) res: FastifyReply) {
     return res.clearCookie('@okami-web:token').status(201).send();
   }
+
+  @Post('login-mobile')
+  async createMobileSession(@Body() data: MakeSessionDto) {
+    const { token } = await this.commandBus.execute<unknown, { token: string }>(
+      new LoginCommand(data.email, data.password),
+    );
+
+    return {
+      token,
+    };
+  }
 }
