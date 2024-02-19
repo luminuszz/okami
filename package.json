@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
+    "@flydotio/dockerfile": "^0.5.2",
     "@jest/types": "^29.6.3",
     "@nestjs/cli": "^10.1.16",
     "@nestjs/schematics": "^10.0.2",
