@@ -3,6 +3,7 @@ import { User } from '@app/infra/crqs/user-auth.decorator';
 import { Body, Controller, Get, Inject, OnModuleInit, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
+import { lastValueFrom } from 'rxjs';
 
 @Controller('notification')
 export class NotificationController implements OnModuleInit {
@@ -21,12 +22,15 @@ export class NotificationController implements OnModuleInit {
     @Body() { auth, endpoint, p256dh }: SubscribeUserBrowserNotificationDto,
     @User('id') user_id: string,
   ) {
-    return this.notificationServiceEmitter.send('create-web-push-subscription', {
-      webPushSubscriptionAuth: auth,
-      webPushSubscriptionP256dh: p256dh,
-      endpoint: endpoint,
-      subscriberId: user_id,
-    });
+    return lastValueFrom(
+      this.notificationServiceEmitter.send('create-web-push-subscription', {
+        webPushSubscriptionAuth: auth,
+        webPushSubscriptionP256dh: p256dh,
+        endpoint: endpoint,
+        subscriberId: user_id,
+      }),
+      { defaultValue: '' },
+    );
   }
 
   @UseGuards(AuthGuard)
@@ -38,18 +42,24 @@ export class NotificationController implements OnModuleInit {
   @UseGuards(AuthGuard)
   @Post('/push/telegram/subscribe')
   async subscribeInTelegram(@Body() { telegramChatId }: { telegramChatId: string }, @User('id') userId: string) {
-    return this.notificationServiceEmitter.send('register-telegram-chat', {
-      telegramChatId,
-      subscriberId: userId,
-    });
+    return lastValueFrom(
+      this.notificationServiceEmitter.send('register-telegram-chat', {
+        telegramChatId,
+        subscriberId: userId,
+      }),
+      { defaultValue: '' },
+    );
   }
 
   @UseGuards(AuthGuard)
   @Post('/push/mobile/subscribe')
   async subscribeInMobile(@Body() { token }: { token: string }, @User('id') userId: string) {
-    return this.notificationServiceEmitter.send('create-mobile-push-subscription', {
-      subscriberId: userId,
-      subscriptionToken: token,
-    });
+    return lastValueFrom(
+      this.notificationServiceEmitter.send('create-mobile-push-subscription', {
+        subscriberId: userId,
+        subscriptionToken: token,
+      }),
+      { defaultValue: '' },
+    );
   }
 }
