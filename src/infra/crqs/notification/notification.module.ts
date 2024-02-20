@@ -15,6 +15,7 @@ import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-not
 import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notification-created-handler';
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 import { FetchUserNotificationSubscriberByIdQueryHandler } from './queries/fetch-user-notification-subscriber-by-id.query';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
@@ -29,7 +30,21 @@ const EventHandlers = [
 ];
 
 @Module({
-  imports: [CqrsModule, HttpModule],
+  imports: [
+    CqrsModule,
+    HttpModule,
+
+    ClientsModule.register([
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.AMQP_URL],
+          queue: 'notification_service_queue',
+        },
+      },
+    ]),
+  ],
   providers: [
     ...EventHandlers,
     ...CommandHandlers,
