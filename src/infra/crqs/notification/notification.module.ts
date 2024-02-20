@@ -39,7 +39,7 @@ const EventHandlers = [
         transport: Transport.RMQ,
         options: {
           urls: [process.env.AMQP_URL],
-          queue: 'notification_service_queue',
+          queue: 'notification-service-queue',
         },
       },
     ]),
