@@ -1,5 +1,6 @@
 import { CreateNotificationUseCase } from '@domain/notification/application/useCases/create-notification';
 import { CreateUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/create-user-notification-subscription';
+import { FetchUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/fetch-user-notification-subscription-by-userId';
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
 import { OneSignalNotificationCreatedEventHandler } from '@infra/crqs/notification/handlers/oneSignal-notification-created-event-handler';
 import { WorkRefreshStatusEventHandler } from '@infra/crqs/notification/handlers/work-refresh-status-updated';
@@ -14,7 +15,6 @@ import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-not
 import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notification-created-handler';
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 import { FetchUserNotificationSubscriberByIdQueryHandler } from './queries/fetch-user-notification-subscriber-by-id.query';
-import { FetchUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/fetch-user-notification-subscription-by-userId';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [

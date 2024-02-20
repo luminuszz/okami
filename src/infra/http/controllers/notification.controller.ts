@@ -1,44 +1,54 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
-import { CreateBrowserUserNotificationSubscriptionCommand } from '@app/infra/crqs/notification/commands/create-user-notification-subscription.command';
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
-import { CommandBus } from '@nestjs/cqrs';
-import { ConfigService } from '@nestjs/config';
+import { User } from '@app/infra/crqs/user-auth.decorator';
+import { Body, Controller, Get, Inject, OnModuleInit, Post, UseGuards } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
 
 @Controller('notification')
-export class NotificationController {
+export class NotificationController implements OnModuleInit {
   constructor(
-    private readonly commandBus: CommandBus,
-    private configService: ConfigService,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationServiceEmitter: ClientProxy,
   ) {}
+  async onModuleInit() {
+    await this.notificationServiceEmitter.connect();
+  }
 
   @UseGuards(AuthGuard)
   @Post('/push/browser/subscribe')
   async registerBrowserSubscriber(
     @Body() { auth, endpoint, p256dh }: SubscribeUserBrowserNotificationDto,
-    @Req() { user }: { user: UserTokenDto },
+    @User('id') user_id: string,
   ) {
-    await this.commandBus.execute(
-      new CreateBrowserUserNotificationSubscriptionCommand({
-        credentials: {
-          endpoint,
-          keys: {
-            auth,
-            p256dh,
-          },
-        },
-        subscriptionId: user.id,
-        userId: user.id,
-      }),
-    );
+    return this.notificationServiceEmitter.send('', {
+      webPushSubscriptionAuth: auth,
+      webPushSubscriptionP256dh: p256dh,
+      endpoint: endpoint,
+      subscriberId: user_id,
+    });
   }
 
   @UseGuards(AuthGuard)
   @Get('/push/browser/public-key')
   async getPublicKey() {
-    return {
-      publicKey: this.configService.get('WEB_PUSH_PUBLIC_KEY'),
-    };
+    return this.notificationServiceEmitter.send('send-web-push-public-key', {});
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/push/telegram/subscribe')
+  async subscribeInTelegram(@Body() { telegramChatId }: { telegramChatId: string }, @User('id') userId: string) {
+    return this.notificationServiceEmitter.send('register-telegram-chat', {
+      telegramChatId,
+      subscriberId: userId,
+    });
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/push/mobile/subscribe')
+  async subscribeInMobile(@Body() { token }: { token: string }, @User('id') userId: string) {
+    return this.notificationServiceEmitter.send('create-mobile-push-subscription', {
+      subscriberId: userId,
+      subscriptionToken: token,
+    });
   }
 }

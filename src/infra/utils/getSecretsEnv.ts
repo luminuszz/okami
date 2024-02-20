@@ -23,6 +23,7 @@ export interface EnvSecrets {
   WEB_PUSH_PRIVATE_KEY: string;
   WEB_PUSH_PUBLIC_KEY: string;
   CURRENT_USER_ID: string;
+  AMQP_URL: string;
 }
 
 const secret_name = 'okami-server-envs';
