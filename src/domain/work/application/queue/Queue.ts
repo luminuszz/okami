@@ -3,6 +3,7 @@ import {
   CheckWithExistsNewChapterDto,
   FindSerieEpisodeDTO,
   RefreshWorkScrappingStatusDto,
+  WorkNewChapterDto,
 } from '@domain/work/application/queue/dto';
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 import { Category, RefreshStatus, Work } from '@domain/work/enterprise/entities/work';
@@ -10,6 +11,7 @@ import { Injectable } from '@nestjs/common';
 import { FindOneWorkUseCase } from '../usecases/fnd-one-work';
 import { MarkWorksOnPendingStatusUseCase } from '../usecases/mark-works-on-pending-status';
 import { UpdateRefreshStatusUseCase } from '../usecases/update-refresh-status';
+import { MarkWorkUnreadUseCase } from '../usecases/mark-work-unread';
 
 export enum QueueMessage {
   FIND_SERIE_EPISODE = 'find-serie-episode',
@@ -17,6 +19,7 @@ export enum QueueMessage {
   SYNC_WITH_OTHER_DATABASES = 'sync-with-other-databases',
   REFRESH_WORKS_STATUS = 'refresh-works-status',
   REFRESH_WORK_SCRAPPING_STATUS = 'refresh-work-scrapping-status',
+  WORK_NEW_CHAPTER = 'work-new-chapter',
 }
 
 @Injectable()
@@ -27,10 +30,14 @@ export class Queue {
     private readonly markWorksOnPendingStatus: MarkWorksOnPendingStatusUseCase,
     private readonly updateRefreshStatus: UpdateRefreshStatusUseCase,
     private readonly findOneWork: FindOneWorkUseCase,
+    private readonly markWorkUnread: MarkWorkUnreadUseCase,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
       this.refreshScrappingChapterStatus(payload),
+    );
+    this.queueProvider.subscribe(QueueMessage.WORK_NEW_CHAPTER, (payload: WorkNewChapterDto) =>
+      this.workNewChapter(payload),
     );
   }
 
@@ -101,6 +108,13 @@ export class Queue {
     await this.updateRefreshStatus.execute({
       refreshStatus: payload.status === 'success' ? RefreshStatus.SUCCESS : RefreshStatus.FAILED,
       workId: payload.workId,
+    });
+  }
+
+  async workNewChapter({ nextChapter, workId }: WorkNewChapterDto) {
+    await this.markWorkUnread.execute({
+      id: workId,
+      nextChapter: nextChapter,
     });
   }
 }

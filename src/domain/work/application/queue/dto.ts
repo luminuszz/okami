@@ -16,3 +16,8 @@ export interface RefreshWorkScrappingStatusDto {
   workId: string;
   status: 'success' | 'error';
 }
+
+export interface WorkNewChapterDto {
+  nextChapter: number;
+  workId: string;
+}
