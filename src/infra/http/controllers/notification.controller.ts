@@ -21,7 +21,7 @@ export class NotificationController implements OnModuleInit {
     @Body() { auth, endpoint, p256dh }: SubscribeUserBrowserNotificationDto,
     @User('id') user_id: string,
   ) {
-    return this.notificationServiceEmitter.send('', {
+    return this.notificationServiceEmitter.send('create-web-push-subscription', {
       webPushSubscriptionAuth: auth,
       webPushSubscriptionP256dh: p256dh,
       endpoint: endpoint,
