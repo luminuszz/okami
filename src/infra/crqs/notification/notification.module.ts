@@ -33,7 +33,6 @@ const EventHandlers = [
   imports: [
     CqrsModule,
     HttpModule,
-
     ClientsModule.register([
       {
         name: 'NOTIFICATION_SERVICE',

@@ -1,7 +1,7 @@
 import { S3FileStorageAdapter } from '@app/infra/storage/s3FileStorage.adapter';
 import { WorkMarkUnreadEvent } from '@domain/work/enterprise/entities/events/work-marked-unread';
 import { Category } from '@domain/work/enterprise/entities/work';
-import { Inject } from '@nestjs/common';
+import { Inject, OnModuleInit } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -13,11 +13,15 @@ interface ContentObject {
 }
 
 @EventsHandler(WorkMarkUnreadEvent)
-export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<WorkMarkUnreadEvent> {
+export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<WorkMarkUnreadEvent>, OnModuleInit {
   constructor(
     @Inject('NOTIFICATION_SERVICE')
     private clientEmitter: ClientProxy,
   ) {}
+
+  async onModuleInit() {
+    await this.clientEmitter.connect();
+  }
 
   async handle({ payload }: WorkMarkUnreadEvent) {
     const message =

@@ -10,6 +10,7 @@ export class NotificationController implements OnModuleInit {
     @Inject('NOTIFICATION_SERVICE')
     private readonly notificationServiceEmitter: ClientProxy,
   ) {}
+
   async onModuleInit() {
     await this.notificationServiceEmitter.connect();
   }
