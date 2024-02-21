@@ -37,11 +37,12 @@ import type { FastifyCookieOptions } from '@fastify/cookie';
     ),
   ]);
   adapter.enableCors({
-    origin: ['localhost', 'https://okami.daviribeiro.com'],
+    origin: ['http://localhost:5173', 'https://okami.daviribeiro.com'],
     allowedHeaders: [
       'Access-Control-Allow-Origin',
       'Origin',
       'X-Requested-With',
+
       'Accept',
       'Content-Type',
       'Authorization',

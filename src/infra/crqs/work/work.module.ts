@@ -33,6 +33,7 @@ import { FindOneWorkQueryHandler } from './queries/find-one-work';
 import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecases/mark-works-on-pending-status';
 import { FetchWorksScrapingPaginatedReportQueryHandler } from './queries/fetch-for-works-scraping-report-paginated';
 import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -56,7 +57,21 @@ const QueryHandlers = [
 const EventHandlers = [];
 
 @Module({
-  imports: [CqrsModule, StorageModule, QueueModule],
+  imports: [
+    CqrsModule,
+    StorageModule,
+    QueueModule,
+    ClientsModule.register([
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.AMQP_URL],
+          queue: 'notification-service-queue',
+        },
+      },
+    ]),
+  ],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,

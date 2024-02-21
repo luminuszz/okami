@@ -8,10 +8,11 @@ import {
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 import { Category, RefreshStatus, Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { FindOneWorkUseCase } from '../usecases/fnd-one-work';
+import { MarkWorkUnreadUseCase } from '../usecases/mark-work-unread';
 import { MarkWorksOnPendingStatusUseCase } from '../usecases/mark-works-on-pending-status';
 import { UpdateRefreshStatusUseCase } from '../usecases/update-refresh-status';
-import { MarkWorkUnreadUseCase } from '../usecases/mark-work-unread';
 
 export enum QueueMessage {
   FIND_SERIE_EPISODE = 'find-serie-episode',
@@ -31,6 +32,7 @@ export class Queue {
     private readonly updateRefreshStatus: UpdateRefreshStatusUseCase,
     private readonly findOneWork: FindOneWorkUseCase,
     private readonly markWorkUnread: MarkWorkUnreadUseCase,
+    private readonly eventbus: EventBus,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
@@ -112,9 +114,13 @@ export class Queue {
   }
 
   async workNewChapter({ nextChapter, workId }: WorkNewChapterDto) {
-    await this.markWorkUnread.execute({
+    const results = await this.markWorkUnread.execute({
       id: workId,
       nextChapter: nextChapter,
     });
+
+    if (results.isLeft()) return;
+
+    await this.eventbus.publishAll(results.value.events);
   }
 }

@@ -10,6 +10,7 @@ interface ContentObject {
   imageUrl: string;
   chapter: number;
   message: string;
+  url: string;
 }
 
 @EventsHandler(WorkMarkUnreadEvent)
@@ -36,6 +37,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       imageUrl: imageUrl,
       message,
       name: payload.name,
+      url: payload.url,
     } satisfies ContentObject;
 
     this.clientEmitter.emit('create-notification', {
