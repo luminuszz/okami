@@ -4,7 +4,11 @@ import { Body, Controller, Get, Inject, OnModuleInit, Post, UseGuards } from '@n
 import { ClientProxy } from '@nestjs/microservices';
 import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
 import { lastValueFrom } from 'rxjs';
+import { RegisterTelegramChatIdDto } from '../validators/register-telegram-chat-id.dto';
+import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('notification')
 @Controller('notification')
 export class NotificationController implements OnModuleInit {
   constructor(
@@ -41,7 +45,7 @@ export class NotificationController implements OnModuleInit {
 
   @UseGuards(AuthGuard)
   @Post('/push/telegram/subscribe')
-  async subscribeInTelegram(@Body() { telegramChatId }: { telegramChatId: string }, @User('id') userId: string) {
+  async subscribeInTelegram(@Body() { telegramChatId }: RegisterTelegramChatIdDto, @User('id') userId: string) {
     return lastValueFrom(
       this.notificationServiceEmitter.send('register-telegram-chat', {
         telegramChatId,
@@ -53,7 +57,7 @@ export class NotificationController implements OnModuleInit {
 
   @UseGuards(AuthGuard)
   @Post('/push/mobile/subscribe')
-  async subscribeInMobile(@Body() { token }: { token: string }, @User('id') userId: string) {
+  async subscribeInMobile(@Body() { token }: RegisterMobilePushSubscriberDto, @User('id') userId: string) {
     return lastValueFrom(
       this.notificationServiceEmitter.send('create-mobile-push-subscription', {
         subscriberId: userId,
