@@ -27,6 +27,8 @@ export const enumMapper = (category: Category): PrismaCategory => {
 };
 
 export const refreshStatusEnumMapper = (refreshStatus?: RefreshStatus): PrismaRefreshStatus => {
+  console.log('refreshStatus', refreshStatus);
+
   return refreshStatus ? PrismaRefreshStatus[refreshStatus] : null;
 };
 
@@ -56,6 +58,8 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
+  console.log(prismaWork.refreshStatus);
+
   return Work.create(
     {
       category: prismaWork.category as Category,

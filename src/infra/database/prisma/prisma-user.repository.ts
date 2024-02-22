@@ -62,7 +62,7 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async findUserWorkMetaData(id: string): Promise<{ readingWorksCount: number; finishedWorksCount: number }> {
-    const [totalOfWorksReading, totalOfWorksRead] = await Promise.all([
+    const [totalOfWorksReading, totalOfWorksRead] = await this.prisma.$transaction([
       this.prisma.work.count({ where: { userId: id, isFinished: false } }),
       this.prisma.work.count({ where: { userId: id, isFinished: true } }),
     ]);

@@ -149,8 +149,11 @@ export class WorkController {
 
   @Get('fetch-for-works-scraping-report')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorksScrapingReportPaginated(@Query('page', ParseIntPipe) page: number) {
-    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(page));
+  async fetchForWorksScrapingReportPaginated(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('filter') filter?: RefreshStatus,
+  ) {
+    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(page, filter));
 
     return {
       data: WorkModel.toHttpList(result.data),
