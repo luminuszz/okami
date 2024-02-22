@@ -1,9 +1,10 @@
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable, Logger } from '@nestjs/common';
-import { omit } from 'lodash';
+import { map, omit } from 'lodash';
 import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper';
 import { PrismaService } from './prisma.service';
+import { RefreshStatus } from '@prisma/client';
 
 @Injectable()
 export class PrismaWorkRepository implements WorkRepository {
@@ -125,22 +126,30 @@ export class PrismaWorkRepository implements WorkRepository {
     await this.prisma.$transaction(operations);
   }
 
-  async fetchWorksScrapingPaginated(page: number): Promise<{ data: Work[]; totalOfPages: number }> {
-    const totalOfWorks = await this.prisma.work.count();
-
+  async fetchWorksScrapingPaginated(
+    page: number,
+    filter?: RefreshStatus,
+  ): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
 
-    const results = await this.prisma.work.findMany({
-      take: limit,
-      skip: page * limit,
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
+    const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
+      this.prisma.work.findMany({
+        take: limit,
+        skip: page * limit,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        where: filter ? { refreshStatus: filter } : {},
+      }),
+
+      this.prisma.work.count({
+        where: filter ? { refreshStatus: filter } : {},
+      }),
+    ]);
 
     return {
-      data: results.map(prismaWorkToEntityMapper),
-      totalOfPages: Math.ceil(totalOfWorks / limit),
+      data: map(prismaWorks, prismaWorkToEntityMapper),
+      totalOfPages: Math.ceil(totalOfPrismaWorks / limit),
     };
   }
 }

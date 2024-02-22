@@ -3,9 +3,11 @@ import { WorkRepository } from '../repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UseCaseImplementation } from '@core/use-case';
 import { Either, right } from '@core/either';
+import { RefreshStatus } from '@prisma/client';
 
 interface Props {
   page: number;
+  filter?: RefreshStatus;
 }
 
 type Response = Either<
@@ -20,8 +22,8 @@ type Response = Either<
 export class FetchWorksScrapingPaginatedReportUseCase implements UseCaseImplementation<Props, Response> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ page }: Props): Promise<Response> {
-    const { data, totalOfPages } = await this.workRepository.fetchWorksScrapingPaginated(page);
+  async execute({ page, filter }: Props): Promise<Response> {
+    const { data, totalOfPages } = await this.workRepository.fetchWorksScrapingPaginated(page, filter);
 
     return right({
       data,
