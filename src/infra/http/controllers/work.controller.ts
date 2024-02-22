@@ -1,18 +1,32 @@
 import { BatchService } from '@infra/database/batchs/batch.service';
 
+import { MarkWorkAsDroppedCommand } from '@app/infra/crqs/work/commands/mark-work-as-dropped.command';
+import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
+import { Queue } from '@domain/work/application/queue/Queue';
+import { RefreshStatus } from '@domain/work/enterprise/entities/work';
+import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command';
+import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
 import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unread.command';
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
+import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
+import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
+import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
+import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
+import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
+import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
+import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
+import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
+import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import {
   BadRequestException,
   Body,
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -21,24 +35,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
-import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
-import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
-import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
-import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
-import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
-import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
-import { UpdateWorkDto } from '@infra/http/validators/update-work.dto';
-import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
-import { Queue } from '@domain/work/application/queue/Queue';
-import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
-import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
-import { RefreshStatus } from '@domain/work/enterprise/entities/work';
-import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
-import { MarkWorkAsDroppedCommand } from '@app/infra/crqs/work/commands/mark-work-as-dropped.command';
-import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
+import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
+import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
+import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -149,11 +149,8 @@ export class WorkController {
 
   @Get('fetch-for-works-scraping-report')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorksScrapingReportPaginated(
-    @Query('page', ParseIntPipe) page: number,
-    @Query('filter') filter?: RefreshStatus,
-  ) {
-    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(page, filter));
+  async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery) {
+    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(query.page, query.filter));
 
     return {
       data: WorkModel.toHttpList(result.data),

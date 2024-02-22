@@ -53,7 +53,7 @@ import type { FastifyCookieOptions } from '@fastify/cookie';
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transformOptions: { enableImplicitConversion: true } }));
 
   const config = new DocumentBuilder()
     .setTitle('Okami API')
