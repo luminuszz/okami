@@ -43,6 +43,8 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
     this.clientEmitter.emit('create-notification', {
       content: JSON.stringify(content),
       recipientId: payload.userId,
+      channels: ['on-new-chapter'],
+      providers: ['all'],
     });
   }
 }
