@@ -96,8 +96,8 @@ export class WorkController {
   }
 
   @Post('sync-database')
-  async syncDatabase() {
-    this.batchService.importNotionDatabaseToMongoDB();
+  async syncDatabase(@Body('databaseId') databaseId: string) {
+    this.batchService.importNotionDatabaseToMongoDB(databaseId);
   }
 
   @Post('refresh-chapters')
@@ -143,8 +143,8 @@ export class WorkController {
   }
 
   @Get('replace-image-from-notion')
-  async setWorkImageFromNotion() {
-    await this.batchService.setWorkImageFromNotion();
+  async setWorkImageFromNotion(@Body('databaseId') databaseId: string) {
+    await this.batchService.setWorkImageFromNotion(databaseId);
   }
 
   @Get('fetch-for-works-scraping-report')
