@@ -7,6 +7,10 @@ import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload
 import { EventBus } from '@nestjs/cqrs';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 
+interface SyncNotionDatabaseBatchProps {
+  database_id: string;
+}
+
 @Injectable()
 export class BatchService {
   private logger = new Logger(BatchService.name);
@@ -18,11 +22,18 @@ export class BatchService {
     private readonly uploadWorkImage: UploadWorkImageUseCase,
     private readonly eventBus: EventBus,
   ) {
-    this.queueProvider.subscribe(QueueMessage.SYNC_WITH_OTHER_DATABASES, () => this.importNotionDatabaseToMongoDB());
+    this.queueProvider.subscribe(
+      QueueMessage.SYNC_WITH_OTHER_DATABASES,
+      ({ database_id }: SyncNotionDatabaseBatchProps) => {
+        if (database_id) {
+          this.importNotionDatabaseToMongoDB(database_id);
+        }
+      },
+    );
   }
 
-  async importNotionDatabaseToMongoDB() {
-    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing();
+  async importNotionDatabaseToMongoDB(databaseId: string) {
+    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(databaseId);
 
     const newWorksCreated = await this.prismaWorkRepository.createAllWithNotExists(allNotionData);
 
@@ -31,8 +42,8 @@ export class BatchService {
     this.eventBus.publishAll(events);
   }
 
-  async setWorkImageFromNotion() {
-    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing();
+  async setWorkImageFromNotion(databaseId: string) {
+    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(databaseId);
 
     for (const work of allNotionData) {
       this.logger.debug(`Setting image for work  ${work.name} - ${work.id}`);

@@ -19,10 +19,10 @@ export class NotionWorkRepository {
     ],
   });
 
-  async create(work: Work): Promise<void> {
+  async create(work: Work, database_id: string): Promise<void> {
     await this.notion.pages.create({
       parent: {
-        database_id: this.notion.database_id,
+        database_id,
       },
       properties: { ...work, Notas: this.getUpdateMessage() } as any,
     });
@@ -85,9 +85,9 @@ export class NotionWorkRepository {
     throw new Error('Method not implemented.');
   }
 
-  async findaAllDocuments(): Promise<Work[]> {
+  async findaAllDocuments(database_id: string): Promise<Work[]> {
     const response = await this.notion.databases.query({
-      database_id: this.notion.database_id,
+      database_id: database_id,
       filter: {
         property: 'Name',
         title: {
@@ -99,9 +99,9 @@ export class NotionWorkRepository {
     return response.results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
-  async findAllDocumentWithStatusFollowing(): Promise<Work[]> {
+  async findAllDocumentWithStatusFollowing(database_id: string): Promise<Work[]> {
     const response = await this.notion.databases.query({
-      database_id: this.notion.database_id,
+      database_id,
       filter: {
         and: [
           {
@@ -117,9 +117,9 @@ export class NotionWorkRepository {
     return response.results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
-  async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
+  async fetchForWorkersWithHasNewChapterTrue(database_id: string): Promise<Work[]> {
     const { results } = await this.notion.databases.query({
-      database_id: this.notion.database_id,
+      database_id,
       filter: {
         property: 'CAPITULO NOVO',
         checkbox: {
@@ -152,9 +152,9 @@ export class NotionWorkRepository {
     });
   }
 
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(database_id: string): Promise<Work[]> {
     const { results } = await this.notion.databases.query({
-      database_id: this.notion.database_id,
+      database_id,
       filter: {
         and: [
           {

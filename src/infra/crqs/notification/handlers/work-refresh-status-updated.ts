@@ -1,8 +1,9 @@
-import { EnvService } from '@app/infra/env/env.service';
+import { CommandBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
 import { Category, RefreshStatus } from '@domain/work/enterprise/entities/work';
+import { ConfigService } from '@nestjs/config';
 import { CreateNotificationCommand } from '@infra/crqs/notification/commands/createNotification.command';
-import { CommandBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { EnvService } from '@app/infra/env/env.service';
 
 @EventsHandler(WorkRefreshStatusUpdatedEvent)
 export class WorkRefreshStatusEventHandler implements IEventHandler<WorkRefreshStatusUpdatedEvent> {
@@ -20,7 +21,7 @@ export class WorkRefreshStatusEventHandler implements IEventHandler<WorkRefreshS
 
       await this.commandBus.execute(
         new CreateNotificationCommand(
-          { content, workId: payload.id, recipientId: this.env.get('TELEGRAM_CHAT_ID') },
+          { content, workId: payload.id, recipientId: this.configService.get('TELEGRAM_CHAT_ID') },
           payload,
         ),
       );
