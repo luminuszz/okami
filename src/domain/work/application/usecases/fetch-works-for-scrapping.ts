@@ -11,7 +11,8 @@ export class FetchWorksForScrappingUseCase implements UseCaseImplementation<void
   constructor(private readonly workRepository: WorkRepository) {}
 
   async execute(): Promise<FetchWorksForScrappingOutput> {
-    const works = await this.workRepository.fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse();
+    const works =
+      await this.workRepository.fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse();
 
     return right({
       works,

@@ -47,7 +47,7 @@ export class WorkHttp implements WorkHttpType {
   name: string;
   @ApiProperty()
   url: string;
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   updatedAt: Date;
 
   @ApiProperty()
@@ -56,10 +56,10 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty()
   isDropped: boolean;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: Date })
   nextChapterUpdatedAt: Date | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: Number })
   nextChapter: number | null;
 
   @ApiProperty()

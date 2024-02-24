@@ -1,4 +1,4 @@
-import { WorkRepository } from '@domain/work/application/repositories/work-repository';
+import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable, Logger } from '@nestjs/common';
 import { map, omit } from 'lodash';
@@ -11,6 +11,34 @@ export class PrismaWorkRepository implements WorkRepository {
   private logger = new Logger(PrismaWorkRepository.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  async fetchWorksByUserIdWithFilters({ userId, status }: FetchUserWorksInput): Promise<Work[]> {
+    const parserFilter = {
+      unread: {
+        hasNewChapter: true,
+      },
+      read: {
+        hasNewChapter: false,
+      },
+      finished: {
+        isFinished: true,
+      },
+      dropped: {
+        isDropped: true,
+      },
+    };
+
+    const filter = parserFilter[status] ?? {};
+
+    const results = await this.prisma.work.findMany({
+      where: {
+        ...filter,
+        userId,
+      },
+    });
+
+    return results.map(prismaWorkToEntityMapper);
+  }
 
   async create(work: Work): Promise<void> {
     const data = workEntityToPrismaMapper(work);
@@ -92,11 +120,12 @@ export class PrismaWorkRepository implements WorkRepository {
     return results ? prismaWorkToEntityMapper(results) : null;
   }
 
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse(): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
         hasNewChapter: false,
         isFinished: false,
+        isDropped: false,
       },
     });
 

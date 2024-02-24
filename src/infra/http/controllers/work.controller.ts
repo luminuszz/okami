@@ -39,6 +39,9 @@ import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
+import { User } from '@app/infra/crqs/user-auth.decorator';
+import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -173,5 +176,13 @@ export class WorkController {
   @Post('sync-work')
   async syncWork(@Body('workId', ParseObjectIdPipe) workId: string) {
     await this.queue.refreshWorkStatusOfOneWork(workId);
+  }
+
+  @Get('list')
+  @ApiOkResponse({ type: WorkHttp, isArray: true })
+  async listUserWorks(@User('id') userId: string, @Query() query: ListUserWorksQuery) {
+    const works = await this.queryBus.execute(new FetchUserWorksWithFilterQuery(userId, query.status));
+
+    return WorkModel.toHttpList(works);
   }
 }

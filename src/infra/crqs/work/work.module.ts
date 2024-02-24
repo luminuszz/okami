@@ -34,6 +34,8 @@ import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecas
 import { FetchWorksScrapingPaginatedReportQueryHandler } from './queries/fetch-for-works-scraping-report-paginated';
 import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { FetchUserWorksWithFilterUseCase } from '@domain/work/application/usecases/fetch-user-works-with-filter';
+import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works-with-filter.query';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -52,6 +54,7 @@ const QueryHandlers = [
   FetchForWorkersUnreadQueryHandler,
   FindOneWorkQueryHandler,
   FetchWorksScrapingPaginatedReportQueryHandler,
+  FetchUserWorksWithFilterQueryHandler,
 ];
 
 const EventHandlers = [];
@@ -91,6 +94,7 @@ const EventHandlers = [];
     MarkWorkAsDroppedUseCase,
     MarkWorksOnPendingStatusUseCase,
     FetchWorksScrapingPaginatedReportUseCase,
+    FetchUserWorksWithFilterUseCase,
     Queue,
   ],
   exports: [
