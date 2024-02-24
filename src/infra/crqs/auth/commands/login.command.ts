@@ -1,9 +1,8 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { EnvService } from '@app/infra/env/env.service';
 import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authenticate-user';
-import { JwtService } from '@nestjs/jwt';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
-import { ConfigService } from '@nestjs/config';
-import { EnvSecrets } from '@infra/utils/getSecretsEnv';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { JwtService } from '@nestjs/jwt';
 
 export class LoginCommand {
   constructor(
@@ -17,7 +16,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
   constructor(
     private readonly authUser: AuthenticateUserUseCase,
     private readonly jwtService: JwtService,
-    private readonly config: ConfigService<EnvSecrets>,
+    private readonly env: EnvService,
   ) {}
 
   async execute({ password, email }: LoginCommand): Promise<{ token: string }> {
@@ -36,7 +35,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     };
 
     const token = await this.jwtService.signAsync(payload, {
-      secret: this.config.get('JWT_SECRET'),
+      secret: this.env.get('JWT_SECRET'),
     });
 
     return {

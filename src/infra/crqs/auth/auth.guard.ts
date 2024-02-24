@@ -1,15 +1,15 @@
+import { EnvService } from '@app/infra/env/env.service';
+import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
-import { ConfigService } from '@nestjs/config';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
-import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly config: ConfigService,
+    private readonly env: EnvService,
     private readonly verifyAccessToken: VerifyApiAccessTokenUseCase,
   ) {}
 
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
       }
 
       const decodePayload = await this.jwtService.verifyAsync<UserTokenDto>(jwtToken, {
-        secret: this.config.get('JWT_SECRET'),
+        secret: this.env.get('JWT_SECRET'),
       });
 
       request['user'] = decodePayload;

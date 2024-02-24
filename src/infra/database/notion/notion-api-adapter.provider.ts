@@ -1,17 +1,17 @@
+import { EnvService } from '@app/infra/env/env.service';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Client as NotionClient } from '@notionhq/client';
 
 @Injectable()
 export class NotionApiAdapter extends NotionClient {
   public database_id: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(private readonly env: EnvService) {
     super({
-      auth: configService.get<string>('NOTION_AUTH_TOKEN'),
+      auth: env.get('NOTION_AUTH_TOKEN'),
     });
 
-    this.database_id = configService.get<string>('NOTION_DATABASE_ID');
+    this.database_id = this.env.get('NOTION_DATABASE_ID');
   }
 
   public async getHealthStatus() {

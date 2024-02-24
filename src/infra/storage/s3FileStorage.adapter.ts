@@ -1,8 +1,8 @@
 import { FiletoUpload, FiletoUploadWithUrl, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
 import { ListObjectsV2Command, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
-import { ConfigService } from '@nestjs/config';
 import * as process from 'process';
+import { EnvService } from '../env/env.service';
 
 @Injectable()
 export class S3FileStorageAdapter implements StorageProvider {
@@ -10,16 +10,16 @@ export class S3FileStorageAdapter implements StorageProvider {
 
   public readonly awsBucket: string;
 
-  constructor(private config: ConfigService) {
+  constructor(private env: EnvService) {
     this.s3Client = new S3({
-      region: this.config.get<string>('AWS_S3_REGION'),
+      region: this.env.get('AWS_S3_REGION'),
       credentials: {
-        accessKeyId: this.config.get<string>('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.config.get<string>('AWS_SECRET_KEY_ACCESS'),
+        accessKeyId: this.env.get('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.env.get('AWS_SECRET_KEY_ACCESS'),
       },
     });
 
-    this.awsBucket = this.config.get<string>('AWS_S3_BUCKET');
+    this.awsBucket = this.env.get('AWS_S3_BUCKET');
   }
 
   private async createFolderIfNotExists(folderPrefix: string) {

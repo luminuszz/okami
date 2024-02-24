@@ -1,8 +1,8 @@
+import { CreateQueueCommand, ListQueuesCommand, SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { CreateQueueCommand, ListQueuesCommand, SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Consumer } from 'sqs-consumer';
-import { ConfigService } from '@nestjs/config';
+import { EnvService } from '../env/env.service';
 
 @Injectable()
 export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
@@ -11,12 +11,12 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
 
   private readonly sqs: SQSClient;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(private readonly env: EnvService) {
     this.sqs = new SQSClient({
-      region: this.config.get('AWS_S3_REGION'),
+      region: this.env.get('AWS_S3_REGION'),
       credentials: {
-        accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.config.get('AWS_SECRET_KEY_ACCESS'),
+        accessKeyId: this.env.get('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.env.get('AWS_SECRET_KEY_ACCESS'),
       },
     });
   }

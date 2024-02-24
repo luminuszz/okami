@@ -5,7 +5,10 @@ import { PrometheusService } from '../prometheus/prometheus.service';
 
 @Injectable()
 export class PrismaHealtCheckIndicator extends HealthIndicator {
-  constructor(private readonly prismaService: PrismaService, private prometheusService: PrometheusService) {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private prometheusService: PrometheusService,
+  ) {
     super();
     this.prometheusService.registerMetric({
       help: 'Prisma health check',

@@ -1,9 +1,9 @@
+import { EnvService } from '@app/infra/env/env.service';
 import { NotificationCreatedEvent } from '@domain/notification/enterprise/events/notificationCreated';
+import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
 import { OnModuleDestroy } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Telegraf } from 'telegraf';
-import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
 
 @EventsHandler(NotificationCreatedEvent)
 export class TelegramNotificationCreatedEventHandler
@@ -11,8 +11,8 @@ export class TelegramNotificationCreatedEventHandler
 {
   private readonly telegraf: Telegraf;
 
-  constructor(private readonly configService: ConfigService) {
-    this.telegraf = new Telegraf(this.configService.get('TELEGRAM_NOTIFICATION_BOT'));
+  constructor(private readonly env: EnvService) {
+    this.telegraf = new Telegraf(this.env.get('TELEGRAM_NOTIFICATION_BOT'));
   }
 
   onModuleDestroy() {

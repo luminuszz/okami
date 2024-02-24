@@ -1,9 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import {
-  HealthCheck,
-  HealthCheckService,
-  MemoryHealthIndicator,
-} from '@nestjs/terminus';
+import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
 import { NotionHealtCheckIndicator } from './health/notion-healt.service';
 import { PrismaHealtCheckIndicator } from './health/prisma-healt.service';
 
@@ -22,11 +18,7 @@ export class LoggerController {
     return this.healtCheckService.check([
       () => this.prismHealtCheckIndicator.isHealthy('prisma'),
       () => this.notionHealtCheckIndicator.isHealthy('notion'),
-      () =>
-        this.memoryHealtCheckIndicator.checkHeap(
-          'memory_heap',
-          150 * 1024 * 1024,
-        ),
+      () => this.memoryHealtCheckIndicator.checkHeap('memory_heap', 150 * 1024 * 1024),
     ]);
   }
 }

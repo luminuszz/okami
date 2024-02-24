@@ -1,26 +1,26 @@
-import { Module } from '@nestjs/common';
-import { LoginCommandHandler } from '@infra/crqs/auth/commands/login.command';
-import { EncryptModule } from '@infra/encrypt/encrypt.module';
+import { EnvService } from '@app/infra/env/env.service';
 import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authenticate-user';
-import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { CqrsModule } from '@nestjs/cqrs';
-import { CreateUserCommandHandler } from '@infra/crqs/auth/commands/create-user.command';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
-import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { UploadUserImageUrlCommandHandler } from '@infra/crqs/auth/commands/upload-user-image-url.command';
-import { StorageModule } from '@infra/storage/storage.module';
-import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
-import { FindUserByIdQueryHandler } from '@infra/crqs/auth/queries/find-user-by-id.query';
-import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
-import { CreateAccessTokenCommandHandler } from '@infra/crqs/auth/commands/create-access-token.command';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
-import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
-import { CreateAdminHashCodeCommandHandler } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
-import { SetAdminHashCodeKeyUseCase } from '@domain/auth/application/useCases/set-admin-hash-code-key';
+import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
+import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
 import { ResetUserPasswordByAdminCodeKey } from '@domain/auth/application/useCases/reset-user-password-by-admin-code-key';
+import { SetAdminHashCodeKeyUseCase } from '@domain/auth/application/useCases/set-admin-hash-code-key';
+import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
+import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { AuthGuard } from '@infra/crqs/auth/auth.guard';
+import { CreateAccessTokenCommandHandler } from '@infra/crqs/auth/commands/create-access-token.command';
+import { CreateAdminHashCodeCommandHandler } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
+import { CreateUserCommandHandler } from '@infra/crqs/auth/commands/create-user.command';
+import { LoginCommandHandler } from '@infra/crqs/auth/commands/login.command';
 import { ResetPasswordCommandHandler } from '@infra/crqs/auth/commands/reset-password.command';
+import { UploadUserImageUrlCommandHandler } from '@infra/crqs/auth/commands/upload-user-image-url.command';
+import { FindUserByIdQueryHandler } from '@infra/crqs/auth/queries/find-user-by-id.query';
+import { EncryptModule } from '@infra/encrypt/encrypt.module';
+import { StorageModule } from '@infra/storage/storage.module';
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 const Commands = [
   LoginCommandHandler,
@@ -38,12 +38,12 @@ const Queries = [FindUserByIdQueryHandler];
     StorageModule,
     EncryptModule,
     JwtModule.registerAsync({
-      useFactory: (config: ConfigService) => ({
+      useFactory: (env: EnvService) => ({
         global: true,
-        secret: config.get('JWT_SECRET'),
+        secret: env.get('JWT_SECRET'),
         signOptions: { expiresIn: '3d' },
       }),
-      inject: [ConfigService],
+      inject: [EnvService],
     }),
   ],
   providers: [

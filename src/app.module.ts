@@ -1,22 +1,18 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
-import loadSecrets from '@infra/utils/getSecretsEnv';
 import { DatabaseModule } from '@infra/database/database.module';
 import { HttpModule } from '@infra/http/http.module';
+import { CommonExceptionInterceptor } from '@infra/interceptors/common-exception.interceptor';
 import { LoggerModule } from '@infra/logs/logs.module';
+import { Module } from '@nestjs/common';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { EnvModule } from './infra/env/env.module';
 
 @Module({
   imports: [
     HttpModule,
     DatabaseModule,
     LoggerModule,
-    ConfigModule.forRoot({
-      load: [loadSecrets],
-      isGlobal: true,
-    }),
+    EnvModule,
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 20,
