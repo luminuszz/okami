@@ -1,23 +1,26 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
-import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
-import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
+import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/update-notion-database-id.command';
+import { User } from '@app/infra/crqs/user-auth.decorator';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
-import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
-import { UserHttp, UserModel } from '@infra/http/models/user.model';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateAccessTokenCommand,
   CreateAccessTokenCommandResponse,
 } from '@infra/crqs/auth/commands/create-access-token.command';
-import { AccessToken, TokenModel } from '@infra/http/models/token.model';
-import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-admin-hash-code.command';
-import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
+import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { ResetPasswordCommand } from '@infra/crqs/auth/commands/reset-password.command';
+import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
+import { AccessToken, TokenModel } from '@infra/http/models/token.model';
+import { UserHttp, UserModel } from '@infra/http/models/user.model';
+import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
+import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
+import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
+import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -136,5 +139,10 @@ export class AuthController {
     return {
       token,
     };
+  }
+
+  @Post('notion/update-database-id')
+  async updateNotionDatabaseId(@Body() { notionDatabaseId }: UpdateNotionDatabaseIdDto, @User('id') userId: string) {
+    await this.commandBus.execute(new UpdateNotionDatabaseIdCommand(userId, notionDatabaseId));
   }
 }

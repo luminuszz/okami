@@ -21,6 +21,8 @@ import { StorageModule } from '@infra/storage/storage.module';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-database-id.command';
+import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update-notion-database-id';
 
 const Commands = [
   LoginCommandHandler,
@@ -29,6 +31,7 @@ const Commands = [
   CreateAccessTokenCommandHandler,
   CreateAdminHashCodeCommandHandler,
   ResetPasswordCommandHandler,
+  UpdateNotionDatabaseIdCommandHandler,
 ];
 const Queries = [FindUserByIdQueryHandler];
 
@@ -60,6 +63,7 @@ const Queries = [FindUserByIdQueryHandler];
     VerifyApiAccessTokenUseCase,
     SetAdminHashCodeKeyUseCase,
     ResetUserPasswordByAdminCodeKey,
+    UpdateNotionDatabaseId,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -71,6 +75,7 @@ const Queries = [FindUserByIdQueryHandler];
     VerifyApiAccessTokenUseCase,
     SetAdminHashCodeKeyUseCase,
     ResetUserPasswordByAdminCodeKey,
+    UpdateNotionDatabaseId,
   ],
 })
 export class AuthModule {}

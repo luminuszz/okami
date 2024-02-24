@@ -13,6 +13,7 @@ interface EntityProps {
   readingWorksCount?: number;
   finishedWorksCount?: number;
   adminHashCodeKey?: string | null;
+  notionDatabaseId?: string;
 }
 
 export class User extends Entity<EntityProps> {
@@ -83,6 +84,15 @@ export class User extends Entity<EntityProps> {
 
   private refresh() {
     this.props.updatedAt = new Date();
+  }
+
+  public get notionDatabaseId(): string {
+    return this.props.notionDatabaseId;
+  }
+
+  public set notionDatabaseId(id: string) {
+    this.props.notionDatabaseId = id;
+    this.refresh();
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {

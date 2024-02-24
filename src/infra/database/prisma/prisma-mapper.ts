@@ -111,6 +111,7 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta): Use
       readingWorksCount: prismaUser.readingWorksCount,
       finishedWorksCount: prismaUser.finishedWorksCount,
       adminHashCodeKey: prismaUser.adminHashCodeKey,
+      notionDatabaseId: prismaUser.notionDatabaseId,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -125,6 +126,7 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   imageUrl: user.avatarImageId,
   worksId: map(user.works, (work) => work.id),
   adminHashCodeKey: user.adminHashCodeKey,
+  notionDatabaseId: user.notionDatabaseId,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({
