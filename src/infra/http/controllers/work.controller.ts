@@ -42,8 +42,9 @@ import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-
 import { User } from '@app/infra/crqs/user-auth.decorator';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
+import { SubscriberGuard } from '@app/infra/crqs/auth/subscriber.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, SubscriberGuard)
 @ApiTags('work')
 @Controller('work')
 export class WorkController {

@@ -1,7 +1,7 @@
 import { PaymentGateway } from '@domain/auth/application/contracts/payment-gateway';
 import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
-import { EnvService } from '../env/env.service';
+import { EnvService } from '../../env/env.service';
 import { User } from '@domain/auth/enterprise/entities/User';
 
 @Injectable()
@@ -30,15 +30,16 @@ export class StripePaymentGatewayProvider implements PaymentGateway {
     };
   }
 
-  async createPaymentIntent(customerId: string): Promise<{ paymentSessionId: string }> {
+  async createPaymentIntent(user: User): Promise<{ paymentSessionId: string }> {
     const results = await this.stripe.checkout.sessions.create({
       success_url: this.env.get('STRIPE_SUCCESS_URL'),
       cancel_url: this.env.get('STRIPE_ERROR_URL'),
-      customer: customerId,
+      client_reference_id: user.id,
+      customer: user.paymentSubscriberId,
       mode: 'subscription',
       line_items: [
         {
-          price: 'price_1OntVODbLdmMyhWWQSwF2hbP',
+          price: this.env.get('STRIPE_PRODUCT_PRICE_ID'),
           quantity: 1,
           adjustable_quantity: {
             enabled: false,
@@ -50,5 +51,9 @@ export class StripePaymentGatewayProvider implements PaymentGateway {
     return {
       paymentSessionId: results.url,
     };
+  }
+
+  public async buildWebhookEvent(body: string | Buffer, signature: string): Promise<Stripe.Event> {
+    return this.stripe.webhooks.constructEvent(body, signature, this.env.get('STRIPE_WEBHOOK_SECRET'));
   }
 }

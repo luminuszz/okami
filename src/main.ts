@@ -51,7 +51,7 @@ import type { FastifyCookieOptions } from '@fastify/cookie';
     methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE', 'PATCH'],
   });
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter);
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true });
 
   app.useGlobalPipes(new ValidationPipe({ transformOptions: { enableImplicitConversion: true } }));
 

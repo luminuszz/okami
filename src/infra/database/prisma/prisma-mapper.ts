@@ -13,8 +13,9 @@ import {
   RefreshStatus as PrismaRefreshStatus,
   UserNotificationSubscription as PrismaUserNotificationSubscription,
   NotificationType as PrismaNotificationType,
+  PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
 } from '@prisma/client';
-import { User } from '@domain/auth/enterprise/entities/User';
+import { PaymentSubscriptionStatus, User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
 import {
@@ -29,6 +30,10 @@ export const enumMapper = (category: Category): PrismaCategory => {
 export const refreshStatusEnumMapper = (refreshStatus?: RefreshStatus): PrismaRefreshStatus => {
   return refreshStatus ? PrismaRefreshStatus[refreshStatus] : null;
 };
+
+export const paymentSubscriptionStatusEnumMapper = (
+  status?: PaymentSubscriptionStatus,
+): PrismaPaymentSubscriptionStatus => PrismaPaymentSubscriptionStatus[status];
 
 interface PrismaUserWithMeta extends PrismaUser {
   readingWorksCount: number;
@@ -99,7 +104,11 @@ export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotifi
     new UniqueEntityID(prismaNotification.id),
   );
 
-export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta): User =>
+const isPrismaWithMeta = (data: any): data is PrismaUserWithMeta => {
+  return data.readingWorksCount !== undefined && data.finishedWorksCount !== undefined;
+};
+
+export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | PrismaUser): User =>
   User.create(
     {
       name: prismaUser.name,
@@ -108,11 +117,13 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta): Use
       passwordHash: prismaUser.passwordHash,
       email: prismaUser.email,
       avatarImageId: prismaUser.imageUrl,
-      readingWorksCount: prismaUser.readingWorksCount,
-      finishedWorksCount: prismaUser.finishedWorksCount,
+      readingWorksCount: isPrismaWithMeta(prismaUser) ? prismaUser?.readingWorksCount : 0,
+      finishedWorksCount: isPrismaWithMeta(prismaUser) ? prismaUser?.finishedWorksCount : 0,
       adminHashCodeKey: prismaUser.adminHashCodeKey,
       notionDatabaseId: prismaUser.notionDatabaseId,
       paymentSubscriptionId: prismaUser.paymentSubscriptionId,
+      paymentSubscriberId: prismaUser.paymentSubscriberId,
+      paymentSubscriptionStatus: prismaUser.paymentSubscriptionStatus as PaymentSubscriptionStatus,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -129,6 +140,8 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   adminHashCodeKey: user.adminHashCodeKey,
   notionDatabaseId: user.notionDatabaseId,
   paymentSubscriptionId: user.paymentSubscriptionId,
+  paymentSubscriberId: user.paymentSubscriberId,
+  paymentSubscriptionStatus: user.paymentSubscriptionStatus,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({

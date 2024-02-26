@@ -72,4 +72,24 @@ export class PrismaUserRepository implements UserRepository {
       finishedWorksCount: totalOfWorksRead,
     };
   }
+
+  async findUserByPaymentSubscriptionId(paymentSubscriptionId: string) {
+    const results = await this.prisma.user.findUnique({
+      where: {
+        paymentSubscriptionId,
+      },
+    });
+
+    return results ? parsePrismaUserToDomainUser(results) : null;
+  }
+
+  async findUserByPaymentSubscriberId(paymentSubscriberId: string) {
+    const results = await this.prisma.user.findUnique({
+      where: {
+        paymentSubscriberId,
+      },
+    });
+
+    return results ? parsePrismaUserToDomainUser(results) : null;
+  }
 }
