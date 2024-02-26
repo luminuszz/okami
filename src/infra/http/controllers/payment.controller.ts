@@ -10,9 +10,11 @@ import { ConfirmPaymentCheckout } from '@domain/payment/application/use-cases/co
 import { CreatePaymentCheckout } from '@domain/payment/application/use-cases/create-payment-checkout';
 import { UpdatePaymentSubscription } from '@domain/payment/application/use-cases/update-payment-subscription';
 import { BadRequestException, Controller, Logger, Post, RawBodyRequest, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 import Stripe from 'stripe';
 
+@ApiTags('payment')
 @Controller('payment')
 export class PaymentController {
   constructor(
