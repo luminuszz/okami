@@ -8,9 +8,12 @@ import { NotificationModule } from '@infra/crqs/notification/notification.module
 import { DatabaseModule } from '@infra/database/database.module';
 import { NotificationController } from './controllers/notification.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PaymentModule } from '../payment/payment.module';
+import { PaymentController } from './controllers/payment.controller';
 
 @Module({
   imports: [
+    PaymentModule,
     CqrsModule,
     WorkModule,
     AuthModule,
@@ -27,6 +30,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [WorkController, AuthController, NotificationController],
+  controllers: [WorkController, AuthController, NotificationController, PaymentController],
 })
 export class HttpModule {}

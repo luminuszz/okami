@@ -21,6 +21,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
+import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
+import { CreateUserDto } from '../validators/create-user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -105,14 +107,25 @@ export class AuthController {
     };
   }
 
-  /*
   @Post('/register')
-  async register(@Body() data: CreateUserDto) {
+  async register(@Body() data: CreateUserDto, @Res({ passthrough: true }) res: FastifyReply) {
     await this.commandBus.execute(
       new CreateUserCommand({ email: data.email, password: data.password, name: data.name }),
     );
+
+    const sessionCreated = await this.commandBus.execute<unknown, { token: string }>(
+      new LoginCommand(data.email, data.password),
+    );
+
+    return res
+      .setCookie('@okami-web:token', sessionCreated.token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        path: '/',
+      })
+      .send()
+      .status(201);
   }
-*/
 
   @UseGuards(AuthGuard)
   @Post('/admin-hash-code')

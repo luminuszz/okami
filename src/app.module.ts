@@ -6,9 +6,11 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { EnvModule } from './infra/env/env.module';
+import { PaymentModule } from './infra/payment/payment.module';
 
 @Module({
   imports: [
+    PaymentModule,
     HttpModule,
     DatabaseModule,
     LoggerModule,

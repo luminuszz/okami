@@ -23,6 +23,9 @@ export const envSchema = z.object({
   ONE_SIGNAL_API_TOKEN: z.string(),
   ONE_SIGNAL_SERVICE_ENDPOINT: z.string(),
   ONE_SIGNAL_APP_ID: z.string(),
+  STRIPE_SECRET_KEY: z.string(),
+  STRIPE_ERROR_URL: z.string(),
+  STRIPE_SUCCESS_URL: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;

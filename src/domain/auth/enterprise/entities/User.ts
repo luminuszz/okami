@@ -14,6 +14,7 @@ interface EntityProps {
   finishedWorksCount?: number;
   adminHashCodeKey?: string | null;
   notionDatabaseId?: string;
+  paymentSubscriptionId?: string;
 }
 
 export class User extends Entity<EntityProps> {
@@ -92,6 +93,14 @@ export class User extends Entity<EntityProps> {
 
   public set notionDatabaseId(id: string) {
     this.props.notionDatabaseId = id;
+    this.refresh();
+  }
+  public get paymentSubscriptionId() {
+    return this.props.paymentSubscriptionId;
+  }
+
+  public set paymentSubscriptionId(paymentSubscriptionId: string) {
+    this.props.paymentSubscriptionId = paymentSubscriptionId;
     this.refresh();
   }
 

@@ -11,7 +11,7 @@ const userSchema = z
     avatarImageId: z.string().optional().nullable(),
     finishedWorksCount: z.number().default(0),
     readingWorksCount: z.number().default(0),
-    notionDatabaseId: z.string().optional().default(null),
+    notionDatabaseId: z.string().nullable(),
   })
   .transform((data) => ({
     ...data,
