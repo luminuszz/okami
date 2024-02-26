@@ -40,13 +40,6 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       url: payload.url,
     } satisfies ContentObject;
 
-    console.log(`sending notification to user ${payload.userId}`, {
-      content: JSON.stringify(content),
-      recipientId: payload.userId,
-      channels: ['on-new-chapter'],
-      providers: ['all'],
-    });
-
     this.clientEmitter.emit('create-notification', {
       content: JSON.stringify(content),
       recipientId: payload.userId,

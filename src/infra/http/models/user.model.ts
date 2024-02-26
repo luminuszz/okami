@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
+import { PaymentSubscriptionStatus } from '@prisma/client';
 
 const userSchema = z
   .object({
@@ -11,7 +12,8 @@ const userSchema = z
     avatarImageId: z.string().optional().nullable(),
     finishedWorksCount: z.number().default(0),
     readingWorksCount: z.number().default(0),
-    notionDatabaseId: z.string().optional().default(null),
+    notionDatabaseId: z.string().nullable(),
+    paymentSubscriptionStatus: z.nativeEnum(PaymentSubscriptionStatus).optional(),
   })
   .transform((data) => ({
     ...data,

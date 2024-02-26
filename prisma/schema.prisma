@@ -16,6 +16,12 @@ enum Category {
   ANIME
 }
 
+enum PaymentSubscriptionStatus {
+  ACTIVE
+  INACTIVE
+}
+
+
 enum RefreshStatus {
   SUCCESS
   FAILED
@@ -71,6 +77,9 @@ model User {
   imageUrl         String?   @default("") @map("image_url")
   adminHashCodeKey String?   @map("admin_hash_code_key")
   notionDatabaseId String?   @map("notion_database_id")
+  paymentSubscriptionId String? @map("payment_subscription_id") @unique
+  paymentSubscriberId String? @map("payment_subscriber_id") @unique
+  paymentSubscriptionStatus PaymentSubscriptionStatus? @map("payment_subscription_status")
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

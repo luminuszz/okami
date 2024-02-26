@@ -23,6 +23,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-database-id.command';
 import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update-notion-database-id';
+import { CheckUserSubscriptionStatus } from '@domain/auth/application/useCases/check-user-subscription-status';
+import { SubscriberGuard } from './subscriber.guard';
 
 const Commands = [
   LoginCommandHandler,
@@ -56,6 +58,7 @@ const Queries = [FindUserByIdQueryHandler];
     CreateUserUseCase,
     AuthGuard,
     JwtService,
+    SubscriberGuard,
     ...Commands,
     ...Queries,
     UploadUserAvatarImage,
@@ -64,6 +67,7 @@ const Queries = [FindUserByIdQueryHandler];
     SetAdminHashCodeKeyUseCase,
     ResetUserPasswordByAdminCodeKey,
     UpdateNotionDatabaseId,
+    CheckUserSubscriptionStatus,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -76,6 +80,8 @@ const Queries = [FindUserByIdQueryHandler];
     SetAdminHashCodeKeyUseCase,
     ResetUserPasswordByAdminCodeKey,
     UpdateNotionDatabaseId,
+    CheckUserSubscriptionStatus,
+    SubscriberGuard,
   ],
 })
 export class AuthModule {}

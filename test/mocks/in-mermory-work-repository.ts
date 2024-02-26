@@ -1,7 +1,10 @@
-import { WorkRepository } from '@domain/work/application/repositories/work-repository';
+import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 
 export class InMemoryWorkRepository implements WorkRepository {
+  async fetchWorksByUserIdWithFilters(payload: FetchUserWorksInput): Promise<Work[]> {
+    return this.works.filter((work) => work.userId === payload.userId);
+  }
   public readonly works: Work[] = [];
 
   async create(work: Work): Promise<void> {
@@ -31,8 +34,11 @@ export class InMemoryWorkRepository implements WorkRepository {
     return this.works.find((work) => work.id === id);
   }
 
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(): Promise<Work[]> {
-    return this.works.filter((item) => !item.isFinished).filter((item) => !item.hasNewChapter);
+  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse(): Promise<Work[]> {
+    return this.works
+      .filter((item) => !item.isFinished)
+      .filter((item) => !item.hasNewChapter)
+      .filter((item) => !item.isDropped);
   }
 
   async saveMany(works: Work[]): Promise<void> {
@@ -45,13 +51,13 @@ export class InMemoryWorkRepository implements WorkRepository {
     });
   }
 
-  async fetchWorksScrapingPaginated(page: number): Promise<{ data: Work[]; totalOfPages: number }> {
+  async fetchWorksScrapingPaginated(userId: string, page: number): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
     const start = (page - 1) * limit;
     const end = start + limit;
 
     return {
-      data: this.works.slice(start, end),
+      data: this.works.slice(start, end).filter((work) => work.userId === userId),
       totalOfPages: Math.ceil(this.works.length / limit),
     };
   }

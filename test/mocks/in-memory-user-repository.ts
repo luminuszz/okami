@@ -2,6 +2,13 @@ import { UserRepository } from '@domain/auth/application/useCases/repositories/u
 import { User } from '@domain/auth/enterprise/entities/User';
 
 export class InMemoryUserRepository implements UserRepository {
+  async findUserByPaymentSubscriberId(paymentSubscriberId: string) {
+    return this.users.find((user) => user.paymentSubscriberId === paymentSubscriberId);
+  }
+
+  async findUserByPaymentSubscriptionId(paymentSubscriptionId: string) {
+    return this.users.find((user) => user.paymentSubscriptionId === paymentSubscriptionId);
+  }
   public users: User[] = [];
 
   async create(user: User): Promise<void> {

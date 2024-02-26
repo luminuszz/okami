@@ -2,6 +2,11 @@ import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Work } from '@domain/work/enterprise/entities/work';
 
+export enum PaymentSubscriptionStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
 interface EntityProps {
   name: string;
   email: string;
@@ -14,6 +19,9 @@ interface EntityProps {
   finishedWorksCount?: number;
   adminHashCodeKey?: string | null;
   notionDatabaseId?: string;
+  paymentSubscriptionId?: string;
+  paymentSubscriberId?: string;
+  paymentSubscriptionStatus?: PaymentSubscriptionStatus;
 }
 
 export class User extends Entity<EntityProps> {
@@ -25,6 +33,7 @@ export class User extends Entity<EntityProps> {
     this.props.readingWorksCount = props.readingWorksCount ?? 0;
     this.props.finishedWorksCount = props.finishedWorksCount ?? 0;
     this.props.adminHashCodeKey = props.adminHashCodeKey ?? null;
+    this.props.paymentSubscriptionStatus = props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE;
   }
 
   get email(): string {
@@ -92,6 +101,32 @@ export class User extends Entity<EntityProps> {
 
   public set notionDatabaseId(id: string) {
     this.props.notionDatabaseId = id;
+    this.refresh();
+  }
+  public get paymentSubscriptionId() {
+    return this.props.paymentSubscriptionId;
+  }
+
+  public get paymentSubscriptionStatus() {
+    return this.props.paymentSubscriptionStatus;
+  }
+
+  public set paymentSubscriptionStatus(paymentSubscriptionStatus: PaymentSubscriptionStatus) {
+    this.props.paymentSubscriptionStatus = paymentSubscriptionStatus;
+    this.refresh();
+  }
+
+  public set paymentSubscriptionId(paymentSubscriptionId: string) {
+    this.props.paymentSubscriptionId = paymentSubscriptionId;
+    this.refresh();
+  }
+
+  public get paymentSubscriberId() {
+    return this.props.paymentSubscriberId;
+  }
+
+  public set paymentSubscriberId(paymentSubscriberId: string) {
+    this.props.paymentSubscriberId = paymentSubscriberId;
     this.refresh();
   }
 

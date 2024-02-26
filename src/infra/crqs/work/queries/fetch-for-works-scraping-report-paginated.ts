@@ -5,6 +5,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 export class FetchWorksScrapingPaginatedReportQuery {
   constructor(
     public readonly page: number,
+    public readonly userId: string,
     public readonly filter?: RefreshStatus,
   ) {}
 }
@@ -15,8 +16,8 @@ export class FetchWorksScrapingPaginatedReportQueryHandler
 {
   constructor(private readonly fetchWorksScrapingPaginatedRepor: FetchWorksScrapingPaginatedReportUseCase) {}
 
-  async execute({ page, filter }: FetchWorksScrapingPaginatedReportQuery) {
-    const result = await this.fetchWorksScrapingPaginatedRepor.execute({ page, filter });
+  async execute({ page, filter, userId }: FetchWorksScrapingPaginatedReportQuery) {
+    const result = await this.fetchWorksScrapingPaginatedRepor.execute({ page, filter, userId });
 
     if (result.isLeft()) {
       throw result.value;

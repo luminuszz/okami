@@ -42,8 +42,9 @@ import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-
 import { User } from '@app/infra/crqs/user-auth.decorator';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
+import { SubscriberGuard } from '@app/infra/crqs/auth/subscriber.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, SubscriberGuard)
 @ApiTags('work')
 @Controller('work')
 export class WorkController {
@@ -152,8 +153,10 @@ export class WorkController {
 
   @Get('fetch-for-works-scraping-report')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery) {
-    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(query.page, query.filter));
+  async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery, @User('id') userId: string) {
+    const result = await this.queryBus.execute(
+      new FetchWorksScrapingPaginatedReportQuery(query.page, userId, query.filter),
+    );
 
     return {
       data: WorkModel.toHttpList(result.data),

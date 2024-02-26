@@ -156,10 +156,15 @@ export class PrismaWorkRepository implements WorkRepository {
   }
 
   async fetchWorksScrapingPaginated(
+    userId: string,
     page: number,
     filter?: RefreshStatus,
   ): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
+
+    console.log({ userId });
+
+    const where = filter ? { refreshStatus: filter, userId } : { userId };
 
     const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
       this.prisma.work.findMany({
@@ -168,11 +173,11 @@ export class PrismaWorkRepository implements WorkRepository {
         orderBy: {
           updatedAt: 'desc',
         },
-        where: filter ? { refreshStatus: filter } : {},
+        where,
       }),
 
       this.prisma.work.count({
-        where: filter ? { refreshStatus: filter } : {},
+        where,
       }),
     ]);
 

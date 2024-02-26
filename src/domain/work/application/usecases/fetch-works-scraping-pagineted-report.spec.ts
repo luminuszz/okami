@@ -2,6 +2,7 @@ import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { CreateWorkUseCase } from './create-work';
 import { FetchWorksScrapingPaginatedReportUseCase } from './fetch-works-scraping-pagineted-report';
 import { createWorkPropsFactory } from '@test/mocks/mocks';
+import { faker } from '@faker-js/faker';
 
 describe('FetchWorksScrapingPaginatedReportUseCase', () => {
   let stu: FetchWorksScrapingPaginatedReportUseCase;
@@ -15,8 +16,12 @@ describe('FetchWorksScrapingPaginatedReportUseCase', () => {
   });
 
   it('should be able to get a paginated list of works for scrapping report', async () => {
+    const fakerUserId = faker.string.uuid();
+
     for (let i = 0; i < 50; i++) {
       const data = createWorkPropsFactory();
+
+      data.userId = fakerUserId;
 
       if (i === 1) {
         data.name = 'Naruto';
@@ -25,7 +30,7 @@ describe('FetchWorksScrapingPaginatedReportUseCase', () => {
       await createWork.execute(data);
     }
 
-    const result = await stu.execute({ page: 2 });
+    const result = await stu.execute({ page: 2, userId: fakerUserId });
 
     expect(result.isRight()).toBeTruthy();
 
