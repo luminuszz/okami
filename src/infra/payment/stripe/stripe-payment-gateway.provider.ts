@@ -23,6 +23,7 @@ export class StripePaymentGatewayProvider implements PaymentGateway {
     const newCustomer = await this.stripe.customers.create({
       email: user.email,
       name: user.name,
+      preferred_locales: ['pt-BR'],
     });
 
     return {
@@ -36,6 +37,7 @@ export class StripePaymentGatewayProvider implements PaymentGateway {
       cancel_url: this.env.get('STRIPE_ERROR_URL'),
       client_reference_id: user.id,
       customer: user.paymentSubscriberId,
+      locale: 'pt-BR',
       mode: 'subscription',
       line_items: [
         {

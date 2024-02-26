@@ -24,7 +24,8 @@ export class CheckUserSubscriptionStatus
       return left(new UserNotFound());
     }
 
-    const subscriptionIsActive = userExists.paymentSubscriptionStatus === PaymentSubscriptionStatus.ACTIVE;
+    const subscriptionIsActive =
+      userExists.paymentSubscriptionStatus === PaymentSubscriptionStatus.ACTIVE && !!userExists.paymentSubscriptionId;
 
     return right({
       isChecked: subscriptionIsActive,
