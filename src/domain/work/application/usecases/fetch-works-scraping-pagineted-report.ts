@@ -8,6 +8,7 @@ import { RefreshStatus } from '@prisma/client';
 interface Props {
   page: number;
   filter?: RefreshStatus;
+  userId: string;
 }
 
 type Response = Either<
@@ -22,8 +23,8 @@ type Response = Either<
 export class FetchWorksScrapingPaginatedReportUseCase implements UseCaseImplementation<Props, Response> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ page, filter }: Props): Promise<Response> {
-    const { data, totalOfPages } = await this.workRepository.fetchWorksScrapingPaginated(page, filter);
+  async execute({ page, filter, userId }: Props): Promise<Response> {
+    const { data, totalOfPages } = await this.workRepository.fetchWorksScrapingPaginated(userId, page, filter);
 
     return right({
       data,

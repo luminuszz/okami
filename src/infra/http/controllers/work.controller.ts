@@ -153,8 +153,10 @@ export class WorkController {
 
   @Get('fetch-for-works-scraping-report')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
-  async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery) {
-    const result = await this.queryBus.execute(new FetchWorksScrapingPaginatedReportQuery(query.page, query.filter));
+  async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery, @User('id') userId: string) {
+    const result = await this.queryBus.execute(
+      new FetchWorksScrapingPaginatedReportQuery(query.page, userId, query.filter),
+    );
 
     return {
       data: WorkModel.toHttpList(result.data),

@@ -16,6 +16,7 @@ export abstract class WorkRepository {
   abstract findOne(id: string): Promise<Work>;
   abstract saveMany(works: Work[]): Promise<void>;
   abstract fetchWorksScrapingPaginated(
+    userId: string,
     page: number,
     filter?: RefreshStatus,
   ): Promise<{ data: Work[]; totalOfPages: number }>;
