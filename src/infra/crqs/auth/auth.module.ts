@@ -25,6 +25,8 @@ import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-d
 import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update-notion-database-id';
 import { CheckUserSubscriptionStatus } from '@domain/auth/application/useCases/check-user-subscription-status';
 import { SubscriberGuard } from './subscriber.guard';
+import { DecreaseTrialUserWorkLimit } from '@domain/auth/application/useCases/decrease-trial-user-work-limit';
+import { OnWorkUserCreatedHandler } from './handlers/on-work-user-created';
 
 const Commands = [
   LoginCommandHandler,
@@ -36,6 +38,8 @@ const Commands = [
   UpdateNotionDatabaseIdCommandHandler,
 ];
 const Queries = [FindUserByIdQueryHandler];
+
+const EventsHandlers = [OnWorkUserCreatedHandler];
 
 @Module({
   imports: [
@@ -61,6 +65,7 @@ const Queries = [FindUserByIdQueryHandler];
     SubscriberGuard,
     ...Commands,
     ...Queries,
+    ...EventsHandlers,
     UploadUserAvatarImage,
     FindUserByIdUseCase,
     VerifyApiAccessTokenUseCase,
@@ -68,6 +73,7 @@ const Queries = [FindUserByIdQueryHandler];
     ResetUserPasswordByAdminCodeKey,
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
+    DecreaseTrialUserWorkLimit,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -82,6 +88,7 @@ const Queries = [FindUserByIdQueryHandler];
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
     SubscriberGuard,
+    DecreaseTrialUserWorkLimit,
   ],
 })
 export class AuthModule {}

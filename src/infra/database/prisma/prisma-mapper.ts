@@ -124,6 +124,7 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | Pri
       paymentSubscriptionId: prismaUser.paymentSubscriptionId,
       paymentSubscriberId: prismaUser.paymentSubscriberId,
       paymentSubscriptionStatus: prismaUser.paymentSubscriptionStatus as PaymentSubscriptionStatus,
+      trialWorkLimit: prismaUser.trialWorkLimit,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -142,6 +143,7 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   paymentSubscriptionId: user.paymentSubscriptionId,
   paymentSubscriberId: user.paymentSubscriberId,
   paymentSubscriptionStatus: user.paymentSubscriptionStatus,
+  trialWorkLimit: user.trialWorkLimit,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({

@@ -80,6 +80,7 @@ model User {
   paymentSubscriptionId String? @map("payment_subscription_id") @unique
   paymentSubscriberId String? @map("payment_subscriber_id") @unique
   paymentSubscriptionStatus PaymentSubscriptionStatus? @map("payment_subscription_status")
+  trialWorkLimit   Int?      @map("trial_work_limit")
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

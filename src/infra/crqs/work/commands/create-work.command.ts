@@ -1,13 +1,9 @@
 import { CreateWorkInput, CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
-import { Work } from '@domain/work/enterprise/entities/work';
+import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
 export class CreateWorkCommand {
   constructor(public payload: CreateWorkInput) {}
-}
-
-class WorkAsCreatedEvent {
-  constructor(public payload: Work) {}
 }
 
 @CommandHandler(CreateWorkCommand)
@@ -22,6 +18,6 @@ export class CreateWorkHandler implements ICommandHandler<CreateWorkCommand> {
 
     if (response.isLeft()) throw response.value;
 
-    this.publisher.publish(new WorkAsCreatedEvent(response.value.work));
+    this.publisher.publish(new WorkCreatedEvent(response.value.work));
   }
 }
