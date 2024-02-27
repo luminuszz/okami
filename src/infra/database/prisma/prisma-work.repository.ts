@@ -89,10 +89,11 @@ export class PrismaWorkRepository implements WorkRepository {
 
       return this.prisma.work.upsert({
         where: {
-          recipientId: work.recipientId,
+          id: work.id.toString(),
+          recipientId: parsedData.recipientId,
         },
-        create: { ...parsedData, userId: '658226ff35d5c694026fa4f5' },
-        update: { ...updateParsedData, userId: '658226ff35d5c694026fa4f5', isUpserted: true },
+        create: { ...parsedData, userId: work.userId },
+        update: { ...updateParsedData, userId: work.userId, isUpserted: true },
       });
     });
     const results = await this.prisma.$transaction(operations);
@@ -185,5 +186,13 @@ export class PrismaWorkRepository implements WorkRepository {
       data: map(prismaWorks, prismaWorkToEntityMapper),
       totalOfPages: Math.ceil(totalOfPrismaWorks / limit),
     };
+  }
+
+  async fetchAllWorksByUserIdCount(userId: string): Promise<number> {
+    return this.prisma.work.count({
+      where: {
+        userId,
+      },
+    });
   }
 }

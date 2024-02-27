@@ -1,10 +1,12 @@
 import { EnvService } from '@app/infra/env/env.service';
 import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authenticate-user';
+import { CheckUserSubscriptionStatus } from '@domain/auth/application/useCases/check-user-subscription-status';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
 import { FindUserByIdUseCase } from '@domain/auth/application/useCases/find-user-by-id';
 import { ResetUserPasswordByAdminCodeKey } from '@domain/auth/application/useCases/reset-user-password-by-admin-code-key';
 import { SetAdminHashCodeKeyUseCase } from '@domain/auth/application/useCases/set-admin-hash-code-key';
+import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update-notion-database-id';
 import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
 import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
@@ -22,11 +24,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-database-id.command';
-import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update-notion-database-id';
-import { CheckUserSubscriptionStatus } from '@domain/auth/application/useCases/check-user-subscription-status';
 import { SubscriberGuard } from './subscriber.guard';
-import { DecreaseTrialUserWorkLimit } from '@domain/auth/application/useCases/decrease-trial-user-work-limit';
-import { OnWorkUserCreatedHandler } from './handlers/on-work-user-created';
 
 const Commands = [
   LoginCommandHandler,
@@ -37,9 +35,8 @@ const Commands = [
   ResetPasswordCommandHandler,
   UpdateNotionDatabaseIdCommandHandler,
 ];
-const Queries = [FindUserByIdQueryHandler];
 
-const EventsHandlers = [OnWorkUserCreatedHandler];
+const Queries = [FindUserByIdQueryHandler];
 
 @Module({
   imports: [
@@ -65,7 +62,6 @@ const EventsHandlers = [OnWorkUserCreatedHandler];
     SubscriberGuard,
     ...Commands,
     ...Queries,
-    ...EventsHandlers,
     UploadUserAvatarImage,
     FindUserByIdUseCase,
     VerifyApiAccessTokenUseCase,
@@ -73,7 +69,6 @@ const EventsHandlers = [OnWorkUserCreatedHandler];
     ResetUserPasswordByAdminCodeKey,
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
-    DecreaseTrialUserWorkLimit,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -88,7 +83,6 @@ const EventsHandlers = [OnWorkUserCreatedHandler];
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
     SubscriberGuard,
-    DecreaseTrialUserWorkLimit,
   ],
 })
 export class AuthModule {}

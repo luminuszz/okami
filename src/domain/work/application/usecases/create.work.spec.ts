@@ -1,12 +1,10 @@
-import { Category, Work } from '@domain/work/enterprise/entities/work';
-import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
-import { CreateWorkUseCase } from './create-work';
+import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
+import { Category } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
-import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { fakeHashProvider } from '@test/mocks/mocks';
-import { InvalidWorkOperationError } from './errors/invalid-work-operation';
-import { PaymentSubscriptionStatus } from '@domain/auth/enterprise/entities/User';
+import { CreateWorkUseCase } from './create-work';
 
 describe('CreateWork', () => {
   let inMemoryWorkRepository: InMemoryWorkRepository;
@@ -18,7 +16,7 @@ describe('CreateWork', () => {
     inMemoryWorkRepository = new InMemoryWorkRepository();
     inMemoryUserRepository = new InMemoryUserRepository();
 
-    stu = new CreateWorkUseCase(inMemoryWorkRepository, inMemoryUserRepository);
+    stu = new CreateWorkUseCase(inMemoryWorkRepository);
     createUser = new CreateUserUseCase(fakeHashProvider, inMemoryUserRepository);
   });
 
@@ -51,70 +49,6 @@ describe('CreateWork', () => {
       expect(work.chapter.getChapter()).toEqual(1);
       expect(work.name).toEqual('One Piece');
       expect(work.url).toEqual('https://onepiece.com');
-    }
-  });
-
-  it('should not ble able to create a work if user no have trial quotes', async () => {
-    const userResults = await createUser.execute({
-      email: faker.internet.email(),
-      name: faker.internet.userName(),
-      password: faker.internet.password(),
-    });
-
-    if (userResults.isLeft()) throw userResults.value;
-
-    const { user } = userResults.value;
-
-    for (let i = 0; i < 5; i++) {
-      user.decreaseTrialWorkLimit();
-    }
-
-    console.log(user);
-
-    const response = await stu.execute({
-      category: Category.MANGA,
-      chapter: 1,
-      name: 'One Piece',
-      url: 'https://onepiece.com',
-      userId: user.id,
-    });
-
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toBeInstanceOf(InvalidWorkOperationError);
-  });
-
-  it('should be able to create a work if user no have trial quotes but have active subscription', async () => {
-    const userResults = await createUser.execute({
-      email: faker.internet.email(),
-      name: faker.internet.userName(),
-      password: faker.internet.password(),
-    });
-
-    if (userResults.isLeft()) throw userResults.value;
-
-    const { user } = userResults.value;
-
-    for (let i = 0; i < 5; i++) {
-      user.decreaseTrialWorkLimit();
-    }
-
-    user.paymentSubscriptionStatus = PaymentSubscriptionStatus.ACTIVE;
-
-    console.log(user);
-
-    const response = await stu.execute({
-      category: Category.MANGA,
-      chapter: 1,
-      name: 'One Piece',
-      url: 'https://onepiece.com',
-      userId: user.id,
-    });
-
-    if (response.isRight()) {
-      expect(response.isRight()).toBeTruthy();
-      expect(response.value.work).toBeInstanceOf(Work);
-      expect(response.value.work.name).toEqual('One Piece');
-      expect(response.value.work.userId).toEqual(user.id);
     }
   });
 });

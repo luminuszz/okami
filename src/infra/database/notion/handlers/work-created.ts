@@ -8,6 +8,8 @@ export class SetSyncIdOnNotionPageEventHandler implements IEventHandler<WorkCrea
   constructor(private notionRepository: NotionWorkRepository) {}
 
   async handle({ payload }: WorkCreatedEvent) {
+    if (!payload.recipientId) return;
+
     await this.notionRepository.setSyncIdInNotionPage(payload.recipientId, payload.id);
   }
 }
@@ -20,6 +22,8 @@ export class UploadNotionWorkImageFromNotionEventHandler implements IEventHandle
   ) {}
 
   async handle({ payload }: WorkCreatedEvent) {
+    if (!payload.recipientId) return;
+
     const notionPageDetails = await this.notionRepository.getNotionPageContent(payload.recipientId);
 
     const results: any = notionPageDetails.find((item: any) => item.type === 'image') || null;
