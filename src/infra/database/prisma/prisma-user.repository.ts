@@ -1,4 +1,4 @@
-import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
+import { UserMetadata, UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { User } from '@domain/auth/enterprise/entities/User';
@@ -91,5 +91,22 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     return results ? parsePrismaUserToDomainUser(results) : null;
+  }
+
+  async fetchUserMetaData(userId: string): Promise<UserMetadata> {
+    const [totalOfWorksRead, totalOfWorksCreated, totalOfWorksUnread, totalOfWorksFinished] =
+      await this.prisma.$transaction([
+        this.prisma.work.count({ where: { userId, hasNewChapter: false, isFinished: false } }),
+        this.prisma.work.count({ where: { userId } }),
+        this.prisma.work.count({ where: { userId, hasNewChapter: true } }),
+        this.prisma.work.count({ where: { userId, isFinished: true } }),
+      ]);
+
+    return {
+      totalOfWorksRead,
+      totalOfWorksCreated,
+      totalOfWorksUnread,
+      totalOfWorksFinished,
+    };
   }
 }

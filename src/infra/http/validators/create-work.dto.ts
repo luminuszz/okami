@@ -28,3 +28,29 @@ export class CreateWorkDto {
   @IsNotEmpty()
   category: Category;
 }
+
+export const CreateWorkSchema = {
+  type: 'object',
+  schema: {
+    properties: {
+      file: {
+        type: 'string',
+        format: 'binary',
+      },
+      name: {
+        type: 'string',
+      },
+      chapter: {
+        type: 'number',
+      },
+
+      url: {
+        type: 'string',
+      },
+      category: {
+        type: 'string',
+        enum: categoryEnumArray,
+      },
+    },
+  },
+};

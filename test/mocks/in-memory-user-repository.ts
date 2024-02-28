@@ -1,4 +1,4 @@
-import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
+import { UserMetadata, UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { User } from '@domain/auth/enterprise/entities/User';
 
 export class InMemoryUserRepository implements UserRepository {
@@ -28,5 +28,15 @@ export class InMemoryUserRepository implements UserRepository {
     if (this.users[index]) {
       this.users[index] = user;
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async fetchUserMetaData(userId: string): Promise<UserMetadata> {
+    return {
+      totalOfWorksCreated: 0,
+      totalOfWorksFinished: 0,
+      totalOfWorksRead: 0,
+      totalOfWorksUnread: 0,
+    };
   }
 }

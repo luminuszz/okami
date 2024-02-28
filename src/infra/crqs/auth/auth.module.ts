@@ -25,6 +25,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-database-id.command';
 import { SubscriberGuard } from './subscriber.guard';
+import { FetchUserAnalytics } from '@domain/auth/application/useCases/fetch-user-analytics';
+import { FetchUserAnalyticsQueryHandler } from './queries/fetch-user-analytics';
 
 const Commands = [
   LoginCommandHandler,
@@ -36,7 +38,7 @@ const Commands = [
   UpdateNotionDatabaseIdCommandHandler,
 ];
 
-const Queries = [FindUserByIdQueryHandler];
+const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
 
 @Module({
   imports: [
@@ -69,6 +71,7 @@ const Queries = [FindUserByIdQueryHandler];
     ResetUserPasswordByAdminCodeKey,
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
+    FetchUserAnalytics,
   ],
   exports: [
     AuthenticateUserUseCase,

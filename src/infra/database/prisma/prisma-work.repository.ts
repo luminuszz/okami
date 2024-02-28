@@ -66,7 +66,7 @@ export class PrismaWorkRepository implements WorkRepository {
       },
     });
 
-    return prismaWorkToEntityMapper(results);
+    return results ? prismaWorkToEntityMapper(results) : null;
   }
 
   async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
@@ -192,6 +192,14 @@ export class PrismaWorkRepository implements WorkRepository {
     return this.prisma.work.count({
       where: {
         userId,
+      },
+    });
+  }
+
+  async deleteWork(workId: string): Promise<void> {
+    await this.prisma.work.delete({
+      where: {
+        id: workId,
       },
     });
   }

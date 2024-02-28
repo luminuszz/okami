@@ -4,21 +4,24 @@ import { Category, Work } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
-import { fakeHashProvider } from '@test/mocks/mocks';
+import { fakeHashProvider, fakeStorageProvider } from '@test/mocks/mocks';
 import { InvalidWorkOperationError } from './errors/invalid-work-operation';
 import { RegisterNewWork } from './register-new-work';
+import { UploadWorkImageUseCase } from './upload-work-image';
 
 describe('RegisterNewWork', () => {
   let inMemoryWorkRepository: InMemoryWorkRepository;
   let inMemoryUserRepository: InMemoryUserRepository;
   let stu: RegisterNewWork;
   let createUser: CreateUserUseCase;
+  let uploadWorkImage: UploadWorkImageUseCase;
 
   beforeEach(() => {
     inMemoryWorkRepository = new InMemoryWorkRepository();
     inMemoryUserRepository = new InMemoryUserRepository();
+    uploadWorkImage = new UploadWorkImageUseCase(fakeStorageProvider, inMemoryWorkRepository);
 
-    stu = new RegisterNewWork(inMemoryWorkRepository, inMemoryUserRepository);
+    stu = new RegisterNewWork(inMemoryWorkRepository, inMemoryUserRepository, uploadWorkImage);
     createUser = new CreateUserUseCase(fakeHashProvider, inMemoryUserRepository);
   });
 
