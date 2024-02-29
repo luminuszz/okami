@@ -13,6 +13,7 @@ export class OnUserCreatedEventHandler implements IEventHandler<UserCreated> {
   async handle({ payload }: UserCreated) {
     this.notificationService.emit('new-subscriber', {
       recipientId: payload.id,
+      email: payload.email,
     });
   }
 }
