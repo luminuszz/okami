@@ -18,6 +18,8 @@ export class WorkMarkUnreadNotionEventHandler implements IEventHandler<WorkMarkU
   async handle(event: WorkMarkUnreadEvent) {
     const { payload } = event;
 
+    if (!payload.recipientId) return;
+
     try {
       await this.workNotionRepository.updateForNewChapter(payload.recipientId);
     } catch (err) {

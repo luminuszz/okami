@@ -24,6 +24,7 @@ import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database
 import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
 import { CreateUserDto } from '../validators/create-user.dto';
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
+import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,6 +32,7 @@ export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly getUserTrialQuote: GetUserTrialQuote,
   ) {}
 
   @Post('login')
@@ -164,5 +166,17 @@ export class AuthController {
   @Get('user/analytics')
   async fetchUserAnalytics(@User('id') userId: string) {
     return await this.queryBus.execute(new FetchUserAnalyticsQuery(userId));
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('user/trial-quote')
+  async getUserTrialQuoteGet(@User('id') userId: string) {
+    const response = await this.getUserTrialQuote.execute({ userId });
+
+    if (response.isLeft()) {
+      throw new BadRequestException(response.value);
+    }
+
+    return response.value;
   }
 }

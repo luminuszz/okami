@@ -19,6 +19,8 @@ export class WorkMarkedNotionFinishedEventHandler implements IEventHandler<WorkM
     try {
       const { payload } = event;
 
+      if (!payload.recipientId) return;
+
       await this.workNotionRepository.moveWorkToFinishedStatus(payload.recipientId);
     } catch (e) {
       throw new WorkMarkFinishedNotionEventHandlerError(e.message, event);

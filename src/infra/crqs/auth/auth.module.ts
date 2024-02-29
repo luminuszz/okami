@@ -27,6 +27,7 @@ import { UpdateNotionDatabaseIdCommandHandler } from './commands/update-notion-d
 import { SubscriberGuard } from './subscriber.guard';
 import { FetchUserAnalytics } from '@domain/auth/application/useCases/fetch-user-analytics';
 import { FetchUserAnalyticsQueryHandler } from './queries/fetch-user-analytics';
+import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
 
 const Commands = [
   LoginCommandHandler,
@@ -72,6 +73,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
     FetchUserAnalytics,
+    GetUserTrialQuote,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -86,6 +88,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     UpdateNotionDatabaseId,
     CheckUserSubscriptionStatus,
     SubscriberGuard,
+    GetUserTrialQuote,
   ],
 })
 export class AuthModule {}
