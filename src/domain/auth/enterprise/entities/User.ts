@@ -22,7 +22,10 @@ interface EntityProps {
   paymentSubscriptionId?: string;
   paymentSubscriberId?: string;
   paymentSubscriptionStatus?: PaymentSubscriptionStatus;
+  trialWorkLimit?: number;
 }
+
+export const DEFAULT_TRIAL_WORK_LIMIT = 5;
 
 export class User extends Entity<EntityProps> {
   private constructor(props: Omit<EntityProps, 'updatedAt'>, id?: UniqueEntityID) {
@@ -34,6 +37,7 @@ export class User extends Entity<EntityProps> {
     this.props.finishedWorksCount = props.finishedWorksCount ?? 0;
     this.props.adminHashCodeKey = props.adminHashCodeKey ?? null;
     this.props.paymentSubscriptionStatus = props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE;
+    this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
   }
 
   get email(): string {
@@ -128,6 +132,18 @@ export class User extends Entity<EntityProps> {
   public set paymentSubscriberId(paymentSubscriberId: string) {
     this.props.paymentSubscriberId = paymentSubscriberId;
     this.refresh();
+  }
+
+  public get trialWorkLimit() {
+    return this.props.trialWorkLimit;
+  }
+
+  public get hasTrial() {
+    return this.props.trialWorkLimit > 0;
+  }
+
+  public decreaseTrialWorkLimit() {
+    this.props.trialWorkLimit = this.hasTrial ? this.props.trialWorkLimit - 1 : 0;
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {

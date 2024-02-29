@@ -61,4 +61,15 @@ export class InMemoryWorkRepository implements WorkRepository {
       totalOfPages: Math.ceil(this.works.length / limit),
     };
   }
+
+  async fetchAllWorksByUserIdCount(userId: string): Promise<number> {
+    return this.works.filter((work) => work.userId === userId).length;
+  }
+
+  async deleteWork(workId: string): Promise<void> {
+    this.works.splice(
+      this.works.findIndex((work) => work.id === workId),
+      1,
+    );
+  }
 }

@@ -1,9 +1,10 @@
+import { Either, right } from '@core/either';
+import { UseCaseImplementation } from '@core/use-case';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
-import { UseCaseImplementation } from '@core/use-case';
-import { Either, right } from '@core/either';
+import { InvalidWorkOperationError } from './errors/invalid-work-operation';
 
 export interface CreateWorkInput {
   name: string;
@@ -17,7 +18,7 @@ export interface CreateWorkInput {
   userId: string;
 }
 
-type CreateWorkOutput = Either<void, { work: Work }>;
+type CreateWorkOutput = Either<InvalidWorkOperationError, { work: Work }>;
 
 @Injectable()
 export class CreateWorkUseCase implements UseCaseImplementation<CreateWorkInput, CreateWorkOutput> {

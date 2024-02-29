@@ -36,6 +36,9 @@ import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/applicati
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FetchUserWorksWithFilterUseCase } from '@domain/work/application/usecases/fetch-user-works-with-filter';
 import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works-with-filter.query';
+import { RegisterNewWork } from '@domain/work/application/usecases/register-new-work';
+import { DeleteWork } from '@domain/work/application/usecases/delete-work';
+import { DeleteWorkCommandHandler } from './commands/delete-work.command';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -47,6 +50,7 @@ const CommandHandlers = [
   UploadWorkImageCommandHandler,
   UpdateWorkRefreshStatusCommandHandler,
   MarkWorkAsDroppedCommandHandler,
+  DeleteWorkCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -95,6 +99,8 @@ const EventHandlers = [];
     MarkWorksOnPendingStatusUseCase,
     FetchWorksScrapingPaginatedReportUseCase,
     FetchUserWorksWithFilterUseCase,
+    RegisterNewWork,
+    DeleteWork,
     Queue,
   ],
   exports: [
@@ -110,6 +116,7 @@ const EventHandlers = [];
     UploadWorkImageUseCase,
     Queue,
     MarkWorksOnPendingStatusUseCase,
+    RegisterNewWork,
   ],
 })
 export class WorkModule {}

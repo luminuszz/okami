@@ -20,6 +20,7 @@ const workSchema = z
     nextChapter: z.preprocess((value: Chapter) => value.getChapter(), z.number().nullable()),
     isDropped: z.boolean(),
     refreshStatus: z.string().nullable(),
+    createdAt: z.date().transform((value) => value.toISOString()),
   })
   .transform((data) => {
     return {

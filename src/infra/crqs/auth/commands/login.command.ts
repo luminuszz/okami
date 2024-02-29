@@ -32,6 +32,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
       email: user.email,
       id: user.id,
       name: user.name,
+      notionDatabaseId: user?.notionDatabaseId,
     };
 
     const token = await this.jwtService.signAsync(payload, {

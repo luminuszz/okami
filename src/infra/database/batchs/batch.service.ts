@@ -9,6 +9,7 @@ import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-c
 
 interface SyncNotionDatabaseBatchProps {
   database_id: string;
+  user_id: string;
 }
 
 @Injectable()
@@ -24,16 +25,20 @@ export class BatchService {
   ) {
     this.queueProvider.subscribe(
       QueueMessage.SYNC_WITH_OTHER_DATABASES,
-      ({ database_id }: SyncNotionDatabaseBatchProps) => {
+      ({ database_id, user_id }: SyncNotionDatabaseBatchProps) => {
         if (database_id) {
-          this.importNotionDatabaseToMongoDB(database_id);
+          this.importNotionDatabaseToMongoDB(database_id, user_id);
         }
       },
     );
   }
 
-  async importNotionDatabaseToMongoDB(databaseId: string) {
+  async importNotionDatabaseToMongoDB(databaseId: string, userId: string) {
     const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(databaseId);
+
+    allNotionData.forEach((work) => {
+      work.setUserId(userId);
+    });
 
     const newWorksCreated = await this.prismaWorkRepository.createAllWithNotExists(allNotionData);
 

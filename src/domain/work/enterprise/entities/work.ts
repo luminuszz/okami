@@ -176,6 +176,13 @@ export class Work extends Entity<WorkProps> {
     this.commit();
   }
 
+  public setUserId(userId: string) {
+    if (this.props.userId) return;
+
+    this.props.userId = userId;
+    this.commit();
+  }
+
   public updateNextChapter(nextChapter: number | null) {
     this.props.nextChapter.updateChapter(nextChapter);
     this.props.nextChapterUpdatedAt = new Date();

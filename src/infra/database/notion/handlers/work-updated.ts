@@ -7,6 +7,8 @@ export class WorkUpdatedEventHandler implements IEventHandler<WorkUpdatedEvent> 
   constructor(private readonly notionRepository: NotionWorkRepository) {}
 
   async handle({ payload }: WorkUpdatedEvent): Promise<void> {
+    if (!payload.recipientId) return;
+
     await this.notionRepository.save(payload);
   }
 }

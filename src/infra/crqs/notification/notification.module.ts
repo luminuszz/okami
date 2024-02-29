@@ -16,6 +16,7 @@ import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notif
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 import { FetchUserNotificationSubscriberByIdQueryHandler } from './queries/fetch-user-notification-subscriber-by-id.query';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { OnUserCreatedEventHandler } from './handlers/on-user-created';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
@@ -27,6 +28,7 @@ const EventHandlers = [
   WorkRefreshStatusEventHandler,
   CreateBrowserUserNotificationSubscriptionCommandHandler,
   FetchUserNotificationSubscriberByIdQueryHandler,
+  OnUserCreatedEventHandler,
 ];
 
 @Module({

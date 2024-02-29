@@ -22,4 +22,8 @@ export abstract class WorkRepository {
   ): Promise<{ data: Work[]; totalOfPages: number }>;
 
   abstract fetchWorksByUserIdWithFilters(payload: FetchUserWorksInput): Promise<Work[]>;
+
+  abstract fetchAllWorksByUserIdCount(userId: string): Promise<number>;
+
+  abstract deleteWork(workId: string): Promise<void>;
 }

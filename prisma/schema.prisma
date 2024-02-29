@@ -40,7 +40,7 @@ model Work {
   hasNewChapter        Boolean        @map("has_new_chapter")
   chapters             Float
   url                  String
-  recipientId          String?        @unique @map("recipient_id")
+  recipientId          String?        @map("recipient_id")
   isFinished           Boolean        @default(false) @map("is_finished")
   imageId              String?        @map("image_id")
   nextChapter          Float?         @map("next_chapter")
@@ -80,6 +80,7 @@ model User {
   paymentSubscriptionId String? @map("payment_subscription_id") @unique
   paymentSubscriberId String? @map("payment_subscriber_id") @unique
   paymentSubscriptionStatus PaymentSubscriptionStatus? @map("payment_subscription_status")
+  trialWorkLimit   Int?      @map("trial_work_limit")
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

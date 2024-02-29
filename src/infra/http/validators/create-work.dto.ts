@@ -1,7 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsObjectId } from '@infra/utils/IsObjectId';
 
 const categoryEnumArray = ['ANIME', 'MANGA'];
 
@@ -28,9 +27,30 @@ export class CreateWorkDto {
   @IsEnum(categoryEnumArray)
   @IsNotEmpty()
   category: Category;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsObjectId()
-  userId: string;
 }
+
+export const CreateWorkSchema = {
+  type: 'object',
+  schema: {
+    properties: {
+      file: {
+        type: 'string',
+        format: 'binary',
+      },
+      name: {
+        type: 'string',
+      },
+      chapter: {
+        type: 'number',
+      },
+
+      url: {
+        type: 'string',
+      },
+      category: {
+        type: 'string',
+        enum: categoryEnumArray,
+      },
+    },
+  },
+};

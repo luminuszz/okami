@@ -15,7 +15,7 @@ import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-im
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
-import { CreateWorkDto } from '@infra/http/validators/create-work.dto';
+import { CreateWorkSchema } from '@infra/http/validators/create-work.dto';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
 import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
@@ -25,6 +25,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -42,9 +43,10 @@ import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-
 import { User } from '@app/infra/crqs/user-auth.decorator';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
-import { SubscriberGuard } from '@app/infra/crqs/auth/subscriber.guard';
+import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
+import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
 
-@UseGuards(AuthGuard, SubscriberGuard)
+@UseGuards(AuthGuard)
 @ApiTags('work')
 @Controller('work')
 export class WorkController {
@@ -55,9 +57,42 @@ export class WorkController {
     private readonly queue: Queue,
   ) {}
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(CreateWorkSchema)
   @Post()
-  async createWork(@Body() data: CreateWorkDto) {
-    await this.commandBus.execute(new CreateWorkCommand(data));
+  async createWork(@Req() req: any, @User('id') userId: string) {
+    const formData = await req.file();
+
+    const { category, chapter, name, url } = formData.fields;
+
+    const data = {
+      category: category.value,
+      chapter: chapter.value,
+      name: name.value,
+      url: url.value,
+      file: formData,
+    };
+
+    const imageData = await formData.toBuffer();
+
+    await this.commandBus.execute(
+      new CreateWorkCommand({
+        category: data.category,
+        chapter: Number(data.chapter),
+        name: data.name,
+        url: data.url,
+        userId,
+        image: {
+          imageFile: imageData,
+          imageType: formData.filename,
+        },
+      }),
+    );
+  }
+
+  @Delete(':id')
+  async deleteWork(@Param('id', ParseObjectIdPipe) id: string) {
+    await this.commandBus.execute(new DeleteWorkCommand(id));
   }
 
   @Get('find/:id')
@@ -83,6 +118,13 @@ export class WorkController {
     await this.commandBus.execute(new MarkWorkUnreadCommand(id, data?.nextChapter));
   }
 
+  @Post('sync-to-notion ')
+  async syncToNotion(@User() user: UserTokenDto) {
+    if (!user.notionDatabaseId) return new BadRequestException('Notion database id not found');
+
+    await this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
+  }
+
   @Get('/fetch-for-workers-read')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
   async fetchForWorkersRead() {
@@ -97,11 +139,6 @@ export class WorkController {
     const works = await this.queryBus.execute(new FetchForWorkersUnreadQuery());
 
     return WorkModel.toHttpList(works);
-  }
-
-  @Post('sync-database')
-  async syncDatabase(@Body('databaseId') databaseId: string) {
-    this.batchService.importNotionDatabaseToMongoDB(databaseId);
   }
 
   @Post('refresh-chapters')
