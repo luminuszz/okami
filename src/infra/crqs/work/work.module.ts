@@ -39,6 +39,7 @@ import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works
 import { RegisterNewWork } from '@domain/work/application/usecases/register-new-work';
 import { DeleteWork } from '@domain/work/application/usecases/delete-work';
 import { DeleteWorkCommandHandler } from './commands/delete-work.command';
+import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-all-user-read-works';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -101,6 +102,7 @@ const EventHandlers = [];
     FetchUserWorksWithFilterUseCase,
     RegisterNewWork,
     DeleteWork,
+    FetchAllUserReadWorks,
     Queue,
   ],
   exports: [
@@ -117,6 +119,7 @@ const EventHandlers = [];
     Queue,
     MarkWorksOnPendingStatusUseCase,
     RegisterNewWork,
+    FetchAllUserReadWorks,
   ],
 })
 export class WorkModule {}

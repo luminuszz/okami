@@ -203,4 +203,15 @@ export class PrismaWorkRepository implements WorkRepository {
       },
     });
   }
+
+  async fetchAllWorksByUserIdAndHasNewChapterFalse(userId: string): Promise<Work[]> {
+    const results = await this.prisma.work.findMany({
+      where: {
+        userId,
+        hasNewChapter: false,
+      },
+    });
+
+    return results.map(prismaWorkToEntityMapper);
+  }
 }

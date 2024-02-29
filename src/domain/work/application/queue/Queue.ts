@@ -13,6 +13,7 @@ import { FindOneWorkUseCase } from '../usecases/fnd-one-work';
 import { MarkWorkUnreadUseCase } from '../usecases/mark-work-unread';
 import { MarkWorksOnPendingStatusUseCase } from '../usecases/mark-works-on-pending-status';
 import { UpdateRefreshStatusUseCase } from '../usecases/update-refresh-status';
+import { FetchAllUserReadWorks } from '../usecases/fetch-all-user-read-works';
 
 export enum QueueMessage {
   FIND_SERIE_EPISODE = 'find-serie-episode',
@@ -33,6 +34,7 @@ export class Queue {
     private readonly findOneWork: FindOneWorkUseCase,
     private readonly markWorkUnread: MarkWorkUnreadUseCase,
     private readonly eventbus: EventBus,
+    private readonly fetchAllReadUserWorks: FetchAllUserReadWorks,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
@@ -122,5 +124,19 @@ export class Queue {
     if (results.isLeft()) return;
 
     await this.eventbus.publishAll(results.value.events);
+  }
+
+  async refreshAllWorksStatusByUserId(userId: string) {
+    const results = await this.fetchAllReadUserWorks.execute({ userId });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
+
+    const { works } = results.value;
+
+    for (const work of works) {
+      await this.sendWorkToSyncWorkQueue(work);
+    }
   }
 }
