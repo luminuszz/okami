@@ -37,6 +37,7 @@ export class Queue {
     private readonly fetchAllReadUserWorks: FetchAllUserReadWorks,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
+
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
       this.refreshScrappingChapterStatus(payload),
     );

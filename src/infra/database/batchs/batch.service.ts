@@ -34,17 +34,21 @@ export class BatchService {
   }
 
   async importNotionDatabaseToMongoDB(databaseId: string, userId: string) {
-    const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(databaseId);
+    try {
+      const allNotionData = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(databaseId);
 
-    allNotionData.forEach((work) => {
-      work.setUserId(userId);
-    });
+      allNotionData.forEach((work) => {
+        work.setUserId(userId);
+      });
 
-    const newWorksCreated = await this.prismaWorkRepository.createAllWithNotExists(allNotionData);
+      const newWorksCreated = await this.prismaWorkRepository.createAllWithNotExists(allNotionData);
 
-    const events = newWorksCreated.map((work) => new WorkCreatedEvent(work));
+      const events = newWorksCreated.map((work) => new WorkCreatedEvent(work));
 
-    this.eventBus.publishAll(events);
+      this.eventBus.publishAll(events);
+    } catch (error) {
+      this.logger.error(`Error importing notion database to mongodb ${error}`);
+    }
   }
 
   async setWorkImageFromNotion(databaseId: string) {
