@@ -28,7 +28,7 @@ export const envSchema = z.object({
   STRIPE_SUCCESS_URL: z.string(),
   STRIPE_PRODUCT_PRICE_ID: z.string(),
   STRIPE_WEBHOOK_SECRET: z.string(),
-  DEFAULT_WORK_IMAGE: z.string(),
+  DEFAULT_WORK_IMAGE: z.string().optional(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;
