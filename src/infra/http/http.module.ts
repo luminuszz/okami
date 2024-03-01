@@ -1,35 +1,18 @@
+import { AuthModule } from '@infra/crqs/auth/auth.module';
+import { NotificationModule } from '@infra/crqs/notification/notification.module';
+import { DatabaseModule } from '@infra/database/database.module';
+import { AuthController } from '@infra/http/controllers/auth.controller';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { WorkModule } from '../crqs/work/work.module';
-import { WorkController } from './controllers/work.controller';
-import { AuthModule } from '@infra/crqs/auth/auth.module';
-import { AuthController } from '@infra/http/controllers/auth.controller';
-import { NotificationModule } from '@infra/crqs/notification/notification.module';
-import { DatabaseModule } from '@infra/database/database.module';
-import { NotificationController } from './controllers/notification.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { MessagingModule } from '../messaging/messaging.module';
 import { PaymentModule } from '../payment/payment.module';
+import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
+import { WorkController } from './controllers/work.controller';
 
 @Module({
-  imports: [
-    PaymentModule,
-    CqrsModule,
-    WorkModule,
-    AuthModule,
-    NotificationModule,
-    DatabaseModule,
-    ClientsModule.register([
-      {
-        name: 'NOTIFICATION_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.AMQP_URL],
-          queue: 'notification-service-queue',
-        },
-      },
-    ]),
-  ],
+  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
   controllers: [WorkController, AuthController, NotificationController, PaymentController],
 })
 export class HttpModule {}

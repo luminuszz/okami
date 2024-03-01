@@ -1,5 +1,9 @@
+import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
 import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/update-notion-database-id.command';
+import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
 import { User } from '@app/infra/crqs/user-auth.decorator';
+import { MessageService } from '@app/infra/messaging/messaging-service';
+import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import {
   CreateAccessTokenCommand,
@@ -20,11 +24,9 @@ import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards }
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
-import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
-import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
+import { firstValueFrom } from 'rxjs';
 import { CreateUserDto } from '../validators/create-user.dto';
-import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
-import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
+import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -33,6 +35,7 @@ export class AuthController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly getUserTrialQuote: GetUserTrialQuote,
+    private readonly notificationService: MessageService,
   ) {}
 
   @Post('login')
@@ -178,5 +181,23 @@ export class AuthController {
     }
 
     return response.value;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/user/telegram-status')
+  async getTelegramStatus(@User('id') userId: string) {
+    try {
+      const response = await firstValueFrom(this.notificationService.send('get-subscriber', { recipientId: userId }), {
+        defaultValue: null,
+      });
+
+      const { telegramChatId } = response as { telegramChatId: string };
+
+      return {
+        isSubscribed: !!telegramChatId,
+      };
+    } catch (e) {
+      throw new BadRequestException('Houve um erro');
+    }
   }
 }

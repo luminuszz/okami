@@ -1,24 +1,17 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
 import { User } from '@app/infra/crqs/user-auth.decorator';
-import { Body, Controller, Get, Inject, OnModuleInit, Post, UseGuards } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
-import { lastValueFrom } from 'rxjs';
-import { RegisterTelegramChatIdDto } from '../validators/register-telegram-chat-id.dto';
-import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
+import { MessageService } from '@app/infra/messaging/messaging-service';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { lastValueFrom } from 'rxjs';
+import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
+import { RegisterTelegramChatIdDto } from '../validators/register-telegram-chat-id.dto';
+import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
 
 @ApiTags('notification')
 @Controller('notification')
-export class NotificationController implements OnModuleInit {
-  constructor(
-    @Inject('NOTIFICATION_SERVICE')
-    private readonly notificationServiceEmitter: ClientProxy,
-  ) {}
-
-  async onModuleInit() {
-    await this.notificationServiceEmitter.connect();
-  }
+export class NotificationController {
+  constructor(private readonly notificationServiceEmitter: MessageService) {}
 
   @UseGuards(AuthGuard)
   @Post('/push/browser/subscribe')

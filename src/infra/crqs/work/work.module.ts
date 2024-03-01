@@ -40,6 +40,7 @@ import { RegisterNewWork } from '@domain/work/application/usecases/register-new-
 import { DeleteWork } from '@domain/work/application/usecases/delete-work';
 import { DeleteWorkCommandHandler } from './commands/delete-work.command';
 import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-all-user-read-works';
+import { MessagingModule } from '@app/infra/messaging/messaging.module';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -66,6 +67,7 @@ const EventHandlers = [];
 
 @Module({
   imports: [
+    MessagingModule,
     CqrsModule,
     StorageModule,
     QueueModule,

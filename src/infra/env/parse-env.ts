@@ -29,6 +29,10 @@ export const envSchema = z.object({
   STRIPE_PRODUCT_PRICE_ID: z.string(),
   STRIPE_WEBHOOK_SECRET: z.string(),
   DEFAULT_WORK_IMAGE: z.string().optional(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.coerce.number(),
+  REDIS_USER: z.string(),
+  REDIS_PASSWORD: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;
