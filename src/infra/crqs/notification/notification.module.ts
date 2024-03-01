@@ -1,3 +1,4 @@
+import { MessagingModule } from '@app/infra/messaging/messaging.module';
 import { CreateNotificationUseCase } from '@domain/notification/application/useCases/create-notification';
 import { CreateUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/create-user-notification-subscription';
 import { FetchUserNotificationSubscriptionUseCase } from '@domain/notification/application/useCases/fetch-user-notification-subscription-by-userId';
@@ -11,12 +12,11 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateBrowserUserNotificationSubscriptionCommandHandler } from './commands/create-user-notification-subscription.command';
 import { CreateNotificationCommandHandler } from './commands/createNotification.command';
+import { OnUserCreatedEventHandler } from './handlers/on-user-created';
 import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-notification-created-event-handler';
 import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notification-created-handler';
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 import { FetchUserNotificationSubscriberByIdQueryHandler } from './queries/fetch-user-notification-subscriber-by-id.query';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { OnUserCreatedEventHandler } from './handlers/on-user-created';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
@@ -32,20 +32,7 @@ const EventHandlers = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
-    HttpModule,
-    ClientsModule.register([
-      {
-        name: 'NOTIFICATION_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.AMQP_URL],
-          queue: 'notification-service-queue',
-        },
-      },
-    ]),
-  ],
+  imports: [CqrsModule, HttpModule, MessagingModule],
   providers: [
     ...EventHandlers,
     ...CommandHandlers,
