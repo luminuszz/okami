@@ -10,6 +10,7 @@ interface ContentObject {
   chapter: number;
   message: string;
   url: string;
+  nextChapter: number;
 }
 
 @EventsHandler(WorkMarkUnreadEvent)
@@ -17,10 +18,14 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
   constructor(private clientEmitter: MessageService) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
-    const message =
-      payload.category === Category.ANIME
-        ? `${payload.name} - Episódio Novo disponível !`
-        : `${payload.name} - Capítulo Novo disponível !`;
+    const predicate = payload.category === Category.ANIME ? 'Capítulo' : 'Episódio';
+
+    const message = `Novo ${predicate} de ${
+      payload.name
+    } - ${predicate} ${payload?.nextChapter?.getChapter()} disponível !
+    
+    ${payload.url}
+    `;
 
     const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${payload.id}-${payload.imageId}`);
 
@@ -30,6 +35,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       message,
       name: payload.name,
       url: payload.url,
+      nextChapter: payload.nextChapter.getChapter(),
     } satisfies ContentObject;
 
     this.clientEmitter.emit('create-notification', {
