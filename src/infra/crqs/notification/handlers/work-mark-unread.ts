@@ -18,11 +18,11 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
   constructor(private clientEmitter: MessageService) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
-    const predicate = payload.category === Category.ANIME ? 'Capítulo' : 'Episódio';
+    const predicate = payload.category === Category.MANGA ? 'Capítulo' : 'Episódio';
 
-    const message = `Novo ${predicate} de ${
-      payload.name
-    } - ${predicate} ${payload?.nextChapter?.getChapter()} disponível !
+    const message = `
+    Obra Atualizada - ${payload.name} !
+    Novo ${predicate} de ${payload.name} - ${predicate} ${payload?.nextChapter?.getChapter()} disponível !
     
     ${payload.url}
     `;
