@@ -183,9 +183,9 @@ export class WorkController {
     await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
   }
 
-  @Get('replace-image-from-notion')
-  async setWorkImageFromNotion(@Body('databaseId') databaseId: string) {
-    await this.batchService.setWorkImageFromNotion(databaseId);
+  @Post('replace-image-from-notion/:databaseId')
+  async setWorkImageFromNotion(@Param('databaseId') databaseId: string) {
+    this.batchService.setWorkImageFromNotion(databaseId);
   }
 
   @Get('fetch-for-works-scraping-report')

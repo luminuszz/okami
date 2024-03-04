@@ -13,7 +13,7 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
 
   constructor(private readonly env: EnvService) {
     this.sqs = new SQSClient({
-      region: this.env.get('AWS_S3_REGION'),
+      region: this.env.get('AWS_REGION'),
       credentials: {
         accessKeyId: this.env.get('AWS_ACCESS_KEY_ID'),
         secretAccessKey: this.env.get('AWS_SECRET_KEY_ACCESS'),

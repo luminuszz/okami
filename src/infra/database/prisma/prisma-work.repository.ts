@@ -47,6 +47,7 @@ export class PrismaWorkRepository implements WorkRepository {
       data,
     });
   }
+
   async save(work: Work): Promise<void> {
     const parsedData = workEntityToPrismaMapper(work);
 

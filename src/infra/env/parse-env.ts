@@ -11,8 +11,9 @@ export const envSchema = z.object({
   ADDRESS: z.string(),
   NEW_RELIC_LICENSE_KEY: z.string(),
   NEW_RELIC_APP_NAME: z.string(),
-  AWS_S3_REGION: z.string(),
-  AWS_S3_BUCKET: z.string(),
+  AWS_REGION: z.string(),
+  CLOUD_FLARE_BUCKET_URL: z.string(),
+  CLOUD_FLARE_BUCKET: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_KEY_ACCESS: z.string(),
   JWT_SECRET: z.string(),
@@ -33,6 +34,9 @@ export const envSchema = z.object({
   REDIS_PORT: z.coerce.number(),
   REDIS_USER: z.string(),
   REDIS_PASSWORD: z.string(),
+  CLOUD_FLARE_R2_KEY: z.string(),
+  CLOUD_FLARE_R2_SECRET_KEY: z.string(),
+  CLOUD_FLARE_PUBLIC_BUCKET_URL: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;

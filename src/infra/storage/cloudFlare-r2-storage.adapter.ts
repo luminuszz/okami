@@ -1,25 +1,26 @@
 import { FiletoUpload, FiletoUploadWithUrl, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
-import { ListObjectsV2Command, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import * as process from 'process';
 import { EnvService } from '../env/env.service';
 
 @Injectable()
-export class S3FileStorageAdapter implements StorageProvider {
-  private readonly s3Client: S3;
+export class CloudFlareR2StorageAdapter implements StorageProvider {
+  private readonly s3Client: S3Client;
 
   public readonly awsBucket: string;
 
   constructor(private env: EnvService) {
-    this.s3Client = new S3({
-      region: this.env.get('AWS_S3_REGION'),
+    this.s3Client = new S3Client({
+      region: 'auto',
+      endpoint: this.env.get('CLOUD_FLARE_BUCKET_URL'),
       credentials: {
-        accessKeyId: this.env.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.env.get('AWS_SECRET_KEY_ACCESS'),
+        accessKeyId: this.env.get('CLOUD_FLARE_R2_KEY'),
+        secretAccessKey: this.env.get('CLOUD_FLARE_R2_SECRET_KEY'),
       },
     });
 
-    this.awsBucket = this.env.get('AWS_S3_BUCKET');
+    this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET');
   }
 
   private async createFolderIfNotExists(folderPrefix: string) {
@@ -54,16 +55,18 @@ export class S3FileStorageAdapter implements StorageProvider {
   async uploadWorkImage({ fileName, fileData, fileMimeType }: FiletoUpload): Promise<void> {
     await this.createFolderIfNotExists('work-images');
 
-    await this.s3Client.putObject({
-      Bucket: this.awsBucket,
-      Body: Buffer.from(fileData),
-      Key: `work-images/${fileName}.${fileMimeType}`,
-      ContentType: `image/${fileMimeType}`,
-    });
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.awsBucket,
+        Body: Buffer.from(fileData),
+        Key: `work-images/${fileName}.${fileMimeType}`,
+        ContentType: `image/${fileMimeType}`,
+      }),
+    );
   }
 
   static createS3FileUrl(fileName: string): string {
-    return `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/work-images/${fileName}`;
+    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
   }
 
   async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<void> {
@@ -72,8 +75,8 @@ export class S3FileStorageAdapter implements StorageProvider {
     const buffer = await response.arrayBuffer();
 
     await this.uploadWorkImage({
-      fileName: file.fileName,
       fileData: buffer,
+      fileName: file.fileName,
       fileMimeType: file.fileMimeType,
     });
   }

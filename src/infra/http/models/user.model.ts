@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@domain/auth/enterprise/entities/User';
-import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { PaymentSubscriptionStatus } from '@prisma/client';
 
 const userSchema = z
@@ -17,7 +17,7 @@ const userSchema = z
   })
   .transform((data) => ({
     ...data,
-    avatarImageUrl: data.avatarImageId ? S3FileStorageAdapter.createS3FileUrl(data.avatarImageId) : null,
+    avatarImageUrl: data.avatarImageId ? CloudFlareR2StorageAdapter.createS3FileUrl(data.avatarImageId) : null,
   }));
 
 export type UserHttpType = z.infer<typeof userSchema>;

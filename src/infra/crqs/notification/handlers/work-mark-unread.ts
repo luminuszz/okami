@@ -1,5 +1,5 @@
 import { MessageService } from '@app/infra/messaging/messaging-service';
-import { S3FileStorageAdapter } from '@app/infra/storage/s3FileStorage.adapter';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { WorkMarkUnreadEvent } from '@domain/work/enterprise/entities/events/work-marked-unread';
 import { Category } from '@domain/work/enterprise/entities/work';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
@@ -27,7 +27,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
     ${payload.url}
     `;
 
-    const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${payload.id}-${payload.imageId}`);
+    const imageUrl = CloudFlareR2StorageAdapter.createS3FileUrl(`${payload.id}-${payload.imageId}`);
 
     const content = {
       chapter: payload.chapter.getChapter(),

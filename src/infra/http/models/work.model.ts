@@ -1,8 +1,9 @@
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { z } from 'zod';
-import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
+
 import { ApiProperty } from '@nestjs/swagger';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 
 const workSchema = z
   .object({
@@ -25,7 +26,7 @@ const workSchema = z
   .transform((data) => {
     return {
       ...data,
-      imageUrl: data.imageId ? S3FileStorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
+      imageUrl: data.imageId ? CloudFlareR2StorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
     };
   });
 

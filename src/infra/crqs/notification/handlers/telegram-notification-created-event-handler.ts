@@ -1,6 +1,6 @@
 import { EnvService } from '@app/infra/env/env.service';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { NotificationCreatedEvent } from '@domain/notification/enterprise/events/notificationCreated';
-import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
 import { OnModuleDestroy } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Telegraf } from 'telegraf';
@@ -45,7 +45,7 @@ export class TelegramNotificationCreatedEventHandler
     const isAllowedImageFiletype = ['png', 'jpg', 'jpeg'].includes(imageId?.split('.').pop());
 
     if (imageId && isAllowedImageFiletype) {
-      const imageUrl = S3FileStorageAdapter.createS3FileUrl(`${id}-${imageId}`);
+      const imageUrl = CloudFlareR2StorageAdapter.createS3FileUrl(`${id}-${imageId}`);
       await this.telegraf.telegram.sendPhoto(payload.recipientId, imageUrl, {
         parse_mode: 'MarkdownV2',
         caption,

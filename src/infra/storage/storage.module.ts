@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { S3FileStorageAdapter } from '@infra/storage/s3FileStorage.adapter';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
 
 @Module({
   providers: [
     {
       provide: StorageProvider,
-      useClass: S3FileStorageAdapter,
+      useClass: CloudFlareR2StorageAdapter,
     },
   ],
 

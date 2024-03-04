@@ -61,12 +61,7 @@ export class AuthController {
   @ApiBody({
     type: 'object',
     schema: {
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
+      type: 'file',
     },
   })
   async uploadAvatarImage(@Req() req: any) {

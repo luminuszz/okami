@@ -148,8 +148,8 @@ export class Work extends Entity<WorkProps> {
     return this.props.imageId;
   }
 
-  public set imageId(imageUrl: string) {
-    this.props.imageId = imageUrl;
+  public set imageId(imageId: string) {
+    this.props.imageId = imageId;
     this.commit();
   }
 
