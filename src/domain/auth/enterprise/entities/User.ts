@@ -44,12 +44,19 @@ export class User extends Entity<EntityProps> {
     return this.props.email;
   }
 
+  set email(email: string) {
+    this.props.email = email;
+  }
   get passwordHash(): string {
     return this.props.passwordHash;
   }
 
   get name(): string {
     return this.props.name;
+  }
+
+  set name(name: string) {
+    this.props.name = name;
   }
 
   get updatedAt(): Date {

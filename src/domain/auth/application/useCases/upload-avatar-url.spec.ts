@@ -4,9 +4,11 @@ import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository';
 import { fakeHashProvider } from '@test/mocks/mocks';
 import { faker } from '@faker-js/faker';
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
+import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
 
-const fakeStorageProvider = {
+const fakeStorageProvider: StorageProvider = {
   uploadWorkImage: jest.fn(),
+  uploadWorkImageWithUrl: jest.fn(),
 };
 
 describe('UploadWorkImageUseCase', () => {

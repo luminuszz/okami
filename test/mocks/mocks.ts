@@ -21,3 +21,9 @@ export const createWorkPropsFactory = () => ({
   category: faker.helpers.arrayElement(['MANGA', 'ANIME']) as any,
   userId: faker.string.uuid(),
 });
+
+export const createUserPropsFactory = () => ({
+  email: faker.internet.email(),
+  name: faker.person.firstName(),
+  passwordHash: faker.string.uuid(),
+});
