@@ -23,6 +23,7 @@ interface EntityProps {
   paymentSubscriberId?: string;
   paymentSubscriptionStatus?: PaymentSubscriptionStatus;
   trialWorkLimit?: number;
+  resetPasswordCode?: string | null;
 }
 
 export const DEFAULT_TRIAL_WORK_LIMIT = 5;
@@ -38,6 +39,7 @@ export class User extends Entity<EntityProps> {
     this.props.adminHashCodeKey = props.adminHashCodeKey ?? null;
     this.props.paymentSubscriptionStatus = props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE;
     this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
+    this.props.resetPasswordCode = props.resetPasswordCode ?? null;
   }
 
   get email(): string {
@@ -69,6 +71,15 @@ export class User extends Entity<EntityProps> {
 
   get avatarImageId(): string {
     return this.props.avatarImageId;
+  }
+
+  get resetPasswordCode(): string | null {
+    return this.props.resetPasswordCode;
+  }
+
+  set resetPasswordCode(code: string | null) {
+    this.props.resetPasswordCode = code;
+    this.refresh();
   }
 
   set avatarImageId(url: string) {

@@ -109,4 +109,14 @@ export class PrismaUserRepository implements UserRepository {
       totalOfWorksFinished,
     };
   }
+
+  async finsUserByPasswordResetCode(code: string): Promise<User> {
+    const results = await this.prisma.user.findFirst({
+      where: {
+        resetPasswordCode: code,
+      },
+    });
+
+    return results ? parsePrismaUserToDomainUser(results) : null;
+  }
 }
