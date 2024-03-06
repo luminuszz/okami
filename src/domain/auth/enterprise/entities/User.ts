@@ -48,9 +48,12 @@ export class User extends Entity<EntityProps> {
   }
 
   set email(email: string) {
+    if (this.props.email !== email) {
+      this.events.push(new UserEmailUpdated(this));
+    }
+
     this.props.email = email;
     this.refresh();
-    this.events.push(new UserEmailUpdated(this));
   }
   get passwordHash(): string {
     return this.props.passwordHash;
