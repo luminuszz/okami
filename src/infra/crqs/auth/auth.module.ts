@@ -33,6 +33,8 @@ import { SendResetPasswordEmailCommandHandler } from './commands/send-reset-pass
 import { SendResetPasswordEmail } from '@domain/auth/application/useCases/send-reset-password-email';
 import { ResetUserPasswordCommandHandler } from './commands/reset-user-passsword.command';
 import { ResetUserPassword } from '@domain/auth/application/useCases/reset-user-password';
+import { UpdateUserCommandHandler } from './commands/update-user.command';
+import { UpdateUser } from '@domain/auth/application/useCases/update-user';
 
 const Commands = [
   LoginCommandHandler,
@@ -44,6 +46,7 @@ const Commands = [
   UpdateNotionDatabaseIdCommandHandler,
   SendResetPasswordEmailCommandHandler,
   ResetUserPasswordCommandHandler,
+  UpdateUserCommandHandler,
 ];
 
 const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
@@ -82,6 +85,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     FetchUserAnalytics,
     GetUserTrialQuote,
     ResetUserPassword,
+    UpdateUser,
     ...Commands,
     ...Queries,
   ],

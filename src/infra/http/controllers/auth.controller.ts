@@ -20,7 +20,7 @@ import { UserHttp, UserModel } from '@infra/http/models/user.model';
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
-import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
@@ -31,6 +31,7 @@ import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/sen
 import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
 import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
 import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
+import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -208,5 +209,11 @@ export class AuthController {
   @Post('/password/reset')
   async resetUserPassword(@Body() { code, newPassword }: ResetUserPasswordDto) {
     await this.commandBus.execute(new ResetUserPasswordCommand(code, newPassword));
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('/user')
+  async updateUser(@User('id') userId: string, @Body() data: { name: string; email: string }) {
+    await this.commandBus.execute(new UpdateUserCommand(userId, data));
   }
 }

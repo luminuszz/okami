@@ -1,6 +1,7 @@
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Work } from '@domain/work/enterprise/entities/work';
+import { UserEmailUpdated } from '../events/user-email-updated';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
@@ -48,6 +49,8 @@ export class User extends Entity<EntityProps> {
 
   set email(email: string) {
     this.props.email = email;
+    this.refresh();
+    this.events.push(new UserEmailUpdated(this));
   }
   get passwordHash(): string {
     return this.props.passwordHash;

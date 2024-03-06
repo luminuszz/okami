@@ -17,6 +17,7 @@ import { TelegramNotificationCreatedEventHandler } from './handlers/telegram-not
 import { WebPushNotificationCreatedEventHandler } from './handlers/webPush-notification-created-handler';
 import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
 import { FetchUserNotificationSubscriberByIdQueryHandler } from './queries/fetch-user-notification-subscriber-by-id.query';
+import { OnUserEmailUpdatedHandler } from './handlers/on-user-email-updated';
 
 const CommandHandlers = [CreateNotificationCommandHandler];
 const EventHandlers = [
@@ -29,6 +30,7 @@ const EventHandlers = [
   CreateBrowserUserNotificationSubscriptionCommandHandler,
   FetchUserNotificationSubscriberByIdQueryHandler,
   OnUserCreatedEventHandler,
+  OnUserEmailUpdatedHandler,
 ];
 
 @Module({
