@@ -27,6 +27,10 @@ import { FastifyReply } from 'fastify';
 import { firstValueFrom } from 'rxjs';
 import { CreateUserDto } from '../validators/create-user.dto';
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
+import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/send-reset-password-emai.command';
+import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
+import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
+import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -194,5 +198,15 @@ export class AuthController {
     } catch (e) {
       throw new BadRequestException('Houve um erro');
     }
+  }
+
+  @Post('/password/send-reset-email')
+  async sendResetPasswordEmail(@Body() { email }: SendResetPasswordEmailDto) {
+    await this.commandBus.execute(new SendResetPasswordEmailCommand(email));
+  }
+
+  @Post('/password/reset')
+  async resetUserPassword(@Body() { code, newPassword }: ResetUserPasswordDto) {
+    await this.commandBus.execute(new ResetUserPasswordCommand(code, newPassword));
   }
 }

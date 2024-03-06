@@ -28,6 +28,11 @@ import { SubscriberGuard } from './subscriber.guard';
 import { FetchUserAnalytics } from '@domain/auth/application/useCases/fetch-user-analytics';
 import { FetchUserAnalyticsQueryHandler } from './queries/fetch-user-analytics';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
+import { MailModule } from '@app/infra/mail/mail.module';
+import { SendResetPasswordEmailCommandHandler } from './commands/send-reset-password-emai.command';
+import { SendResetPasswordEmail } from '@domain/auth/application/useCases/send-reset-password-email';
+import { ResetUserPasswordCommandHandler } from './commands/reset-user-passsword.command';
+import { ResetUserPassword } from '@domain/auth/application/useCases/reset-user-password';
 
 const Commands = [
   LoginCommandHandler,
@@ -37,12 +42,15 @@ const Commands = [
   CreateAdminHashCodeCommandHandler,
   ResetPasswordCommandHandler,
   UpdateNotionDatabaseIdCommandHandler,
+  SendResetPasswordEmailCommandHandler,
+  ResetUserPasswordCommandHandler,
 ];
 
 const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
 
 @Module({
   imports: [
+    MailModule,
     CqrsModule,
     StorageModule,
     EncryptModule,
@@ -56,6 +64,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     }),
   ],
   providers: [
+    SendResetPasswordEmail,
     CreateApiAccessTokenUseCase,
     UploadWorkImageUseCase,
     AuthenticateUserUseCase,
@@ -63,8 +72,6 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     AuthGuard,
     JwtService,
     SubscriberGuard,
-    ...Commands,
-    ...Queries,
     UploadUserAvatarImage,
     FindUserByIdUseCase,
     VerifyApiAccessTokenUseCase,
@@ -74,6 +81,9 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     CheckUserSubscriptionStatus,
     FetchUserAnalytics,
     GetUserTrialQuote,
+    ResetUserPassword,
+    ...Commands,
+    ...Queries,
   ],
   exports: [
     AuthenticateUserUseCase,

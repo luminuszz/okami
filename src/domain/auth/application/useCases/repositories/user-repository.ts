@@ -12,7 +12,9 @@ export abstract class UserRepository {
   findByEmail: (email: string) => Promise<User | undefined>;
   findById: (id: string) => Promise<User | undefined>;
   save: (user: User) => Promise<void>;
-  findUserByPaymentSubscriptionId: (paymentSubscriptionId: string) => Promise<User | undefined>;
-  findUserByPaymentSubscriberId: (paymentSubscriberId: string) => Promise<User | undefined>;
+  abstract findUserByPaymentSubscriptionId: (paymentSubscriptionId: string) => Promise<User | undefined>;
+  abstract findUserByPaymentSubscriberId: (paymentSubscriberId: string) => Promise<User | undefined>;
   abstract fetchUserMetaData(userId: string): Promise<UserMetadata>;
+
+  abstract finsUserByPasswordResetCode(code: string): Promise<User | undefined>;
 }

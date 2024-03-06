@@ -2,6 +2,9 @@ import { UserMetadata, UserRepository } from '@domain/auth/application/useCases/
 import { User } from '@domain/auth/enterprise/entities/User';
 
 export class InMemoryUserRepository implements UserRepository {
+  async finsUserByPasswordResetCode(code: string): Promise<User | undefined> {
+    return this.users.find((user) => user.resetPasswordCode === code);
+  }
   async findUserByPaymentSubscriberId(paymentSubscriberId: string) {
     return this.users.find((user) => user.paymentSubscriberId === paymentSubscriberId);
   }
