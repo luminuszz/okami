@@ -41,6 +41,7 @@ export class Queue {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORK_SCRAPPING_STATUS, (payload: RefreshWorkScrappingStatusDto) =>
       this.refreshScrappingChapterStatus(payload),
     );
+
     this.queueProvider.subscribe(QueueMessage.WORK_NEW_CHAPTER, (payload: WorkNewChapterDto) =>
       this.workNewChapter(payload),
     );
