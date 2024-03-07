@@ -88,6 +88,13 @@ export class PrismaWorkRepository implements WorkRepository {
 
       const updateParsedData = omit(parsedData, ['id', 'nextChapterUpdatedAt', 'nextChapter']);
 
+      if (!work.id) {
+        this.logger.debug(`${work.name} not exists in database witg valid id, creating new work`);
+        return this.prisma.work.create({
+          data: { ...parsedData, userId: work.userId },
+        });
+      }
+
       return this.prisma.work.upsert({
         where: {
           id: work.id.toString(),

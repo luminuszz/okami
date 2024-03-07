@@ -32,6 +32,7 @@ import { SendResetPasswordEmailDto } from '../validators/send-reset-password-ema
 import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
 import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
 import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
+import { UpdateUserDto } from '../validators/update-user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -213,7 +214,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Put('/user')
-  async updateUser(@User('id') userId: string, @Body() data: { name: string; email: string }) {
+  async updateUser(@User('id') userId: string, @Body() data: UpdateUserDto) {
     await this.commandBus.execute(new UpdateUserCommand(userId, data));
   }
 }
