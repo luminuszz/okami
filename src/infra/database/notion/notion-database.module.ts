@@ -14,6 +14,7 @@ import {
 } from '@infra/database/notion/handlers/work-created';
 import { StorageModule } from '@infra/storage/storage.module';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { OnWorkDeletedHandler } from './handlers/on-work-deleted';
 
 @Module({
   imports: [CqrsModule, ConfigModule.forRoot(), StorageModule],
@@ -27,6 +28,7 @@ import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload
     SetSyncIdOnNotionPageEventHandler,
     UploadWorkImageUseCase,
     UploadNotionWorkImageFromNotionEventHandler,
+    OnWorkDeletedHandler,
   ],
   exports: [NotionWorkRepository, NotionApiAdapter],
 })

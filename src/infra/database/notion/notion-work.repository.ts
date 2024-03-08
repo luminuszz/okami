@@ -152,6 +152,19 @@ export class NotionWorkRepository {
     });
   }
 
+  async moveWorkToArchive(id: string): Promise<void> {
+    await this.notion.pages.update({
+      page_id: id,
+      properties: {
+        status: {
+          select: {
+            name: 'Lerei',
+          },
+        },
+      },
+    });
+  }
+
   async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalse(database_id: string): Promise<Work[]> {
     const { results } = await this.notion.databases.query({
       database_id,

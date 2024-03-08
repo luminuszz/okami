@@ -3,12 +3,13 @@ import { UseCaseImplementation } from '@core/use-case';
 import { Injectable } from '@nestjs/common';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { WorkRepository } from '../repositories/work-repository';
+import { Work } from '@domain/work/enterprise/entities/work';
 
 interface DeleteWorkRequest {
   workId: string;
 }
 
-type DeleteWorkResponse = Either<WorkNotFoundError, void>;
+type DeleteWorkResponse = Either<WorkNotFoundError, { work: Work }>;
 
 @Injectable()
 export class DeleteWork implements UseCaseImplementation<DeleteWorkRequest, DeleteWorkResponse> {
@@ -21,6 +22,8 @@ export class DeleteWork implements UseCaseImplementation<DeleteWorkRequest, Dele
 
     await this.workRepository.deleteWork(workId);
 
-    return right(null);
+    return right({
+      work: existsWork,
+    });
   }
 }
