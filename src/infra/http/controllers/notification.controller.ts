@@ -59,4 +59,15 @@ export class NotificationController {
       { defaultValue: '' },
     );
   }
+
+  @UseGuards(AuthGuard)
+  @Get('recent')
+  async getRecentNotifications(@User('id') userId: string) {
+    return lastValueFrom(
+      this.notificationServiceEmitter.send('get-recent-notifications', {
+        recipientId: userId,
+      }),
+      { defaultValue: [] },
+    );
+  }
 }
