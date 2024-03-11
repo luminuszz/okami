@@ -171,9 +171,11 @@ export class PrismaWorkRepository implements WorkRepository {
   ): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
 
-    console.log({ userId });
+    const where = { userId, isFinished: false, isDropped: false };
 
-    const where = filter ? { refreshStatus: filter, userId } : { userId };
+    if (filter) {
+      Object.assign(where, { refreshStatus: filter });
+    }
 
     const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
       this.prisma.work.findMany({
