@@ -1,7 +1,7 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
 import { User } from '@app/infra/crqs/user-auth.decorator';
 import { MessageService } from '@app/infra/messaging/messaging-service';
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { lastValueFrom } from 'rxjs';
 import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
@@ -69,5 +69,11 @@ export class NotificationController {
       }),
       { defaultValue: [] },
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('mark-read/:notificationId')
+  async markNotificationAsRead(@Param('notificationId') notificationId: string) {
+    this.notificationServiceEmitter.emit('mark-notification-as-read', { notificationId });
   }
 }
