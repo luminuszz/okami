@@ -2,7 +2,10 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
 
 export class MarkWorkFinishedCommand {
-  constructor(public readonly workId: string) {}
+  constructor(
+    public readonly workId: string,
+    public readonly userId: string,
+  ) {}
 }
 
 @CommandHandler(MarkWorkFinishedCommand)
@@ -12,8 +15,8 @@ export class MarkWorkFinishedCommandHandler implements ICommandHandler<MarkWorkF
     private eventBus: EventBus,
   ) {}
 
-  async execute({ workId }: MarkWorkFinishedCommand): Promise<void> {
-    const results = await this.markWorkFinished.execute({ workId });
+  async execute({ workId, userId }: MarkWorkFinishedCommand): Promise<void> {
+    const results = await this.markWorkFinished.execute({ workId, userId });
 
     if (results.isRight()) {
       const { work } = results.value;

@@ -18,17 +18,19 @@ describe('MarkWorkFinished', () => {
   });
 
   it('should be able to mark work as finished', async () => {
+    const userId = faker.string.uuid();
+
     const response = await createWorkUseCase.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
-      userId: faker.string.uuid(),
+      userId: userId,
     });
 
     if (response.isLeft()) throw response.value;
 
-    const result = await stu.execute({ workId: response.value.work.id });
+    const result = await stu.execute({ workId: response.value.work.id, userId });
 
     expect(result.isRight()).toBeTruthy();
     expect(result.value).toHaveProperty('work');
@@ -49,24 +51,26 @@ describe('MarkWorkFinished', () => {
       userId: faker.string.uuid(),
     });
 
-    const result = await stu.execute({ workId: 'INVALID_ID' });
+    const result = await stu.execute({ workId: 'INVALID_ID', userId: 'INVALIDUSER' });
 
     expect(result.isLeft()).toBeTruthy();
     expect(result.value).toBeInstanceOf(WorkNotFoundError);
   });
 
   it('should be able to MarkWorkFinishedEvent has been dispatched', async () => {
+    const userId = faker.string.uuid();
+
     const response = await createWorkUseCase.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
-      userId: faker.string.uuid(),
+      userId,
     });
 
     if (response.isLeft()) throw response.value;
 
-    const result = await stu.execute({ workId: response.value.work.id });
+    const result = await stu.execute({ workId: response.value.work.id, userId });
 
     expect(result.isRight()).toBeTruthy();
 

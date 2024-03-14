@@ -224,4 +224,15 @@ export class PrismaWorkRepository implements WorkRepository {
 
     return results.map(prismaWorkToEntityMapper);
   }
+
+  async findUserWorkById(userId: string, workId: string): Promise<Work> {
+    const results = await this.prisma.work.findUnique({
+      where: {
+        id: workId,
+        userId,
+      },
+    });
+
+    return results ? prismaWorkToEntityMapper(results) : null;
+  }
 }

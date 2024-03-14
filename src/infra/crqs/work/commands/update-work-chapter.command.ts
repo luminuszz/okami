@@ -5,6 +5,7 @@ export class UpdateWorkChapterCommand {
   constructor(
     public readonly id: string,
     public readonly chapter: number,
+    public readonly userId: string,
   ) {}
 }
 
@@ -15,10 +16,11 @@ export class UpdateWorkChapterCommandHandler implements ICommandHandler<UpdateWo
     private eventBus: EventBus,
   ) {}
 
-  async execute({ chapter, id }: UpdateWorkChapterCommand): Promise<any> {
+  async execute({ chapter, id, userId }: UpdateWorkChapterCommand): Promise<any> {
     const { work } = await this.updateChapter.execute({
       chapter,
       id,
+      userId,
     });
 
     this.eventBus.publishAll(work.events);

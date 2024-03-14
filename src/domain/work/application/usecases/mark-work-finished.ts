@@ -7,6 +7,7 @@ import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work
 
 interface MarkWorkFinishedInput {
   workId: string;
+  userId: string;
 }
 
 type MarkWorkFinishedOutput = Either<WorkNotFoundError, { work: Work }>;
@@ -15,8 +16,8 @@ type MarkWorkFinishedOutput = Either<WorkNotFoundError, { work: Work }>;
 export class MarkWorkFinishedUseCase implements UseCaseImplementation<MarkWorkFinishedInput, MarkWorkFinishedOutput> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ workId }: MarkWorkFinishedInput): Promise<MarkWorkFinishedOutput> {
-    const workExists = await this.workRepository.findOne(workId);
+  async execute({ workId, userId }: MarkWorkFinishedInput): Promise<MarkWorkFinishedOutput> {
+    const workExists = await this.workRepository.findUserWorkById(userId, workId);
 
     if (!workExists) return left(new WorkNotFoundError());
 

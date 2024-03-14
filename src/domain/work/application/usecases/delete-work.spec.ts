@@ -1,8 +1,8 @@
+import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
+import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { faker } from '@faker-js/faker';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { DeleteWork } from './delete-work';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
-import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { faker } from '@faker-js/faker';
 import { WorkNotFoundError } from './errors/work-not-found';
 
 describe('DeleteWork', () => {
@@ -14,7 +14,7 @@ describe('DeleteWork', () => {
     stu = new DeleteWork(workRepository);
   });
 
-  it('shoud be able to delete a work', async () => {
+  it('should be able to delete a work', async () => {
     const work = Work.create({
       category: Category.MANGA,
       name: 'One Piece',
@@ -27,18 +27,30 @@ describe('DeleteWork', () => {
 
     await workRepository.create(work);
 
-    const response = await stu.execute({ workId: work.id });
+    const response = await stu.execute({ workId: work.id, userId: '1' });
 
     expect(response.isRight());
     expect(workRepository.works).toHaveLength(0);
   });
 
-  it('shoud be able to delete a work', async () => {
+  it('should not be able to delete a work if work not exists', async () => {
     const fakeWorkId = faker.string.uuid();
 
-    const response = await stu.execute({ workId: fakeWorkId });
+    const work = Work.create({
+      category: Category.MANGA,
+      name: 'One Piece',
+      userId: faker.string.uuid(),
+      chapter: new Chapter(1),
+      createdAt: new Date(),
+      url: 'http://one-piece.com',
+      hasNewChapter: false,
+    });
 
-    expect(workRepository.works).toHaveLength(0);
+    await workRepository.create(work);
+
+    const response = await stu.execute({ workId: fakeWorkId, userId: '1' });
+
+    expect(workRepository.works).toHaveLength(1);
     expect(response.isLeft());
     expect(response.value).toBeInstanceOf(WorkNotFoundError);
   });

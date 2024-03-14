@@ -6,6 +6,7 @@ import { WorkNotFoundError } from './errors/work-not-found';
 interface UpdateWorkChapterInput {
   id: string;
   chapter: number;
+  userId: string;
 }
 
 interface UpdateWorkChapterOutput {
@@ -16,8 +17,8 @@ interface UpdateWorkChapterOutput {
 export class UpdateWorkChapterUseCase {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ chapter, id }: UpdateWorkChapterInput): Promise<UpdateWorkChapterOutput> {
-    const work = await this.workRepository.findById(id);
+  async execute({ chapter, id, userId }: UpdateWorkChapterInput): Promise<UpdateWorkChapterOutput> {
+    const work = await this.workRepository.findUserWorkById(userId, id);
 
     if (!work) {
       throw new WorkNotFoundError();

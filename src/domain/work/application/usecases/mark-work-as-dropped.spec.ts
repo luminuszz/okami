@@ -39,7 +39,9 @@ describe('MarkWorkAsDropped', () => {
   });
 
   it('not be able to not mark a work as dropped if status is finished', async () => {
-    const workCreated = await createUser.execute(createWorkPropsFactory());
+    const workToCreate = createWorkPropsFactory();
+
+    const workCreated = await createUser.execute(workToCreate);
 
     if (workCreated.isLeft()) {
       throw workCreated.value;
@@ -47,7 +49,7 @@ describe('MarkWorkAsDropped', () => {
 
     const { work } = workCreated.value;
 
-    await markWorkFinished.execute({ workId: work.id });
+    await markWorkFinished.execute({ workId: work.id, userId: workToCreate.userId });
 
     const result = await stu.execute({ workId: work.id });
 

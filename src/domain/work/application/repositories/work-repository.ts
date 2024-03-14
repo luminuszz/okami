@@ -28,4 +28,6 @@ export abstract class WorkRepository {
   abstract deleteWork(workId: string): Promise<void>;
 
   abstract fetchAllWorksByUserIdAndHasNewChapterFalse(userId: string): Promise<Work[]>;
+
+  abstract findUserWorkById(userId: string, workId: string): Promise<Work | null>;
 }

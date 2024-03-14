@@ -91,8 +91,8 @@ export class WorkController {
   }
 
   @Delete(':id')
-  async deleteWork(@Param('id', ParseObjectIdPipe) id: string) {
-    await this.commandBus.execute(new DeleteWorkCommand(id));
+  async deleteWork(@Param('id', ParseObjectIdPipe) id: string, @User('id') userId: string) {
+    await this.commandBus.execute(new DeleteWorkCommand(id, userId));
   }
 
   @Get('find/:id')
@@ -104,8 +104,12 @@ export class WorkController {
   }
 
   @Patch(':id/update-chapter')
-  async updateChapter(@Param('id', ParseObjectIdPipe) id: string, @Body() { chapter }: UpdateChapterDto) {
-    await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter));
+  async updateChapter(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() { chapter }: UpdateChapterDto,
+    @User('id') userId: string,
+  ) {
+    await this.commandBus.execute(new UpdateWorkChapterCommand(id, chapter, userId));
   }
 
   @Patch(':id/mark-read')
@@ -147,13 +151,17 @@ export class WorkController {
   }
 
   @Put('update-work/:id')
-  async updateWork(@Param('id', ParseObjectIdPipe) id: string, @Body() data: UpdateWorkDto) {
-    await this.commandBus.execute(new UpdateWorkCommand(id, data));
+  async updateWork(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() data: UpdateWorkDto,
+    @User('id') userId: string,
+  ) {
+    await this.commandBus.execute(new UpdateWorkCommand(id, data, userId));
   }
 
   @Patch('/mark-finished/:id')
-  async markFinished(@Param('id', ParseObjectIdPipe) id: string) {
-    await this.commandBus.execute(new MarkWorkFinishedCommand(id));
+  async markFinished(@Param('id', ParseObjectIdPipe) id: string, @User('id') userId: string) {
+    await this.commandBus.execute(new MarkWorkFinishedCommand(id, userId));
   }
 
   @Post('/upload-work-image/:id')

@@ -1,12 +1,13 @@
 import { Either, left, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
-import { Injectable } from '@nestjs/common';
-import { WorkNotFoundError } from './errors/work-not-found';
-import { WorkRepository } from '../repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
+import { Injectable } from '@nestjs/common';
+import { WorkRepository } from '../repositories/work-repository';
+import { WorkNotFoundError } from './errors/work-not-found';
 
 interface DeleteWorkRequest {
   workId: string;
+  userId: string;
 }
 
 type DeleteWorkResponse = Either<WorkNotFoundError, { work: Work }>;
@@ -15,8 +16,8 @@ type DeleteWorkResponse = Either<WorkNotFoundError, { work: Work }>;
 export class DeleteWork implements UseCaseImplementation<DeleteWorkRequest, DeleteWorkResponse> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ workId }: DeleteWorkRequest): Promise<DeleteWorkResponse> {
-    const existsWork = await this.workRepository.findById(workId);
+  async execute({ workId, userId }: DeleteWorkRequest): Promise<DeleteWorkResponse> {
+    const existsWork = await this.workRepository.findUserWorkById(userId, workId);
 
     if (!existsWork) return left(new WorkNotFoundError());
 

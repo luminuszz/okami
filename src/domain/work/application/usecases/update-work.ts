@@ -8,6 +8,7 @@ import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-u
 
 type UpdateWorkUseCaseInput = {
   id: string;
+  userId: string;
   data: Partial<{
     chapter: number;
     url: string;
@@ -21,8 +22,8 @@ type UpdateWorkUseCaseOutput = Either<WorkNotFoundError, { work: Work }>;
 export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCaseInput, UpdateWorkUseCaseOutput> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ data, id }: UpdateWorkUseCaseInput): Promise<UpdateWorkUseCaseOutput> {
-    const existsWork = await this.workRepository.findById(id);
+  async execute({ data, id, userId }: UpdateWorkUseCaseInput): Promise<UpdateWorkUseCaseOutput> {
+    const existsWork = await this.workRepository.findUserWorkById(userId, id);
 
     if (!existsWork) {
       return left(new WorkNotFoundError());

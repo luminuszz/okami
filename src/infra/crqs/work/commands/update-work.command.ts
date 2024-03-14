@@ -11,6 +11,7 @@ export class UpdateWorkCommand {
   constructor(
     public id: string,
     public data: UpdateWorkInput,
+    public userId: string,
   ) {}
 }
 
@@ -21,10 +22,11 @@ export class UpdateWorkCommandHandler implements ICommandHandler<UpdateWorkComma
     private eventBus: EventBus,
   ) {}
 
-  async execute({ id, data }: UpdateWorkCommand): Promise<any> {
+  async execute({ id, data, userId }: UpdateWorkCommand): Promise<any> {
     const results = await this.updateWorkUseCase.execute({
       data,
       id,
+      userId,
     });
 
     if (results.isRight()) {

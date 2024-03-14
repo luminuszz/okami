@@ -16,17 +16,19 @@ describe('CreateWork', () => {
   });
 
   it('should to update a work chapter', async () => {
+    const userId = faker.string.uuid();
+
     const results = await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'Naruto',
       url: 'https://naruto.com',
-      userId: faker.string.uuid(),
+      userId,
     });
 
     if (results.isLeft()) throw results.value;
 
-    await stu.execute({ chapter: 2, id: results.value.work.id });
+    await stu.execute({ chapter: 2, id: results.value.work.id, userId });
 
     expect(inMemoryWorkRepository.works[0].chapter.getChapter()).toBe(2);
   });
