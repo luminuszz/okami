@@ -39,6 +39,7 @@ export const envSchema = z.object({
   CLOUD_FLARE_PUBLIC_BUCKET_URL: z.string(),
   FRONT_END_URL_RESET_PASSWORD_URL: z.string(),
   RESEND_API_SECRET_KEY: z.string(),
+  SENTRY_DSN_ENDPOINT: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;

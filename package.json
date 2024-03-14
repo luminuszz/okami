@@ -41,6 +41,7 @@
     "@nestjs/throttler": "^4.0.0",
     "@notionhq/client": "^2.2.5",
     "@prisma/client": "5.2.0",
+    "@sentry/node": "^7.106.1",
     "@swc/core": "^1.3.83",
     "@swc/jest": "^0.2.29",
     "@types/cron": "^2.0.1",

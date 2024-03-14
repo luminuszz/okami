@@ -1,13 +1,16 @@
-import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
-import { catchError, Observable } from 'rxjs';
-import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
-import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
-import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
 import { InvalidCodeKey } from '@domain/auth/application/errors/InvalidCodeKey';
+import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
+import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 import { InvalidWorkOperationError } from '@domain/work/application/usecases/errors/invalid-work-operation';
+import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
+import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
+import { Observable, catchError } from 'rxjs';
+import { SentryService } from '../logs/sentry/sentry.service';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
+  constructor(private readonly sentryService: SentryService) {}
+
   intercept(_, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       catchError((err) => {
@@ -30,6 +33,8 @@ export class CommonExceptionInterceptor implements NestInterceptor {
         if (err instanceof InvalidWorkOperationError) {
           throw new BadRequestException(err.message);
         }
+
+        this.sentryService.captureException(err);
 
         throw err;
       }),
