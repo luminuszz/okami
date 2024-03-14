@@ -1,4 +1,4 @@
-import { Category, Work } from '@app/domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@app/domain/work/enterprise/entities/work';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { NotionPage } from './dto/notion-page.dto';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
@@ -26,7 +26,7 @@ export class NotionMapper {
         category,
         chapter: new Chapter(properties.cap.number || 0),
         createdAt: new Date(properties.Created.created_time),
-        hasNewChapter: properties['CAPITULO NOVO'].checkbox,
+        status: properties['CAPITULO NOVO'].checkbox ? WorkStatus.UNREAD : WorkStatus.READ,
         name: properties?.Name?.title?.[0]?.text?.content,
         recipientId: id,
         url: properties.URL.url,

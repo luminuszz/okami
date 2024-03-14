@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { parseDomainUserToPrismaUser, parsePrismaUserToDomainUser } from '@infra/database/prisma/prisma-mapper';
+import { WorkStatus } from '@prisma/client';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -63,8 +64,8 @@ export class PrismaUserRepository implements UserRepository {
 
   async findUserWorkMetaData(id: string): Promise<{ readingWorksCount: number; finishedWorksCount: number }> {
     const [totalOfWorksReading, totalOfWorksRead] = await this.prisma.$transaction([
-      this.prisma.work.count({ where: { userId: id, isFinished: false } }),
-      this.prisma.work.count({ where: { userId: id, isFinished: true } }),
+      this.prisma.work.count({ where: { userId: id, status: { not: WorkStatus.FINISHED } } }),
+      this.prisma.work.count({ where: { userId: id, status: WorkStatus.FINISHED } }),
     ]);
 
     return {
@@ -94,13 +95,31 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async fetchUserMetaData(userId: string): Promise<UserMetadata> {
+    const values = await this.prisma.work.groupBy({
+      by: ['status'],
+      _count: true,
+
+      where: {
+        userId,
+      },
+    });
+
+    const parsedValues = values.reduce(
+      (acc, curr) => ({ ...acc, [curr.status]: curr._count }),
+      {} as Record<WorkStatus, number>,
+    );
+
+    console.log(parsedValues.DROPPED, parsedValues.FINISHED, parsedValues.READ, parsedValues.UNREAD);
+
     const [totalOfWorksRead, totalOfWorksCreated, totalOfWorksUnread, totalOfWorksFinished] =
       await this.prisma.$transaction([
-        this.prisma.work.count({ where: { userId, hasNewChapter: false, isFinished: false } }),
+        this.prisma.work.count({ where: { userId, status: WorkStatus.READ } }),
         this.prisma.work.count({ where: { userId } }),
-        this.prisma.work.count({ where: { userId, hasNewChapter: true } }),
-        this.prisma.work.count({ where: { userId, isFinished: true } }),
+        this.prisma.work.count({ where: { userId, status: WorkStatus.UNREAD } }),
+        this.prisma.work.count({ where: { userId, status: WorkStatus.FINISHED } }),
       ]);
+
+    console.log(totalOfWorksRead, totalOfWorksCreated, totalOfWorksUnread, totalOfWorksFinished);
 
     return {
       totalOfWorksRead,
