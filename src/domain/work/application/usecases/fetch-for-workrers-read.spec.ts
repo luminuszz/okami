@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { FetchForWorkersReadUseCase } from '@domain/work/application/usecases/fetch-for-workrers-read';
@@ -26,11 +26,12 @@ describe('FetchForWorksRead', () => {
       await workRepository.create(
         Work.create({
           createdAt: new Date(),
-          hasNewChapter: false,
+          status: WorkStatus.READ,
           category: Category.MANGA,
           chapter: new Chapter(1),
           name: 'One Piece',
           url: 'https://onepiece.com',
+          userId: faker.string.uuid(),
         }),
       );
     }
@@ -41,7 +42,7 @@ describe('FetchForWorksRead', () => {
 
     if (results.isRight()) {
       expect(results.value.works.length).toEqual(randomNumber);
-      const condition = results.value.works.every((work) => !work.hasNewChapter);
+      const condition = results.value.works.every((work) => work.isRead);
 
       expect(condition).toBeTruthy();
     }

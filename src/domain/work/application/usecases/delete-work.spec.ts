@@ -1,5 +1,5 @@
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { DeleteWork } from './delete-work';
@@ -22,7 +22,7 @@ describe('DeleteWork', () => {
       chapter: new Chapter(1),
       createdAt: new Date(),
       url: 'http://one-piece.com',
-      hasNewChapter: false,
+      status: WorkStatus.READ,
     });
 
     await workRepository.create(work);
@@ -43,7 +43,7 @@ describe('DeleteWork', () => {
       chapter: new Chapter(1),
       createdAt: new Date(),
       url: 'http://one-piece.com',
-      hasNewChapter: false,
+      status: WorkStatus.READ,
     });
 
     await workRepository.create(work);
