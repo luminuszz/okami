@@ -1,7 +1,7 @@
 import { Either, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
 import { InvalidWorkOperationError } from './errors/invalid-work-operation';
@@ -29,11 +29,11 @@ export class CreateWorkUseCase implements UseCaseImplementation<CreateWorkInput,
       category,
       chapter: new Chapter(chapter),
       nextChapter: new Chapter(null),
-      hasNewChapter: false,
       name,
       url,
       createdAt: new Date(),
       userId,
+      status: WorkStatus.READ,
     });
 
     await this.workRepository.create(work);

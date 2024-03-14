@@ -1,5 +1,5 @@
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 import { FetchAllUserReadWorks } from './fetch-all-user-read-works';
@@ -23,7 +23,7 @@ describe('FetchAllUserWorks', () => {
       chapter: new Chapter(1),
       createdAt: new Date(),
       url: 'http://one-piece.com',
-      hasNewChapter: false,
+      status: WorkStatus.READ,
     });
 
     await workRepository.create(work);
@@ -47,7 +47,7 @@ describe('FetchAllUserWorks', () => {
       chapter: new Chapter(1),
       createdAt: new Date(),
       url: 'http://one-piece.com',
-      hasNewChapter: false,
+      status: WorkStatus.READ,
     });
 
     await workRepository.create(work);
@@ -71,7 +71,7 @@ describe('FetchAllUserWorks', () => {
       chapter: new Chapter(1),
       createdAt: new Date(),
       url: 'http://one-piece.com',
-      hasNewChapter: faker.helpers.arrayElement([true, false]),
+      status: faker.helpers.arrayElement([WorkStatus.READ, WorkStatus.UNREAD]),
     });
 
     for (let i = 0; i < 10; i++) {

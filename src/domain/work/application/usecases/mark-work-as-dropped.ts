@@ -29,7 +29,7 @@ export class MarkWorkAsDroppedUseCase
       return left(new InvalidWorkOperationError('work is finished'));
     }
 
-    workOrNull.isDropped = true;
+    workOrNull.markAsDropped();
 
     await this.workRepository.save(workOrNull);
 

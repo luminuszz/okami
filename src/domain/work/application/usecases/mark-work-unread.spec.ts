@@ -30,10 +30,11 @@ describe('MarkWorkRead', () => {
     const { work } = createWorkResponse.value;
 
     const result = await stu.execute({ id: work.id });
+
     const response = await workRepository.findById(work.id);
 
     expect(result.isRight()).toBeTruthy();
-    expect(response.hasNewChapter).toBeTruthy();
+    expect(response.isUnread).toBeTruthy();
   });
 
   it('should not mark work as unread if work not exists', async () => {

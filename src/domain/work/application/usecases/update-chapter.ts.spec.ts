@@ -30,6 +30,7 @@ describe('UpdateWorkChapterUseCase', () => {
     const { work } = workCreatedResponse.value;
 
     const result = await stu.execute({
+      userId: work.userId,
       id: work.id,
       data: {
         chapter: 0,
@@ -50,15 +51,17 @@ describe('UpdateWorkChapterUseCase', () => {
   it('should not update work if works not exist', async () => {
     const createWork = new CreateWorkUseCase(workRepository);
 
+    const userId = faker.string.uuid();
+
     await createWork.execute({
       category: Category.ANIME,
       chapter: 1,
       name: 'One Piece',
       url: 'https://onepiece.com',
-      userId: faker.string.uuid(),
+      userId,
     });
 
-    const result = await stu.execute({ id: 'NOT_EXISTS_ID', data: { chapter: 10 } });
+    const result = await stu.execute({ id: 'NOT_EXISTS_ID', userId, data: { chapter: 10 } });
 
     expect(result.isLeft()).toBeTruthy();
     expect(result.value).toBeInstanceOf(WorkNotFoundError);

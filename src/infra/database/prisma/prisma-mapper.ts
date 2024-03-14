@@ -2,7 +2,7 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Notification } from '@domain/notification/enterprise/entities/notification';
 import { Content } from '@domain/notification/enterprise/values-objects/content';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, RefreshStatus, Work } from '@domain/work/enterprise/entities/work';
+import { Category, RefreshStatus, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 
 import {
   AccessToken as PrismaAccessToken,
@@ -45,19 +45,17 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   chapters: work.chapter.getChapter(),
   nextChapter: work.nextChapter?.getChapter(),
   nextChapterUpdatedAt: work.nextChapterUpdatedAt,
-  hasNewChapter: work.hasNewChapter,
   name: work.name,
   createdAt: work.createdAt,
   id: work.id.toString(),
   updatedAt: work.updatedAt,
   url: work.url,
   recipientId: work.recipientId,
-  isFinished: work.isFinished,
   imageId: work.imageId,
   userId: work.userId,
   isUpserted: null,
   refreshStatus: refreshStatusEnumMapper(work.refreshStatus),
-  isDropped: work.isDropped,
+  status: work.status as WorkStatus,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
@@ -66,18 +64,16 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       category: prismaWork.category as Category,
       chapter: new Chapter(prismaWork.chapters),
       createdAt: prismaWork.createdAt,
-      hasNewChapter: prismaWork.hasNewChapter,
       name: prismaWork.name,
       url: prismaWork.url,
       updatedAt: prismaWork.updatedAt,
       recipientId: prismaWork.recipientId,
-      isFinished: prismaWork.isFinished,
       imageId: prismaWork.imageId,
       nextChapter: new Chapter(prismaWork.nextChapter),
       nextChapterUpdatedAt: prismaWork.nextChapterUpdatedAt,
       userId: prismaWork.userId,
       refreshStatus: prismaWork.refreshStatus as RefreshStatus,
-      isDropped: prismaWork.isDropped,
+      status: prismaWork.status as WorkStatus,
     },
     new UniqueEntityID(prismaWork.id),
   );

@@ -27,7 +27,7 @@ export class InMemoryWorkRepository implements WorkRepository {
   }
 
   async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
-    return this.works.filter((work) => work.hasNewChapter);
+    return this.works.filter((work) => work.hasNewChapter || work.isUnread);
   }
 
   async findOne(id: string): Promise<Work> {

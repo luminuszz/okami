@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { map, omit } from 'lodash';
 import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper';
 import { PrismaService } from './prisma.service';
-import { RefreshStatus } from '@prisma/client';
+import { RefreshStatus, WorkStatus } from '@prisma/client';
 
 @Injectable()
 export class PrismaWorkRepository implements WorkRepository {
@@ -14,26 +14,21 @@ export class PrismaWorkRepository implements WorkRepository {
 
   async fetchWorksByUserIdWithFilters({ userId, status }: FetchUserWorksInput): Promise<Work[]> {
     const parserFilter = {
-      unread: {
-        hasNewChapter: true,
-      },
-      read: {
-        hasNewChapter: false,
-      },
-      finished: {
-        isFinished: true,
-      },
-      dropped: {
-        isDropped: true,
-      },
+      unread: WorkStatus.UNREAD,
+      read: WorkStatus.READ,
+      finished: WorkStatus.FINISHED,
+      dropped: WorkStatus.DROPPED,
     };
 
-    const filter = parserFilter[status] ?? {};
+    const filter = parserFilter[status];
 
     const results = await this.prisma.work.findMany({
       where: {
-        ...filter,
+        status: filter,
         userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -73,7 +68,7 @@ export class PrismaWorkRepository implements WorkRepository {
   async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
-        hasNewChapter: false,
+        status: WorkStatus.READ,
       },
     });
 
@@ -112,7 +107,7 @@ export class PrismaWorkRepository implements WorkRepository {
   async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
-        hasNewChapter: true,
+        status: WorkStatus.UNREAD,
       },
     });
 
@@ -132,9 +127,7 @@ export class PrismaWorkRepository implements WorkRepository {
   async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse(): Promise<Work[]> {
     const results = await this.prisma.work.findMany({
       where: {
-        hasNewChapter: false,
-        isFinished: false,
-        isDropped: false,
+        status: WorkStatus.READ,
       },
     });
 
@@ -171,7 +164,10 @@ export class PrismaWorkRepository implements WorkRepository {
   ): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
 
-    const where = { userId, isFinished: false, isDropped: false };
+    const where = {
+      userId,
+      OR: [{ status: WorkStatus.UNREAD }, { status: WorkStatus.READ }],
+    };
 
     if (filter) {
       Object.assign(where, { refreshStatus: filter });
@@ -218,7 +214,7 @@ export class PrismaWorkRepository implements WorkRepository {
     const results = await this.prisma.work.findMany({
       where: {
         userId,
-        hasNewChapter: false,
+        status: WorkStatus.READ,
       },
     });
 

@@ -11,19 +11,17 @@ interface WorkProps {
   name: string;
   url: string;
   chapter: Chapter;
-  hasNewChapter: boolean;
   updatedAt?: Date;
   createdAt: Date;
   category: Category;
   recipientId?: string;
-  isFinished?: boolean;
   imageId?: string;
   subscribers?: User[];
   nextChapter?: Chapter;
   nextChapterUpdatedAt?: Date;
   userId: string;
   refreshStatus?: RefreshStatus | null;
-  isDropped?: boolean;
+  status: WorkStatus;
 }
 
 export enum Category {
@@ -37,17 +35,22 @@ export enum RefreshStatus {
   PENDING = 'PENDING',
 }
 
+export enum WorkStatus {
+  READ = 'READ',
+  UNREAD = 'UNREAD',
+  FINISHED = 'FINISHED',
+  DROPPED = 'DROPPED',
+}
+
 export class Work extends Entity<WorkProps> {
   private constructor(props: WorkProps, id?: UniqueEntityID) {
     super(props, id);
 
     this.props.createdAt = props.createdAt ?? new Date();
-    this.props.isFinished = props.isFinished ?? false;
     this.props.subscribers = props.subscribers ?? [];
     this.props.nextChapter = props.nextChapter ?? null;
     this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
     this.props.refreshStatus = props.refreshStatus ?? null;
-    this.props.isDropped = props.isDropped ?? false;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -87,10 +90,6 @@ export class Work extends Entity<WorkProps> {
     return this.props.chapter;
   }
 
-  public get hasNewChapter() {
-    return this.props.hasNewChapter;
-  }
-
   public get category() {
     return this.props.category;
   }
@@ -100,10 +99,6 @@ export class Work extends Entity<WorkProps> {
 
   public get userId() {
     return this.props.userId;
-  }
-
-  public get isDropped() {
-    return this.props.isDropped;
   }
 
   public setRecipientId(recipientId: string) {
@@ -121,27 +116,28 @@ export class Work extends Entity<WorkProps> {
   }
 
   markAsRead(): void {
-    this.props.hasNewChapter = false;
+    this.props.status = WorkStatus.READ;
     this.updateNextChapter(null);
     this.events.push(new WorkMarkReadEvent(this));
     this.commit();
   }
 
   markAsUnread(nextChapter: number): void {
-    this.props.hasNewChapter = true;
+    this.props.status = WorkStatus.UNREAD;
     this.updateNextChapter(nextChapter);
     this.events.push(new WorkMarkUnreadEvent(this));
     this.commit();
   }
 
   public markAsFinished(): void {
-    this.props.isFinished = true;
+    this.props.status = WorkStatus.FINISHED;
     this.events.push(new WorkMarkedFinishedEvent(this));
     this.commit();
   }
 
-  public get isFinished() {
-    return this.props.isFinished;
+  public markAsDropped() {
+    this.props.status = WorkStatus.DROPPED;
+    this.commit();
   }
 
   public get imageId() {
@@ -171,11 +167,6 @@ export class Work extends Entity<WorkProps> {
     this.commit();
   }
 
-  public set isDropped(isDropped: boolean) {
-    this.props.isDropped = isDropped;
-    this.commit();
-  }
-
   public setUserId(userId: string) {
     if (this.props.userId) return;
 
@@ -187,5 +178,29 @@ export class Work extends Entity<WorkProps> {
     this.props.nextChapter.updateChapter(nextChapter);
     this.props.nextChapterUpdatedAt = new Date();
     this.commit();
+  }
+
+  public get status() {
+    return this.props.status;
+  }
+
+  public get isFinished() {
+    return this.props.status === WorkStatus.FINISHED;
+  }
+
+  public get isDropped() {
+    return this.props.status === WorkStatus.DROPPED;
+  }
+
+  public get isRead() {
+    return this.props.status === WorkStatus.READ;
+  }
+
+  public get isUnread() {
+    return this.props.status === WorkStatus.UNREAD;
+  }
+
+  public get hasNewChapter() {
+    return !!this.props.nextChapter?.getChapter();
   }
 }

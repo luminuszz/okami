@@ -4,7 +4,7 @@ import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { PaymentSubscriptionStatus } from '@domain/auth/enterprise/entities/User';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Category, Work } from '@domain/work/enterprise/entities/work';
+import { Category, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
 import { InvalidWorkOperationError } from './errors/invalid-work-operation';
@@ -57,11 +57,11 @@ export class RegisterNewWork implements UseCaseImplementation<RegisterNewWorkReq
       category,
       chapter: new Chapter(chapter),
       nextChapter: new Chapter(null),
-      hasNewChapter: false,
       name,
       url,
       createdAt: new Date(),
       userId,
+      status: WorkStatus.READ,
     });
 
     await this.workRepository.create(work);
