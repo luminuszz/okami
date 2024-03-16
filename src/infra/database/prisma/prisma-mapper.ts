@@ -1,27 +1,19 @@
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
-import { Notification } from '@domain/notification/enterprise/entities/notification';
-import { Content } from '@domain/notification/enterprise/values-objects/content';
+
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, RefreshStatus, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 
 import {
   AccessToken as PrismaAccessToken,
   Category as PrismaCategory,
-  Notification as PrismaNotification,
   User as PrismaUser,
   Work as PrismaWork,
   RefreshStatus as PrismaRefreshStatus,
-  UserNotificationSubscription as PrismaUserNotificationSubscription,
-  NotificationType as PrismaNotificationType,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
 } from '@prisma/client';
 import { PaymentSubscriptionStatus, User } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
-import {
-  UserNotificationSubscription,
-  NotificationType,
-} from '@domain/notification/enterprise/entities/user-notification-subscription';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -78,27 +70,6 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
     new UniqueEntityID(prismaWork.id),
   );
 };
-
-export const parseNotificationEntityToPrisma = (notification: Notification): PrismaNotification => ({
-  content: notification.content.toString(),
-  createdAt: notification.createdAt,
-  id: notification.id.toString(),
-  readAt: notification.readAt,
-  recipientId: notification.recipientId,
-  workId: notification.workId,
-});
-
-export const parsePrismaToNotificationEntity = (prismaNotification: PrismaNotification): Notification =>
-  Notification.create(
-    {
-      content: new Content(prismaNotification.content),
-      recipientId: prismaNotification.recipientId,
-      createdAt: prismaNotification.createdAt,
-      readAt: prismaNotification.readAt,
-      workId: prismaNotification.workId,
-    },
-    new UniqueEntityID(prismaNotification.id),
-  );
 
 const isPrismaWithMeta = (data: any): data is PrismaUserWithMeta => {
   return data.readingWorksCount !== undefined && data.finishedWorksCount !== undefined;
@@ -158,19 +129,4 @@ export const parsePrismaAccessTokenToDomainAccessToken = (prismaAccessToken: Pri
     createdAt: prismaAccessToken.createdAt,
     revokedAt: prismaAccessToken.revokedAt,
     userId: prismaAccessToken.userId,
-  });
-
-export const notificationTypeEnumMapper = (notificationType?: NotificationType): PrismaNotificationType => {
-  return notificationType ? PrismaNotificationType[notificationType] : null;
-};
-
-export const parsePrismaUserNotificationSubscriptionToDomain = (
-  data: PrismaUserNotificationSubscription,
-): UserNotificationSubscription =>
-  UserNotificationSubscription.create({
-    notificationType: data.notificationType as any,
-    subscriptionId: data.id,
-    userId: data.userId,
-    createdAt: data.createdAt,
-    credentials: data.credentials as Record<string, any>,
   });

@@ -1,7 +1,7 @@
 import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
 import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/update-notion-database-id.command';
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
-import { User } from '@app/infra/crqs/user-auth.decorator';
+import { User } from '../user-auth.decorator';
 import { MessageService } from '@app/infra/messaging/messaging-service';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';

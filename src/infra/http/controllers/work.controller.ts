@@ -40,7 +40,7 @@ import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
-import { User } from '@app/infra/crqs/user-auth.decorator';
+import { User } from '../user-auth.decorator';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';

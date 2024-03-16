@@ -1,5 +1,5 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { User } from '@app/infra/crqs/user-auth.decorator';
+import { User } from '../user-auth.decorator';
 import { MessageService } from '@app/infra/messaging/messaging-service';
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';

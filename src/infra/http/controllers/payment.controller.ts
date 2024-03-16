@@ -1,5 +1,5 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { User } from '@app/infra/crqs/user-auth.decorator';
+import { User } from '../user-auth.decorator';
 import {
   parseStripeCheckoutSessionSchema,
   parseStripeSubscriptionSchema,

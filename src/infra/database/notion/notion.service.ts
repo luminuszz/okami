@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Client as NotionClient } from '@notionhq/client';
 
 @Injectable()
-export class NotionApiAdapter extends NotionClient {
-  constructor(private readonly env: EnvService) {
+export class NotionService extends NotionClient {
+  constructor(env: EnvService) {
     super({
       auth: env.get('NOTION_AUTH_TOKEN'),
     });

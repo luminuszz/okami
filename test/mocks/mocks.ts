@@ -25,6 +25,7 @@ export const createWorkPropsFactory = () => ({
   createdAt: faker.date.recent(),
   category: faker.helpers.arrayElement(['MANGA', 'ANIME']) as any,
   userId: faker.string.uuid(),
+  status: faker.helpers.arrayElement(['READING', 'FINISHED', 'DROPPED']) as any,
 });
 
 export const createUserPropsFactory = () => ({
