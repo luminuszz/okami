@@ -137,6 +137,12 @@ export class Queue {
 
     const { works } = results.value;
 
+    const response = await this.markWorksOnPendingStatus.execute({ works });
+
+    if (response.isLeft()) {
+      throw response.value;
+    }
+
     for (const work of works) {
       await this.sendWorkToSyncWorkQueue(work);
     }
