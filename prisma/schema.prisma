@@ -58,20 +58,11 @@ model Work {
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
 
-  notifications Notification[]
   User          User           @relation(fields: [userId], references: [id])
   userId        String         @db.ObjectId
 }
 
-model Notification {
-  id          String    @id @map("_id") @db.ObjectId
-  content     String
-  createdAt   DateTime  @map("created_at")
-  readAt      DateTime? @map("read_at")
-  recipientId String?   @map("recipent_id")
-  Work        Work?     @relation(fields: [workId], references: [id])
-  workId      String?   @db.ObjectId
-}
+
 
 model User {
   id               String    @id @map("_id") @db.ObjectId

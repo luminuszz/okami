@@ -1,12 +1,12 @@
-import { NotionApiAdapter } from '@app/infra/database/notion/notion-api-adapter.provider';
 import { Injectable } from '@nestjs/common';
 import { HealthCheckError, HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 import { PrometheusService } from '../prometheus/prometheus.service';
+import { NotionService } from '@app/infra/database/notion/notion.service';
 
 @Injectable()
 export class NotionHealtCheckIndicator extends HealthIndicator {
   constructor(
-    private readonly notionService: NotionApiAdapter,
+    private readonly notionService: NotionService,
     private prometheusService: PrometheusService,
   ) {
     super();

@@ -1,12 +1,12 @@
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { NotionPage } from './dto/notion-page.dto';
-import { NotionApiAdapter } from './notion-api-adapter.provider';
 import { NotionMapper } from './notion.mappter';
+import { NotionService } from './notion.service';
 
 @Injectable()
 export class NotionWorkRepository {
-  constructor(private readonly notion: NotionApiAdapter) {}
+  constructor(private readonly notion: NotionService) {}
 
   private getUpdateMessage = () => ({
     rich_text: [
@@ -18,6 +18,8 @@ export class NotionWorkRepository {
       },
     ],
   });
+
+  private readonly newChapterToken = 'CAPITULO NOVO';
 
   async create(work: Work, database_id: string): Promise<void> {
     await this.notion.pages.create({
@@ -56,7 +58,7 @@ export class NotionWorkRepository {
     await this.notion.pages.update({
       page_id: id,
       properties: {
-        'CAPITULO NOVO': {
+        [this.newChapterToken]: {
           checkbox: true,
         },
 
@@ -69,7 +71,7 @@ export class NotionWorkRepository {
     await this.notion.pages.update({
       page_id: id,
       properties: {
-        'CAPITULO NOVO': {
+        [this.newChapterToken]: {
           checkbox: false,
         },
         cap: {
@@ -121,7 +123,7 @@ export class NotionWorkRepository {
     const { results } = await this.notion.databases.query({
       database_id,
       filter: {
-        property: 'CAPITULO NOVO',
+        property: this.newChapterToken,
         checkbox: {
           equals: true,
         },
@@ -178,7 +180,7 @@ export class NotionWorkRepository {
           },
 
           {
-            property: 'CAPITULO NOVO',
+            property: this.newChapterToken,
             checkbox: {
               equals: false,
             },

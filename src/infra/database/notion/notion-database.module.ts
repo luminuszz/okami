@@ -2,24 +2,24 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 
-import { NotionApiAdapter } from './notion-api-adapter.provider';
-import { NotionWorkRepository } from './notion-work.repository';
-import { WorkMarkReadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-read';
-import { WorkMarkUnreadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-unread';
-import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
-import { WorkUpdatedEventHandler } from '@infra/database/notion/handlers/work-updated';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import {
   SetSyncIdOnNotionPageEventHandler,
   UploadNotionWorkImageFromNotionEventHandler,
 } from '@infra/database/notion/handlers/work-created';
+import { WorkMarkReadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-read';
+import { WorkMarkUnreadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-unread';
+import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
+import { WorkUpdatedEventHandler } from '@infra/database/notion/handlers/work-updated';
 import { StorageModule } from '@infra/storage/storage.module';
-import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { OnWorkDeletedHandler } from './handlers/on-work-deleted';
+import { NotionWorkRepository } from './notion-work.repository';
+import { NotionService } from './notion.service';
 
 @Module({
   imports: [CqrsModule, ConfigModule.forRoot(), StorageModule],
   providers: [
-    NotionApiAdapter,
+    NotionService,
     NotionWorkRepository,
     WorkMarkReadNotionEventHandler,
     WorkMarkUnreadNotionEventHandler,
@@ -30,6 +30,6 @@ import { OnWorkDeletedHandler } from './handlers/on-work-deleted';
     UploadNotionWorkImageFromNotionEventHandler,
     OnWorkDeletedHandler,
   ],
-  exports: [NotionWorkRepository, NotionApiAdapter],
+  exports: [NotionWorkRepository, NotionService],
 })
 export class NotionDatabaseModule {}
