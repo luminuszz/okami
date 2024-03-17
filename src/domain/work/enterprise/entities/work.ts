@@ -7,7 +7,7 @@ import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
 
-interface WorkProps {
+export interface WorkProps {
   name: string;
   url: string;
   chapter: Chapter;
