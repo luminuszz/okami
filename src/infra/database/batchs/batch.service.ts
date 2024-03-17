@@ -1,9 +1,16 @@
-import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { Injectable, Logger } from '@nestjs/common';
-import { EventBus } from '@nestjs/cqrs';
 import { NotionWorkRepository } from '../notion/notion-work.repository';
 import { PrismaWorkRepository } from '../prisma/prisma-work.repository';
+import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
+import { QueueMessage } from '@domain/work/application/queue/Queue';
+import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { EventBus } from '@nestjs/cqrs';
+import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
+
+interface SyncNotionDatabaseBatchProps {
+  database_id: string;
+  user_id: string;
+}
 
 @Injectable()
 export class BatchService {
@@ -12,9 +19,19 @@ export class BatchService {
   constructor(
     private readonly notionWorkRepository: NotionWorkRepository,
     private readonly prismaWorkRepository: PrismaWorkRepository,
+    private readonly queueProvider: QueueProvider,
     private readonly uploadWorkImage: UploadWorkImageUseCase,
     private readonly eventBus: EventBus,
-  ) {}
+  ) {
+    this.queueProvider.subscribe(
+      QueueMessage.SYNC_WITH_OTHER_DATABASES,
+      ({ database_id, user_id }: SyncNotionDatabaseBatchProps) => {
+        if (database_id) {
+          this.importNotionDatabaseToMongoDB(database_id, user_id);
+        }
+      },
+    );
+  }
 
   async importNotionDatabaseToMongoDB(databaseId: string, userId: string) {
     try {

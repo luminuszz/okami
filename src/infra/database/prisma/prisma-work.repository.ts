@@ -1,10 +1,10 @@
 import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable, Logger } from '@nestjs/common';
-import { map, omit } from 'lodash';
+import { RefreshStatus, WorkStatus } from '@prisma/client';
+import { map } from 'lodash';
 import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper';
 import { PrismaService } from './prisma.service';
-import { RefreshStatus, WorkStatus } from '@prisma/client';
 
 @Injectable()
 export class PrismaWorkRepository implements WorkRepository {
@@ -77,26 +77,26 @@ export class PrismaWorkRepository implements WorkRepository {
 
   async createAllWithNotExists(data: Work[]) {
     const operations = data.map((work) => {
-      const parsedData = workEntityToPrismaMapper(work);
-
       this.logger.log(`Syncing document ${work.name} to prisma database category => ${work.name}}`);
 
-      const updateParsedData = omit(parsedData, ['id', 'nextChapterUpdatedAt', 'nextChapter']);
+      const parsedData = workEntityToPrismaMapper(work);
 
-      if (!work.id) {
-        this.logger.debug(`${work.name} not exists in database witg valid id, creating new work`);
-        return this.prisma.work.create({
-          data: { ...parsedData, userId: work.userId },
-        });
-      }
+      const updateParsedData = {
+        name: work.name,
+        chapters: work.chapter.getChapter(),
+        category: work.category,
+        url: work.url,
+        userId: work.userId,
+        isUpserted: true,
+      };
 
       return this.prisma.work.upsert({
         where: {
           id: work.id.toString(),
           recipientId: parsedData.recipientId,
         },
-        create: { ...parsedData, userId: work.userId },
-        update: { ...updateParsedData, userId: work.userId, isUpserted: true },
+        create: parsedData,
+        update: updateParsedData,
       });
     });
     const results = await this.prisma.$transaction(operations);
