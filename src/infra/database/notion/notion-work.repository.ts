@@ -3,17 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { NotionPage } from './dto/notion-page.dto';
 import { NotionMapper } from './notion.mappter';
 import { NotionService } from './notion.service';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 
 @Injectable()
 export class NotionWorkRepository {
   constructor(private readonly notion: NotionService) {}
 
-  private getUpdateMessage = () => ({
+  private getUpdateMessage = (created?: boolean) => ({
     rich_text: [
       {
         type: 'text',
         text: {
-          content: `updated by Okami integration ${new Date().toLocaleString()} `,
+          content: `${created ? 'Created' : 'Updated'}  by Okami integration ${new Date().toLocaleString()} `,
         },
       },
     ],
@@ -21,13 +22,47 @@ export class NotionWorkRepository {
 
   private readonly newChapterToken = 'CAPITULO NOVO';
 
-  async create(work: Work, database_id: string): Promise<void> {
-    await this.notion.pages.create({
+  async create(work: Work, database_id: string): Promise<{ pageId: string }> {
+    const response = await this.notion.pages.create({
       parent: {
+        type: 'database_id',
         database_id,
       },
-      properties: { ...work, Notas: this.getUpdateMessage() } as any,
+      properties: {
+        title: [
+          {
+            type: 'text',
+            text: {
+              content: work.name,
+            },
+          },
+        ],
+        URL: { type: 'url', url: work.url },
+        cap: { type: 'number', number: work.chapter.getChapter() },
+
+        status: {
+          type: 'select',
+          select: {
+            name: 'Acompanhando',
+          },
+        },
+      } as any,
+
+      content: [
+        {
+          type: 'image',
+          image: {
+            external: {
+              url: CloudFlareR2StorageAdapter.createS3FileUrl(`${work.id}-${work.imageId}`),
+            },
+          },
+        },
+      ],
     });
+
+    return {
+      pageId: response.id,
+    };
   }
 
   async save(work: Work): Promise<void> {

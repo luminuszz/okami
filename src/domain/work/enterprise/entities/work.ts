@@ -6,6 +6,7 @@ import { Chapter } from './values-objects/chapter';
 import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
+import { WorkCreatedEvent } from './events/work-created';
 
 export interface WorkProps {
   name: string;
@@ -54,6 +55,12 @@ export class Work extends Entity<WorkProps> {
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
+    }
+
+    const isNewWork = !id;
+
+    if (isNewWork) {
+      this.events.push(new WorkCreatedEvent(this));
     }
   }
 
