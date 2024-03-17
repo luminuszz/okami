@@ -167,6 +167,9 @@ export class PrismaWorkRepository implements WorkRepository {
     const where = {
       userId,
       OR: [{ status: WorkStatus.UNREAD }, { status: WorkStatus.READ }],
+      refreshStatus: {
+        not: null,
+      },
     };
 
     if (filter) {

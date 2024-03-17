@@ -33,7 +33,7 @@ export class Queue {
     private readonly updateRefreshStatus: UpdateRefreshStatusUseCase,
     private readonly findOneWork: FindOneWorkUseCase,
     private readonly markWorkUnread: MarkWorkUnreadUseCase,
-    private readonly eventbus: EventBus,
+    private readonly eventBus: EventBus,
     private readonly fetchAllReadUserWorks: FetchAllUserReadWorks,
   ) {
     this.queueProvider.subscribe(QueueMessage.REFRESH_WORKS_STATUS, () => this.refreshWorkStatus());
@@ -56,7 +56,11 @@ export class Queue {
 
     const { works } = results.value;
 
-    await this.markWorksOnPendingStatus.execute({ works });
+    const response = await this.markWorksOnPendingStatus.execute({ works });
+
+    if (response.isLeft()) {
+      throw results.value;
+    }
 
     for (const work of works) {
       await this.sendWorkToSyncWorkQueue(work);
@@ -125,7 +129,7 @@ export class Queue {
 
     if (results.isLeft()) return;
 
-    await this.eventbus.publishAll(results.value.events);
+    await this.eventBus.publishAll(results.value.events);
   }
 
   async refreshAllWorksStatusByUserId(userId: string) {
