@@ -29,6 +29,10 @@ export class EmailValidationCode {
     return this.emailIsValidated;
   }
 
+  public getEmailValidationCodeExpirationAt() {
+    return this.emailValidationCodeExpirationAt;
+  }
+
   public isExpired(): boolean {
     return dayjs(this.emailValidationCodeExpirationAt).isBefore(new Date());
   }
