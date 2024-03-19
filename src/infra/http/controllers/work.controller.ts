@@ -1,7 +1,9 @@
 import { BatchService } from '@infra/database/batchs/batch.service';
 
-import { MarkWorkAsDroppedCommand } from '@app/infra/crqs/work/commands/mark-work-as-dropped.command';
+import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
+import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
 import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
+import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
@@ -39,12 +41,9 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
-import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { User } from '../user-auth.decorator';
+import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
-import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
-import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
-import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
 
 @UseGuards(AuthGuard)
 @ApiTags('work')
@@ -122,11 +121,11 @@ export class WorkController {
     await this.commandBus.execute(new MarkWorkUnreadCommand(id, data?.nextChapter));
   }
 
-  @Post('sync-to-notion ')
+  @Post('sync-to-notion')
   async syncToNotion(@User() user: UserTokenDto) {
     if (!user.notionDatabaseId) return new BadRequestException('Notion database id not found');
 
-    await this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
+    this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
   }
 
   @Get('/fetch-for-workers-read')
@@ -214,11 +213,6 @@ export class WorkController {
     const refreshStatus = status === 'success' ? RefreshStatus.SUCCESS : RefreshStatus.FAILED;
 
     await this.commandBus.execute(new UpdateWorkRefreshStatusCommand(workId, refreshStatus));
-  }
-
-  @Patch('dropped/:workId')
-  async markWorkAsDropped(@Param('workId', ParseObjectIdPipe) workId: string) {
-    await this.commandBus.execute(new MarkWorkAsDroppedCommand(workId));
   }
 
   @Post('sync-work')
