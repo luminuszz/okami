@@ -47,7 +47,7 @@ describe('WorkEntity', () => {
     expect(work.hasNewChapter).toEqual(false);
     expect(work.nextChapter.getChapter()).toEqual(null);
 
-    expect(work.events[0]).toBeInstanceOf(WorkMarkReadEvent);
+    expect(work.events[1]).toBeInstanceOf(WorkMarkReadEvent);
   });
 
   it('should be able to markAsUnread', () => {
@@ -63,7 +63,7 @@ describe('WorkEntity', () => {
     expect(work.nextChapter.getChapter()).toEqual(randomChapter);
     expect(work.chapter.getChapter()).toBe(workData.chapter.getChapter());
 
-    expect(work.events[0]).toBeInstanceOf(WorkMarkUnreadEvent);
+    expect(work.events[1]).toBeInstanceOf(WorkMarkUnreadEvent);
   });
 
   it('should be able to updateNextChapter', () => {
@@ -85,6 +85,6 @@ describe('WorkEntity', () => {
 
     expect(work.isFinished).toBe(true);
 
-    expect(work.events[0]).toBeInstanceOf(WorkMarkedFinishedEvent);
+    expect(work.events[1]).toBeInstanceOf(WorkMarkedFinishedEvent);
   });
 });

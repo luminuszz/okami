@@ -75,7 +75,7 @@ describe('MarkWorkFinished', () => {
     expect(result.isRight()).toBeTruthy();
 
     if (result.isRight()) {
-      expect(result.value.work.events[0]).toBeInstanceOf(WorkMarkedFinishedEvent);
+      expect(result.value.work.events[1]).toBeInstanceOf(WorkMarkedFinishedEvent);
     }
   });
 });

@@ -30,6 +30,7 @@ jobs:
           pnpm run build
 
   build_and_deploy:
+    needs: validate_tests
     name: Deploy app
     runs-on: ubuntu-latest
     concurrency: deploy-group
