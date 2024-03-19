@@ -3,16 +3,16 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, RefreshStatus, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 
+import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
+import { PaymentSubscriptionStatus, User } from '@domain/auth/enterprise/entities/User';
 import {
   AccessToken as PrismaAccessToken,
   Category as PrismaCategory,
+  PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
+  RefreshStatus as PrismaRefreshStatus,
   User as PrismaUser,
   Work as PrismaWork,
-  RefreshStatus as PrismaRefreshStatus,
-  PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
 } from '@prisma/client';
-import { PaymentSubscriptionStatus, User } from '@domain/auth/enterprise/entities/User';
-import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
 
 export const enumMapper = (category: Category): PrismaCategory => {

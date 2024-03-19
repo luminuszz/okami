@@ -15,6 +15,7 @@ export const fakeStorageProvider: StorageProvider = {
 
 export const fakeEmailProvider: MailProvider = {
   sendResetPasswordEmail: jest.fn().mockImplementation(() => Promise.resolve()),
+  sendConfirmEmail: jest.fn().mockImplementation(() => Promise.resolve()),
 };
 
 export const createWorkPropsFactory = () => ({
