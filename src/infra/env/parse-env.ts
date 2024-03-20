@@ -40,6 +40,7 @@ export const envSchema = z.object({
   FRONT_END_URL_RESET_PASSWORD_URL: z.string(),
   RESEND_API_SECRET_KEY: z.string(),
   SENTRY_DSN_ENDPOINT: z.string(),
+  FRONT_END_URL_CONFIRM_EMAIL: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;

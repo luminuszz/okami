@@ -35,6 +35,8 @@ import { ResetUserPasswordCommandHandler } from './commands/reset-user-passsword
 import { ResetUserPassword } from '@domain/auth/application/useCases/reset-user-password';
 import { UpdateUserCommandHandler } from './commands/update-user.command';
 import { UpdateUser } from '@domain/auth/application/useCases/update-user';
+import { SendConfirmEmailCommandHandler } from './commands/send-confirm-email.command';
+import { SendConfirmEmail } from '@domain/auth/application/useCases/send-confirm-email';
 
 const Commands = [
   LoginCommandHandler,
@@ -47,6 +49,7 @@ const Commands = [
   SendResetPasswordEmailCommandHandler,
   ResetUserPasswordCommandHandler,
   UpdateUserCommandHandler,
+  SendConfirmEmailCommandHandler,
 ];
 
 const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
@@ -67,6 +70,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     }),
   ],
   providers: [
+    SendConfirmEmail,
     SendResetPasswordEmail,
     CreateApiAccessTokenUseCase,
     UploadWorkImageUseCase,

@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 export class EmailValidationCode {
   private code: string | null;
@@ -6,14 +6,14 @@ export class EmailValidationCode {
   private emailValidationCodeExpirationAt: Date | null;
 
   constructor(code: string, emailIsValidated?: boolean, emailValidationCodeExpirationAt?: Date) {
-    this.code = code ?? null;
+    this.code = code;
     this.emailIsValidated = emailIsValidated ?? false;
     this.emailValidationCodeExpirationAt = emailValidationCodeExpirationAt ?? new Date();
   }
 
   public validateEmail(): void {
     if (this.isExpired()) {
-      throw new Error('Email validation code is expired');
+      throw new Error('code expired');
     }
 
     this.emailIsValidated = true;

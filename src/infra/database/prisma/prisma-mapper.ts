@@ -14,6 +14,7 @@ import {
   Work as PrismaWork,
 } from '@prisma/client';
 import { map } from 'lodash';
+import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -93,6 +94,11 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | Pri
       paymentSubscriptionStatus: prismaUser.paymentSubscriptionStatus as PaymentSubscriptionStatus,
       trialWorkLimit: prismaUser.trialWorkLimit,
       resetPasswordCode: prismaUser.resetPasswordCode,
+      emailValidationCode: new EmailValidationCode(
+        prismaUser.validateEmailCode,
+        prismaUser.emailIsValidated,
+        prismaUser.emailValidationCodeExpirationAt,
+      ),
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -113,6 +119,9 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   paymentSubscriptionStatus: user.paymentSubscriptionStatus,
   trialWorkLimit: user.trialWorkLimit,
   resetPasswordCode: user.resetPasswordCode,
+  emailIsValidated: user?.emailValidatedCode?.isEmailValidated() ?? null,
+  validateEmailCode: user?.emailValidatedCode.getCode() ?? null,
+  emailValidationCodeExpirationAt: user?.emailValidatedCode.getEmailValidationCodeExpirationAt() ?? null,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({

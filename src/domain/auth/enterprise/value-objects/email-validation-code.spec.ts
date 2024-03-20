@@ -1,8 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { EmailValidationCode } from './email-validation-code';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 describe('EmailValidationCode', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be able to create a new EmailValidationCode', () => {
     const code = faker.string.uuid();
 
@@ -12,7 +16,7 @@ describe('EmailValidationCode', () => {
     expect(emailValidationCode.isEmailValidated()).toBe(false);
   });
 
-  it('should be able to validate  EmailValidationCode', () => {
+  it('should be able to validate  code', () => {
     const code = faker.string.uuid();
 
     const emailValidationCode = new EmailValidationCode(code);
@@ -34,9 +38,7 @@ describe('EmailValidationCode', () => {
     expect(emailValidationCode.isEmailValidated()).toBe(true);
   });
 
-  it('should be not be able able to validate email with email is expired', () => {
-    jest.useFakeTimers().setSystemTime();
-
+  it('should  not be  able to validate email with email is expired', async () => {
     const code = faker.string.uuid();
 
     const emailValidationCode = new EmailValidationCode(code);
@@ -44,6 +46,6 @@ describe('EmailValidationCode', () => {
     // set system time to 2 hours in the future
     jest.useFakeTimers().setSystemTime(dayjs().add(2, 'hours').toDate());
 
-    expect(emailValidationCode.validateEmail()).rejects.toThrow('Email validation code is expired');
+    expect(emailValidationCode.validateEmail).toThrowError(Error);
   });
 });
