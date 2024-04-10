@@ -22,6 +22,7 @@ const workSchema = z
     isDropped: z.boolean(),
     refreshStatus: z.string().nullable(),
     createdAt: z.date().transform((value) => value.toISOString()),
+    userId: z.string().nonempty(),
   })
   .transform((data) => {
     return {
@@ -66,6 +67,9 @@ export class WorkHttp implements WorkHttpType {
 
   @ApiProperty()
   refreshStatus: string;
+
+  @ApiProperty()
+  userId: string;
 }
 
 export class WorkModel {
