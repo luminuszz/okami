@@ -9,13 +9,13 @@ import { MessageService } from './messaging-service';
       {
         name: 'NOTIFICATION_SERVICE',
         useFactory: (env: EnvService) => ({
-          transport: Transport.REDIS,
+          transport: Transport.RMQ,
           options: {
-            url: env.get('REDIS_HOST'),
-            port: env.get('REDIS_PORT'),
-            username: env.get('REDIS_USER'),
-            password: env.get('REDIS_PASSWORD'),
-            host: env.get('REDIS_HOST'),
+            urls: [env.get('RABBIT_MQ_URL')],
+            queue: 'notification-service-queue',
+            queueOptions: {
+              durable: false,
+            },
           },
         }),
         inject: [EnvService],
