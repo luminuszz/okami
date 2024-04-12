@@ -8,6 +8,12 @@ export enum PaymentSubscriptionStatus {
   INACTIVE = 'INACTIVE',
 }
 
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  SUBSCRIBED_USER = 'SUBSCRIBED_USER',
+}
+
 interface EntityProps {
   name: string;
   email: string;
@@ -16,6 +22,7 @@ interface EntityProps {
   updatedAt?: Date;
   avatarImageId?: string;
   works?: Work[];
+  role?: UserRole;
   readingWorksCount?: number;
   finishedWorksCount?: number;
   adminHashCodeKey?: string | null;
@@ -41,6 +48,7 @@ export class User extends Entity<EntityProps> {
     this.props.paymentSubscriptionStatus = props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE;
     this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
     this.props.resetPasswordCode = props.resetPasswordCode ?? null;
+    this.props.role = props.role ?? UserRole.USER;
   }
 
   get email(): string {
@@ -139,6 +147,15 @@ export class User extends Entity<EntityProps> {
     return this.props.paymentSubscriptionStatus;
   }
 
+  get role() {
+    return this.props.role;
+  }
+
+  set role(role: UserRole) {
+    this.props.role = role;
+    this.refresh();
+  }
+
   public set paymentSubscriptionStatus(paymentSubscriptionStatus: PaymentSubscriptionStatus) {
     this.props.paymentSubscriptionStatus = paymentSubscriptionStatus;
     this.refresh();
@@ -164,6 +181,10 @@ export class User extends Entity<EntityProps> {
 
   public get hasTrial() {
     return this.props.trialWorkLimit > 0;
+  }
+
+  public isAdmin() {
+    return this.props.role === UserRole.ADMIN;
   }
 
   public decreaseTrialWorkLimit() {

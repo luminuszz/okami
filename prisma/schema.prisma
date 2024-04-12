@@ -40,6 +40,13 @@ enum WorkStatus {
   DROPPED
 }
 
+ enum UserRole {
+  ADMIN
+  USER
+  SUBSCRIBED_USER
+}
+
+
 
 model Work {
   id                   String         @id @map("_id") @db.ObjectId
@@ -79,6 +86,7 @@ model User {
   paymentSubscriptionStatus PaymentSubscriptionStatus? @map("payment_subscription_status")
   trialWorkLimit   Int?      @map("trial_work_limit")
   resetPasswordCode String?  @map("reset_password_code")
+  role             UserRole  @default(USER)
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

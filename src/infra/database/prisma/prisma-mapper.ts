@@ -11,7 +11,7 @@ import {
   RefreshStatus as PrismaRefreshStatus,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
 } from '@prisma/client';
-import { PaymentSubscriptionStatus, User } from '@domain/auth/enterprise/entities/User';
+import { PaymentSubscriptionStatus, User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
 
@@ -93,6 +93,7 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | Pri
       paymentSubscriptionStatus: prismaUser.paymentSubscriptionStatus as PaymentSubscriptionStatus,
       trialWorkLimit: prismaUser.trialWorkLimit,
       resetPasswordCode: prismaUser.resetPasswordCode,
+      role: prismaUser.role as UserRole,
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -113,6 +114,7 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   paymentSubscriptionStatus: user.paymentSubscriptionStatus,
   trialWorkLimit: user.trialWorkLimit,
   resetPasswordCode: user.resetPasswordCode,
+  role: user.role,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({
