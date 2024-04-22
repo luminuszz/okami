@@ -3,7 +3,13 @@ import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyEx
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 import { InvalidWorkOperationError } from '@domain/work/application/usecases/errors/invalid-work-operation';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
-import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  BadRequestException,
+  CallHandler,
+  Injectable,
+  InternalServerErrorException,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable, catchError } from 'rxjs';
 import { SentryService } from '../logs/sentry/sentry.service';
 
@@ -36,7 +42,7 @@ export class CommonExceptionInterceptor implements NestInterceptor {
 
         this.sentryService.captureException(err);
 
-        throw err;
+        throw new InternalServerErrorException('Internal server error');
       }),
     );
   }
