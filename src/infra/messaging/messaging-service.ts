@@ -17,6 +17,7 @@ export class MessageService implements OnModuleInit, OnModuleDestroy {
     this.client.subscribeToResponseOf('register-telegram-chat');
     this.client.subscribeToResponseOf('create-mobile-push-subscription');
     this.client.subscribeToResponseOf('get-recent-notifications');
+    this.client.subscribeToResponseOf('get-subscriber');
 
     await this.client.connect();
   }
