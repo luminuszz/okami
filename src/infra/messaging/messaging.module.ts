@@ -9,12 +9,20 @@ import { MessageService } from './messaging-service';
       {
         name: 'NOTIFICATION_SERVICE',
         useFactory: (env: EnvService) => ({
-          transport: Transport.RMQ,
+          transport: Transport.KAFKA,
           options: {
-            urls: [env.get('RABBIT_MQ_URL')],
-            queue: 'notification-service-queue',
-            queueOptions: {
-              durable: false,
+            client: {
+              brokers: [env.get('KAFKA_BROKER')],
+              ssl: true,
+              sasl: {
+                username: env.get('KAFKA_USER'),
+                password: env.get('KAFKA_PASSWORD'),
+                mechanism: 'scram-sha-256',
+              },
+            },
+            consumer: {
+              groupId: 'okami-consumers',
+              allowAutoTopicCreation: true,
             },
           },
         }),
