@@ -10,9 +10,10 @@ import { PaymentModule } from '../payment/payment.module';
 import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
 import { WorkController } from './controllers/work.controller';
+import { TagController } from './controllers/tag.controller';
 
 @Module({
   imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
-  controllers: [WorkController, AuthController, NotificationController, PaymentController],
+  controllers: [WorkController, AuthController, NotificationController, PaymentController, TagController],
 })
 export class HttpModule {}

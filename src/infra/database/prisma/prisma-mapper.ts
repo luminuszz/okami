@@ -48,6 +48,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   isUpserted: null,
   refreshStatus: refreshStatusEnumMapper(work.refreshStatus),
   status: work.status as WorkStatus,
+  tagsId: [],
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
