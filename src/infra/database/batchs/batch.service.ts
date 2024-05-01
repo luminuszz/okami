@@ -6,6 +6,8 @@ import { QueueMessage } from '@domain/work/application/queue/Queue';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { EventBus } from '@nestjs/cqrs';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 
 interface SyncNotionDatabaseBatchProps {
   database_id: string;
@@ -83,5 +85,16 @@ export class BatchService {
     for (const work of allWorks) {
       await this.notionWorkRepository.setSyncIdInNotionPage(work.recipientId, work.id);
     }
+  }
+
+  async setAllTagsFromNotionDatabase(database_id: string) {
+    const response = await this.notionWorkRepository.fetchAllNotionWorksTags(database_id);
+
+    const data = response.map((item) => ({
+      workId: item.id,
+      tags: item.tags.map((tag) => Tag.create({ name: tag.name, slug: new Slug(tag.name) })),
+    }));
+
+    await this.prismaWorkRepository.linkTagsBatch(data);
   }
 }

@@ -10,6 +10,21 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 export class PrismaTagRepository implements TagRepository {
   constructor(private prisma: PrismaService) {}
 
+  async linkTagToWork(workId: string, tagId: string): Promise<void> {
+    await this.prisma.work.update({
+      where: {
+        id: workId,
+      },
+      data: {
+        tags: {
+          connect: {
+            id: tagId,
+          },
+        },
+      },
+    });
+  }
+
   private toEntity(tag: PrismaTag): Tag {
     return Tag.create(
       {

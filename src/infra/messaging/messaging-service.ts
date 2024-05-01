@@ -19,7 +19,7 @@ export class MessageService implements OnModuleInit, OnModuleDestroy {
     this.client.subscribeToResponseOf('get-recent-notifications');
     this.client.subscribeToResponseOf('get-subscriber');
 
-    await this.client.connect();
+    //  await this.client.connect();
   }
 
   send(pattern: string, data: any) {

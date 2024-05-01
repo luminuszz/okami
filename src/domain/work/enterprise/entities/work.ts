@@ -7,6 +7,7 @@ import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { User } from '@domain/auth/enterprise/entities/User';
 import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
 import { WorkCreatedEvent } from './events/work-created';
+import { Tag } from '@prisma/client';
 
 export interface WorkProps {
   name: string;
@@ -23,6 +24,7 @@ export interface WorkProps {
   userId: string;
   refreshStatus?: RefreshStatus | null;
   status: WorkStatus;
+  tags?: Tag[];
 }
 
 export enum Category {
@@ -52,6 +54,7 @@ export class Work extends Entity<WorkProps> {
     this.props.nextChapter = props.nextChapter ?? null;
     this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
     this.props.refreshStatus = props.refreshStatus ?? null;
+    this.props.tags = props.tags ?? [];
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -106,6 +109,10 @@ export class Work extends Entity<WorkProps> {
 
   public get userId() {
     return this.props.userId;
+  }
+
+  get tags() {
+    return this.props.tags;
   }
 
   public setRecipientId(recipientId: string) {

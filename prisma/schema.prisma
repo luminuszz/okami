@@ -54,7 +54,7 @@ model Work {
   category             Category
   chapters             Float
   url                  String
-  recipientId          String?        @map("recipient_id")
+  recipientId          String?        @map("recipient_id") @unique
   imageId              String?        @map("image_id")
   nextChapter          Float?         @map("next_chapter")
   nextChapterUpdatedAt DateTime?      @map("next_chapter_updated_at")

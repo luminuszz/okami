@@ -7,6 +7,7 @@ export interface TagProps {
   slug: Slug;
   createdAt?: Date;
   updatedAt?: Date;
+  worksId?: string[];
 }
 
 export class Tag extends Entity<TagProps> {
@@ -33,6 +34,15 @@ export class Tag extends Entity<TagProps> {
 
   get updatedAt() {
     return this.props.updatedAt;
+  }
+
+  get worksId() {
+    return this.props.worksId;
+  }
+
+  set worksId(worksId: string[]) {
+    this.props.worksId = worksId;
+    this.commit();
   }
 
   private commit() {

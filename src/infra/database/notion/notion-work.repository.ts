@@ -154,6 +154,27 @@ export class NotionWorkRepository {
     return response.results.map((item) => NotionMapper.toDomain(item as NotionPage));
   }
 
+  async fetchAllNotionWorksTags(database_id: string) {
+    const response = await this.notion.databases.query({
+      database_id,
+      filter: {
+        and: [
+          {
+            property: 'status',
+            select: {
+              equals: 'Acompanhando',
+            },
+          },
+        ],
+      },
+    });
+
+    return response.results.map((item: any) => ({
+      id: item.id,
+      tags: item.properties['Gêneros']?.multi_select,
+    }));
+  }
+
   async fetchForWorkersWithHasNewChapterTrue(database_id: string): Promise<Work[]> {
     const { results } = await this.notion.databases.query({
       database_id,

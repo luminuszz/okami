@@ -1,17 +1,21 @@
-import { CreateTagCommand } from '@app/infra/crqs/work/commands/create-tag.command';
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
+import { BatchService } from '@app/infra/database/batchs/batch.service';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { ApiTags } from '@nestjs/swagger';
+import { User } from '../user-auth.decorator';
 
+@ApiTags('tags')
+@UseGuards(AuthGuard)
 @Controller('tags')
 export class TagController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly batchService: BatchService,
+  ) {}
 
   @Post()
-  async create(@Body('name') name: string) {
-    if (!name) {
-      throw new BadRequestException('Name is required');
-    }
-
-    await this.commandBus.execute(new CreateTagCommand(name));
+  async create(@User('notionDatabaseId') databaseId: string) {
+    await this.batchService.setAllTagsFromNotionDatabase(databaseId);
   }
 }
