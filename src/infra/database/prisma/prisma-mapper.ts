@@ -82,7 +82,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWorkWithTags): Work =
 
 export const prismaTagToEntityTag = (tag: PrismaTag): Tag => {
   return Tag.create(
-    { name: tag.name, createdAt: tag.createdAt, updatedAt: tag.updatedAt, slug: new Slug(tag.name) },
+    { name: tag.name, createdAt: tag.createdAt, updatedAt: tag.updatedAt, slug: new Slug(tag.name), color: tag.color },
     new UniqueEntityID(tag.id),
   );
 };

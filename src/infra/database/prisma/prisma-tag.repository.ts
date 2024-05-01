@@ -88,4 +88,23 @@ export class PrismaTagRepository implements TagRepository {
 
     return tag ? this.toEntity(tag) : null;
   }
+
+  async updateTagColorBatch(tags: Tag[]) {
+    try {
+      const operations = tags.map((tag) => {
+        return this.prisma.tag.update({
+          where: {
+            slug: tag.slug,
+          },
+          data: {
+            color: tag.color,
+          },
+        });
+      });
+
+      await this.prisma.$transaction(operations);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }

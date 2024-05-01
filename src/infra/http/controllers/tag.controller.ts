@@ -16,6 +16,6 @@ export class TagController {
 
   @Post()
   async create(@User('notionDatabaseId') databaseId: string) {
-    await this.batchService.setAllTagsFromNotionDatabase(databaseId);
+    await this.batchService.updateTagColorFromNotionDatabase(databaseId);
   }
 }
