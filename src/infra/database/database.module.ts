@@ -13,6 +13,8 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { BatchService } from './batchs/batch.service';
 import { NotionDatabaseModule } from './notion/notion-database.module';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
+import { TagRepository } from '@domain/work/application/repositories/tag-repository';
+import { PrismaTagRepository } from './prisma/prisma-tag.repository';
 
 @Global()
 @Module({
@@ -24,7 +26,8 @@ import { PrismaWorkRepository } from './prisma/prisma-work.repository';
     { provide: WorkRepository, useClass: PrismaWorkRepository },
     { provide: UserRepository, useClass: PrismaUserRepository },
     { provide: AccessTokenRepository, useClass: PrismaAccessTokenRepository },
+    { provide: TagRepository, useClass: PrismaTagRepository },
   ],
-  exports: [WorkRepository, BatchService, UserRepository, PrismaService, AccessTokenRepository],
+  exports: [WorkRepository, BatchService, UserRepository, PrismaService, AccessTokenRepository, TagRepository],
 })
 export class DatabaseModule {}

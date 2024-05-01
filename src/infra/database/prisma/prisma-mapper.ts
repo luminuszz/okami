@@ -10,10 +10,13 @@ import {
   Work as PrismaWork,
   RefreshStatus as PrismaRefreshStatus,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
+  Tag as PrismaTag,
 } from '@prisma/client';
 import { PaymentSubscriptionStatus, User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -32,6 +35,10 @@ interface PrismaUserWithMeta extends PrismaUser {
   finishedWorksCount: number;
 }
 
+interface PrismaWorkWithTags extends PrismaWork {
+  tags?: PrismaTag[];
+}
+
 export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   category: enumMapper(work.category),
   chapters: work.chapter.getChapter(),
@@ -48,9 +55,10 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   isUpserted: null,
   refreshStatus: refreshStatusEnumMapper(work.refreshStatus),
   status: work.status as WorkStatus,
+  tagsId: [],
 });
 
-export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
+export const prismaWorkToEntityMapper = (prismaWork: PrismaWorkWithTags): Work => {
   return Work.create(
     {
       category: prismaWork.category as Category,
@@ -66,8 +74,16 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWork): Work => {
       userId: prismaWork.userId,
       refreshStatus: prismaWork.refreshStatus as RefreshStatus,
       status: prismaWork.status as WorkStatus,
+      tags: prismaWork.tags?.map(prismaTagToEntityTag) ?? [],
     },
     new UniqueEntityID(prismaWork.id),
+  );
+};
+
+export const prismaTagToEntityTag = (tag: PrismaTag): Tag => {
+  return Tag.create(
+    { name: tag.name, createdAt: tag.createdAt, updatedAt: tag.updatedAt, slug: new Slug(tag.name), color: tag.color },
+    new UniqueEntityID(tag.id),
   );
 };
 
