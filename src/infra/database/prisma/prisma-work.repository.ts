@@ -243,6 +243,8 @@ export class PrismaWorkRepository implements WorkRepository {
   async linkTagsBatch(payload: { workId: string; tags: Tag[] }[]): Promise<void> {
     try {
       const operations = payload.map((data) => {
+        this.logger.log(`Linking tags to work ${data.workId} with tags ${data.tags.map((tag) => tag.name).join(', ')}`);
+
         return this.prisma.work.update({
           where: {
             recipientId: data.workId,
@@ -259,6 +261,7 @@ export class PrismaWorkRepository implements WorkRepository {
                   createdAt: tag.createdAt,
                   id: tag.id,
                   updatedAt: tag.updatedAt,
+                  color: tag.color,
                 },
               })),
             },

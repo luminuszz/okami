@@ -8,6 +8,7 @@ import { TagRepository } from '../repositories/tag-repository';
 
 interface CreateTagRequest {
   name: string;
+  color?: string;
 }
 
 type CreateTagResponse = Either<WorkNotFoundError, { tag: Tag }>;
@@ -16,7 +17,7 @@ type CreateTagResponse = Either<WorkNotFoundError, { tag: Tag }>;
 export class CreateTag implements UseCaseImplementation<CreateTagRequest, CreateTagResponse> {
   constructor(private tagRepository: TagRepository) {}
 
-  async execute({ name }: CreateTagRequest): Promise<CreateTagResponse> {
+  async execute({ name, color }: CreateTagRequest): Promise<CreateTagResponse> {
     const slug = new Slug(name);
 
     const exitsTag = await this.tagRepository.findBySlug(slug.name);
@@ -25,7 +26,7 @@ export class CreateTag implements UseCaseImplementation<CreateTagRequest, Create
       return right({ tag: exitsTag });
     }
 
-    const tag = Tag.create({ name, slug });
+    const tag = Tag.create({ name, slug, color });
 
     await this.tagRepository.create(tag);
 

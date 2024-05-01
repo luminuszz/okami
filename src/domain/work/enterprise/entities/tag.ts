@@ -7,6 +7,7 @@ export interface TagProps {
   slug: Slug;
   createdAt?: Date;
   updatedAt?: Date;
+  color?: string;
   worksId?: string[];
 }
 
@@ -14,6 +15,7 @@ export class Tag extends Entity<TagProps> {
   private constructor(props: TagProps, id?: UniqueEntityID) {
     super(props, id);
     this.props.createdAt = props.createdAt ?? new Date();
+    this.props.color = props.color ?? 'default';
   }
 
   static create(props: TagProps, id?: UniqueEntityID) {
@@ -34,6 +36,10 @@ export class Tag extends Entity<TagProps> {
 
   get updatedAt() {
     return this.props.updatedAt;
+  }
+
+  get color() {
+    return this.props.color;
   }
 
   get worksId() {

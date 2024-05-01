@@ -78,6 +78,8 @@ model Tag {
   slug      String    @unique
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
+  color     String    @default("default")
+
   worksId   String[]  @map("works_id") @db.ObjectId
   works     Work[]     @relation(fields: [worksId], references: [id])
 }
