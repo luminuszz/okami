@@ -198,7 +198,6 @@ export class AuthController {
         isSubscribed: !!telegramChatId,
       };
     } catch (e) {
-      console.log(e);
       throw new BadRequestException('Houve um erro');
     }
   }

@@ -1,9 +1,12 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { BatchService } from '@app/infra/database/batchs/batch.service';
-import { Controller, Post, UseGuards } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CreateTagCommand } from '@app/infra/crqs/work/commands/create-tag.command';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from '../user-auth.decorator';
+import { CreateTagDto } from '../validators/create-tag.dto';
+import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
+import { ListTagParams } from '../validators/list-tags-params';
+import { TahHttpModel } from '../models/tag.model';
 
 @ApiTags('tags')
 @UseGuards(AuthGuard)
@@ -11,11 +14,18 @@ import { User } from '../user-auth.decorator';
 export class TagController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly batchService: BatchService,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post()
-  async create(@User('notionDatabaseId') databaseId: string) {
-    await this.batchService.updateTagColorFromNotionDatabase(databaseId);
+  async create(@Body() { name }: CreateTagDto) {
+    await this.commandBus.execute(new CreateTagCommand(name));
+  }
+
+  @Get()
+  async litsTags(@Query() params: ListTagParams) {
+    const response = await this.queryBus.execute(new FetchPagedTagsQuery(params.page));
+
+    return TahHttpModel.toHttpList(response);
   }
 }

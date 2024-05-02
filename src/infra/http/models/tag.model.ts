@@ -1,3 +1,4 @@
+import { Tag } from '@domain/work/enterprise/entities/tag';
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
@@ -22,4 +23,10 @@ export class TagModel implements TagHttpType {
 
   @ApiProperty()
   color: string;
+}
+
+export class TahHttpModel {
+  static toHttpList(tags: Tag[]) {
+    return z.array(tagSchema).parse(tags);
+  }
 }

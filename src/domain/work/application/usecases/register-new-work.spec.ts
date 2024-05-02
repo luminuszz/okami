@@ -101,8 +101,6 @@ describe('RegisterNewWork', () => {
 
     user.paymentSubscriptionStatus = PaymentSubscriptionStatus.ACTIVE;
 
-    console.log(user);
-
     const response = await stu.execute({
       category: Category.MANGA,
       chapter: 1,

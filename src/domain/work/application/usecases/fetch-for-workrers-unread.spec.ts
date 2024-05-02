@@ -49,8 +49,6 @@ describe('FetchForWorksUnread', () => {
         return work.isUnread;
       });
 
-      console.log(results.value.works);
-
       expect(condition).toBeTruthy();
     }
   });

@@ -95,22 +95,6 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async fetchUserMetaData(userId: string): Promise<UserMetadata> {
-    const values = await this.prisma.work.groupBy({
-      by: ['status'],
-      _count: true,
-
-      where: {
-        userId,
-      },
-    });
-
-    const parsedValues = values.reduce(
-      (acc, curr) => ({ ...acc, [curr.status]: curr._count }),
-      {} as Record<WorkStatus, number>,
-    );
-
-    console.log(parsedValues.DROPPED, parsedValues.FINISHED, parsedValues.READ, parsedValues.UNREAD);
-
     const [totalOfWorksRead, totalOfWorksCreated, totalOfWorksUnread, totalOfWorksFinished] =
       await this.prisma.$transaction([
         this.prisma.work.count({ where: { userId, status: WorkStatus.READ } }),
@@ -118,8 +102,6 @@ export class PrismaUserRepository implements UserRepository {
         this.prisma.work.count({ where: { userId, status: WorkStatus.UNREAD } }),
         this.prisma.work.count({ where: { userId, status: WorkStatus.FINISHED } }),
       ]);
-
-    console.log(totalOfWorksRead, totalOfWorksCreated, totalOfWorksUnread, totalOfWorksFinished);
 
     return {
       totalOfWorksRead,

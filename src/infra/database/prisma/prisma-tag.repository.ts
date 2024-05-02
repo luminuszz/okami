@@ -5,6 +5,7 @@ import { Tag as PrismaTag } from '@prisma/client';
 import { PrismaService } from './prisma.service';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { prismaTagToEntityTag } from './prisma-mapper';
 
 @Injectable()
 export class PrismaTagRepository implements TagRepository {
@@ -106,5 +107,16 @@ export class PrismaTagRepository implements TagRepository {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async fetchAllTagsPaged(page: number): Promise<Tag[]> {
+    const limit = 20;
+
+    const results = await this.prisma.tag.findMany({
+      take: limit,
+      skip: page * limit,
+    });
+
+    return results.map(prismaTagToEntityTag);
   }
 }

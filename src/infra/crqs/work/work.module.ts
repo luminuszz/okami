@@ -43,6 +43,8 @@ import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-a
 import { MessagingModule } from '@app/infra/messaging/messaging.module';
 import { CreateTagCommandHandler } from './commands/create-tag.command';
 import { CreateTag } from '@domain/work/application/usecases/create-tag';
+import { FetchPagedTagsQueryHandler } from './queries/fetch-paged-tags';
+import { FetchAllTagsPaged } from '@domain/work/application/usecases/fetch-all-tags-paged';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -64,6 +66,7 @@ const QueryHandlers = [
   FindOneWorkQueryHandler,
   FetchWorksScrapingPaginatedReportQueryHandler,
   FetchUserWorksWithFilterQueryHandler,
+  FetchPagedTagsQueryHandler,
 ];
 
 const EventHandlers = [];
@@ -90,6 +93,7 @@ const EventHandlers = [];
     ...QueryHandlers,
     ...EventHandlers,
     CreateTag,
+    FetchAllTagsPaged,
     CreateWorkUseCase,
     UpdateWorkChapterUseCase,
     MarkWorkReadUseCase,

@@ -7,4 +7,5 @@ export abstract class TagRepository {
   abstract findBySlug(slug: string): Promise<Tag | null>;
   abstract findById(id: string): Promise<Tag | null>;
   abstract linkTagToWork(workId: string, tagId: string): Promise<void>;
+  abstract fetchAllTagsPaged(page: number): Promise<Tag[]>;
 }
