@@ -20,10 +20,6 @@ import { MessageService } from './messaging-service';
                 mechanism: 'scram-sha-256',
               },
             },
-            consumer: {
-              groupId: 'okami-consumers',
-              allowAutoTopicCreation: true,
-            },
           },
         }),
         inject: [EnvService],
