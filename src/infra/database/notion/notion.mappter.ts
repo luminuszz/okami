@@ -1,7 +1,9 @@
 import { Category, Work, WorkStatus } from '@app/domain/work/enterprise/entities/work';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { NotionPage } from './dto/notion-page.dto';
-import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 
 export type NotionDocument = {
   object: 'page';
@@ -32,6 +34,9 @@ export class NotionMapper {
         url: properties.URL.url,
         updatedAt: new Date(properties['last edited'].last_edited_time),
         userId: '',
+        tags: properties['Gêneros']?.multi_select.map((notionTag) =>
+          Tag.create({ name: notionTag.name, slug: new Slug(notionTag.name) }),
+        ),
       },
       new UniqueEntityID(properties?.sync_id?.rich_text?.[0]?.text?.content || null),
     );

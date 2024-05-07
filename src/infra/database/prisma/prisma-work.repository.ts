@@ -100,7 +100,24 @@ export class PrismaWorkRepository implements WorkRepository {
           id: work.id.toString(),
           recipientId: parsedData.recipientId,
         },
-        create: parsedData,
+        create: {
+          ...parsedData,
+          tags: {
+            connectOrCreate: work.tags.map((tag) => ({
+              create: {
+                name: tag.name,
+                slug: tag.slug,
+                color: tag.color,
+                createdAt: tag.createdAt,
+                updatedAt: tag.updatedAt,
+                id: tag.id,
+              },
+              where: {
+                slug: tag.slug,
+              },
+            })),
+          },
+        },
         update: updateParsedData,
       });
     });

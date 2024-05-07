@@ -12,6 +12,7 @@ import { MessageService } from './messaging-service';
           transport: Transport.KAFKA,
           options: {
             client: {
+              clientId: 'okami-server',
               brokers: [env.get('KAFKA_BROKER')],
               ssl: true,
               sasl: {
@@ -19,6 +20,10 @@ import { MessageService } from './messaging-service';
                 password: env.get('KAFKA_PASSWORD'),
                 mechanism: 'scram-sha-256',
               },
+            },
+
+            consumer: {
+              groupId: 'okami-server',
             },
           },
         }),
