@@ -1,9 +1,5 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { User } from '../user-auth.decorator';
-import {
-  parseStripeCheckoutSessionSchema,
-  parseStripeSubscriptionSchema,
-} from '@app/infra/payment/stripe/parse-stripe-events';
+import { stripeEventSchema } from '@app/infra/payment/stripe/parse-stripe-events';
 import { StripePaymentGatewayProvider } from '@app/infra/payment/stripe/stripe-payment-gateway.provider';
 import { PaymentSubscriptionStatus } from '@domain/auth/enterprise/entities/User';
 import { ConfirmPaymentCheckout } from '@domain/payment/application/use-cases/confirm-payment-checkout';
@@ -12,7 +8,7 @@ import { UpdatePaymentSubscription } from '@domain/payment/application/use-cases
 import { BadRequestException, Controller, Logger, Post, RawBodyRequest, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
-import Stripe from 'stripe';
+import { User } from '../user-auth.decorator';
 
 @ApiTags('payment')
 @Controller('payment')
@@ -45,16 +41,16 @@ export class PaymentController {
     try {
       if (!req.rawBody) throw new BadRequestException('Webhook error no raw body');
 
-      const event = await this.stripePaymentGateway.buildWebhookEvent(
+      const stripeResponse = await this.stripePaymentGateway.buildWebhookEvent(
         req.rawBody,
         req.headers['stripe-signature'] as string,
       );
 
+      const event = await stripeEventSchema.parseAsync(stripeResponse);
+
       switch (event.type) {
         case 'checkout.session.completed':
-          const parsedEvent = await parseStripeCheckoutSessionSchema.parseAsync(event.data.object);
-
-          const { client_reference_id, customer, subscription, status } = parsedEvent;
+          const { client_reference_id, customer, subscription, status } = event.data.object;
 
           if (status === 'complete') {
             const results = await this.confirmPaymentCheckout.execute({
@@ -68,9 +64,7 @@ export class PaymentController {
 
         case 'customer.subscription.created':
         case 'customer.subscription.updated':
-          const subscriptionEventData = await parseStripeSubscriptionSchema.parseAsync(
-            event.data.object as Stripe.Subscription,
-          );
+          const subscriptionEventData = event.data.object;
 
           this.logger.debug(`Subscription event data: ${JSON.stringify(subscriptionEventData)}`);
 
