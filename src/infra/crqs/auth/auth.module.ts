@@ -35,6 +35,7 @@ import { ResetUserPasswordCommandHandler } from './commands/reset-user-passsword
 import { ResetUserPassword } from '@domain/auth/application/useCases/reset-user-password';
 import { UpdateUserCommandHandler } from './commands/update-user.command';
 import { UpdateUser } from '@domain/auth/application/useCases/update-user';
+import { RoleGuard } from './role.guard';
 
 const Commands = [
   LoginCommandHandler,
@@ -88,6 +89,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     UpdateUser,
     ...Commands,
     ...Queries,
+    RoleGuard,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -103,6 +105,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     CheckUserSubscriptionStatus,
     SubscriberGuard,
     GetUserTrialQuote,
+    RoleGuard,
   ],
 })
 export class AuthModule {}
