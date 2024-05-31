@@ -31,7 +31,7 @@ export class BatchService {
       QueueMessage.SYNC_WITH_OTHER_DATABASES,
       ({ database_id, user_id }: SyncNotionDatabaseBatchProps) => {
         if (database_id) {
-          this.importNotionDatabaseToMongoDB(database_id, user_id);
+          void this.importNotionDatabaseToMongoDB(database_id, user_id);
         }
       },
     );
