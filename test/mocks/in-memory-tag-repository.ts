@@ -4,6 +4,12 @@ import { Tag } from '@domain/work/enterprise/entities/tag';
 export class InMemoryTagRepository implements TagRepository {
   public tags: Tag[] = [];
 
+  async fetchAllTagsPaged(page: number): Promise<Tag[]> {
+    console.log(page);
+
+    return this.tags;
+  }
+
   async create(tag: Tag): Promise<void> {
     this.tags.push(tag);
   }
