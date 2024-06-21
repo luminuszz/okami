@@ -4,7 +4,7 @@ import { IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class FetchScrappingReportQuery {
   @IsNotEmpty()
-  @ApiProperty({ type: Number })
+  @ApiProperty({ type: Number, minimum: 0 })
   @Min(0)
   page: number;
 
