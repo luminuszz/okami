@@ -1,11 +1,12 @@
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsPositive } from 'class-validator';
 
 export class FetchScrappingReportQuery {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({ type: Number })
+  @IsPositive()
   page: number;
 
   @IsString()
