@@ -37,6 +37,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.env.get('JWT_SECRET'),
+      expiresIn: '7d',
     });
 
     return {

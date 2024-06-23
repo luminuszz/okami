@@ -62,7 +62,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
       useFactory: (env: EnvService) => ({
         global: true,
         secret: env.get('JWT_SECRET'),
-        signOptions: { expiresIn: '3d' },
+        signOptions: { expiresIn: '7d' },
       }),
       inject: [EnvService],
     }),
