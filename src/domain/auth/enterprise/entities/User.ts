@@ -32,6 +32,8 @@ interface EntityProps {
   paymentSubscriptionStatus?: PaymentSubscriptionStatus;
   trialWorkLimit?: number;
   resetPasswordCode?: string | null;
+  emailIsValidated?: boolean;
+  confirmEmailCode?: string;
 }
 
 export const DEFAULT_TRIAL_WORK_LIMIT = 5;
@@ -49,6 +51,8 @@ export class User extends Entity<EntityProps> {
     this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
     this.props.resetPasswordCode = props.resetPasswordCode ?? null;
     this.props.role = props.role ?? UserRole.USER;
+    this.props.emailIsValidated = props.emailIsValidated ?? false;
+    this.props.confirmEmailCode = props.confirmEmailCode ?? null;
   }
 
   get email(): string {
@@ -189,6 +193,22 @@ export class User extends Entity<EntityProps> {
 
   public decreaseTrialWorkLimit() {
     this.props.trialWorkLimit = this.hasTrial ? this.props.trialWorkLimit - 1 : 0;
+  }
+
+  public set emailIsValidated(isValidated: boolean) {
+    this.props.emailIsValidated = isValidated;
+  }
+
+  public get emailIsValidated() {
+    return this.props.emailIsValidated;
+  }
+
+  public set confirmEmailCode(code: string) {
+    this.props.confirmEmailCode = code;
+  }
+
+  public get confirmEmailCode() {
+    return this.props.confirmEmailCode;
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {
