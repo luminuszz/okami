@@ -5,12 +5,13 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { MailProvider } from '@domain/auth/application/contracts/mail-provider';
 import { UserEmailAlreadyConfirmed } from '@domain/auth/application/errors/UserEmailAlreadyConfirmed';
+import { User } from '@domain/auth/enterprise/entities/User';
 
 interface SendUserConfirmEmailRequest {
   userId: string;
 }
 
-type SendUserConfirmEmailResponse = Either<UserNotFound | UserEmailAlreadyConfirmed, void>;
+type SendUserConfirmEmailResponse = Either<UserNotFound | UserEmailAlreadyConfirmed, { user: User }>;
 
 @Injectable()
 export class SendUserConfirmEmail
@@ -32,11 +33,17 @@ export class SendUserConfirmEmail
       return left(new UserEmailAlreadyConfirmed());
     }
 
+    user.confirmEmailCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await this.userRepository.save(user);
+
     await this.mail.sendConfirmEmail({
       email: user.email,
       confirmEmailCode: user.confirmEmailCode,
     });
 
-    return right(null);
+    return right({
+      user,
+    });
   }
 }

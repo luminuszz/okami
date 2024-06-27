@@ -19,7 +19,6 @@ describe('SendUserConfirmEmail', () => {
   it('should be able to send a e-mail confirm to user', async () => {
     const fakeEmail = faker.internet.email();
 
-    const spyUserRepository = jest.spyOn(inMemoryUserRepository, 'findById');
     const spyEmailProvider = jest.spyOn(fakeEmailProvider, 'sendConfirmEmail');
 
     const user = User.create({
@@ -30,10 +29,21 @@ describe('SendUserConfirmEmail', () => {
 
     await inMemoryUserRepository.create(user);
 
-    await stu.execute({ userId: user.id });
+    const results = await stu.execute({ userId: user.id });
 
-    expect(spyUserRepository).toHaveBeenCalledTimes(1);
-    expect(spyEmailProvider).toHaveBeenCalledTimes(1);
+    expect(results.isRight()).toBeTruthy();
+
+    if (results.isRight()) {
+      const { user: userResults } = results.value;
+
+      expect(userResults.emailIsValidated).toBeFalsy();
+      expect(userResults.confirmEmailCode).toBeDefined();
+
+      expect(spyEmailProvider).toHaveBeenNthCalledWith(1, {
+        email: user.email,
+        confirmEmailCode: userResults.confirmEmailCode,
+      });
+    }
   });
 
   it('should not be able to send a e-mail confirm to user if user not exists', async () => {
