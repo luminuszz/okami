@@ -1,4 +1,5 @@
 import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
+import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable, Logger } from '@nestjs/common';
 import { RefreshStatus, WorkStatus } from '@prisma/client';
@@ -29,6 +30,10 @@ export class PrismaWorkRepository implements WorkRepository {
       },
       orderBy: {
         createdAt: 'desc',
+      },
+
+      include: {
+        tags: true,
       },
     });
 
@@ -95,7 +100,24 @@ export class PrismaWorkRepository implements WorkRepository {
           id: work.id.toString(),
           recipientId: parsedData.recipientId,
         },
-        create: parsedData,
+        create: {
+          ...parsedData,
+          tags: {
+            connectOrCreate: work.tags.map((tag) => ({
+              create: {
+                name: tag.name,
+                slug: tag.slug,
+                color: tag.color,
+                createdAt: tag.createdAt,
+                updatedAt: tag.updatedAt,
+                id: tag.id,
+              },
+              where: {
+                slug: tag.slug,
+              },
+            })),
+          },
+        },
         update: updateParsedData,
       });
     });
@@ -233,5 +255,40 @@ export class PrismaWorkRepository implements WorkRepository {
     });
 
     return results ? prismaWorkToEntityMapper(results) : null;
+  }
+
+  async linkTagsBatch(payload: { workId: string; tags: Tag[] }[]): Promise<void> {
+    try {
+      const operations = payload.map((data) => {
+        this.logger.log(`Linking tags to work ${data.workId} with tags ${data.tags.map((tag) => tag.name).join(', ')}`);
+
+        return this.prisma.work.update({
+          where: {
+            recipientId: data.workId,
+          },
+          data: {
+            tags: {
+              connectOrCreate: data.tags.map((tag) => ({
+                where: {
+                  slug: tag.slug,
+                },
+                create: {
+                  name: tag.name,
+                  slug: tag.slug,
+                  createdAt: tag.createdAt,
+                  id: tag.id,
+                  updatedAt: tag.updatedAt,
+                  color: tag.color,
+                },
+              })),
+            },
+          },
+        });
+      });
+
+      await this.prisma.$transaction(operations);
+    } catch (error) {
+      this.logger.error(`Error linking tags to work ${error}`);
+    }
   }
 }

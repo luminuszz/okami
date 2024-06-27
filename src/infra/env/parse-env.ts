@@ -40,6 +40,9 @@ export const envSchema = z.object({
   FRONT_END_URL_RESET_PASSWORD_URL: z.string(),
   RESEND_API_SECRET_KEY: z.string(),
   SENTRY_DSN_ENDPOINT: z.string(),
+  KAFKA_BROKER: z.string(),
+  KAFKA_USER: z.string(),
+  KAFKA_PASSWORD: z.string(),
   FRONT_END_URL_CONFIRM_EMAIL: z.string(),
 });
 

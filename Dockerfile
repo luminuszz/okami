@@ -26,7 +26,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod=false
+RUN pnpm install --prod=false
 
 # Generate Prisma Client
 COPY --link prisma .

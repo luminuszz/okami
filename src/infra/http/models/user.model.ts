@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@domain/auth/enterprise/entities/User';
+import { User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { PaymentSubscriptionStatus } from '@prisma/client';
 
@@ -14,6 +14,7 @@ const userSchema = z
     readingWorksCount: z.number().default(0),
     notionDatabaseId: z.string().nullable(),
     paymentSubscriptionStatus: z.nativeEnum(PaymentSubscriptionStatus).optional(),
+    role: z.nativeEnum(UserRole),
   })
   .transform((data) => ({
     ...data,
@@ -41,6 +42,9 @@ export class UserHttp implements UserHttpType {
 
   @ApiProperty({ required: false })
   notionDatabaseId?: string;
+
+  @ApiProperty({ enum: UserRole })
+  role: UserRole;
 }
 
 export class UserModel {

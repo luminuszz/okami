@@ -40,6 +40,13 @@ enum WorkStatus {
   DROPPED
 }
 
+ enum UserRole {
+  ADMIN
+  USER
+  SUBSCRIBED_USER
+}
+
+
 
 model Work {
   id                   String         @id @map("_id") @db.ObjectId
@@ -47,7 +54,7 @@ model Work {
   category             Category
   chapters             Float
   url                  String
-  recipientId          String?        @map("recipient_id")
+  recipientId          String?        @map("recipient_id") @unique
   imageId              String?        @map("image_id")
   nextChapter          Float?         @map("next_chapter")
   nextChapterUpdatedAt DateTime?      @map("next_chapter_updated_at")
@@ -60,6 +67,21 @@ model Work {
 
   User          User           @relation(fields: [userId], references: [id])
   userId        String         @db.ObjectId
+  tagsId        String[]       @map("tags_id") @db.ObjectId
+  tags          Tag[]          @relation(fields: [tagsId], references: [id])
+}
+
+
+model Tag {
+  id        String    @id @map("_id") @db.ObjectId
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  color     String    @default("default")
+
+  worksId   String[]  @map("works_id") @db.ObjectId
+  works     Work[]     @relation(fields: [worksId], references: [id])
 }
 
 
@@ -79,11 +101,12 @@ model User {
   paymentSubscriptionStatus PaymentSubscriptionStatus? @map("payment_subscription_status")
   trialWorkLimit   Int?      @map("trial_work_limit")
   resetPasswordCode String?  @map("reset_password_code")
+  role             UserRole  @default(USER)
   validateEmailCode String?   @map("validate_email_code")
   emailIsValidated  Boolean?   @default(false) @map("email_is_validated")
   emailValidationCodeExpirationAt DateTime? @map("email_validation_code_expiration_at")
 
-  
+
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

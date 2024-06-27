@@ -1,10 +1,13 @@
 import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
+import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
+import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/send-reset-password-emai.command';
 import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/update-notion-database-id.command';
+import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
-import { User } from '../user-auth.decorator';
+import { ProtectFor } from '@app/infra/crqs/auth/role.guard';
 import { MessageService } from '@app/infra/messaging/messaging-service';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
+import { IsPublic } from '@infra/crqs/auth/auth.guard';
 import {
   CreateAccessTokenCommand,
   CreateAccessTokenCommandResponse,
@@ -20,18 +23,16 @@ import { UserHttp, UserModel } from '@infra/http/models/user.model';
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
-import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
 import { firstValueFrom } from 'rxjs';
+import { User } from '../user-auth.decorator';
 import { CreateUserDto } from '../validators/create-user.dto';
-import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
-import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/send-reset-password-emai.command';
-import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
 import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
-import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
-import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
+import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
+import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 import { UpdateUserDto } from '../validators/update-user.dto';
 import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
 
@@ -45,6 +46,7 @@ export class AuthController {
     private readonly notificationService: MessageService,
   ) {}
 
+  @IsPublic()
   @Post('login')
   @ApiCreatedResponse({ type: TokenModel })
   async makeSession(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
@@ -62,7 +64,6 @@ export class AuthController {
       .status(201);
   }
 
-  @UseGuards(AuthGuard)
   @Post('/user/avatar/upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -93,7 +94,6 @@ export class AuthController {
     );
   }
 
-  @UseGuards(AuthGuard)
   @ApiOkResponse({ type: UserHttp })
   @Get('user/me')
   async getMe(@Req() { user }: { user: UserTokenDto }) {
@@ -102,7 +102,7 @@ export class AuthController {
     return UserModel.toHttp(results);
   }
 
-  @UseGuards(AuthGuard)
+  @ProtectFor('ADMIN')
   @Post('/access-token')
   @ApiCreatedResponse({ type: AccessToken })
   async createAccessToken(@Req() { user }: { user: UserTokenDto }) {
@@ -115,6 +115,7 @@ export class AuthController {
     };
   }
 
+  @IsPublic()
   @Post('/register')
   async register(@Body() data: CreateUserDto, @Res({ passthrough: true }) res: FastifyReply) {
     await this.commandBus.execute(
@@ -135,12 +136,12 @@ export class AuthController {
       .status(201);
   }
 
-  @UseGuards(AuthGuard)
   @Post('/admin-hash-code')
   async createAdminHashCode(@Req() @Req() { user }: { user: UserTokenDto }, @Body() data: CreateAdminHashCodeDto) {
     await this.commandBus.execute(new CreateAdminHashCodeCommand(user.id, data.hashCodeKey));
   }
 
+  @IsPublic()
   @Post('reset-password')
   async resetPassword(@Body() data: ResetPasswordDto) {
     await this.commandBus.execute(new ResetPasswordCommand(data.email, data.newPassword, data.adminHashCode));
@@ -151,6 +152,7 @@ export class AuthController {
     return res.clearCookie('@okami-web:token').status(201).send();
   }
 
+  @IsPublic()
   @Post('login-mobile')
   async createMobileSession(@Body() data: MakeSessionDto) {
     const { token } = await this.commandBus.execute<unknown, { token: string }>(
@@ -167,13 +169,11 @@ export class AuthController {
     await this.commandBus.execute(new UpdateNotionDatabaseIdCommand(userId, notionDatabaseId));
   }
 
-  @UseGuards(AuthGuard)
   @Get('user/analytics')
   async fetchUserAnalytics(@User('id') userId: string) {
     return await this.queryBus.execute(new FetchUserAnalyticsQuery(userId));
   }
 
-  @UseGuards(AuthGuard)
   @Get('user/trial-quote')
   async getUserTrialQuoteGet(@User('id') userId: string) {
     const response = await this.getUserTrialQuote.execute({ userId });
@@ -185,7 +185,6 @@ export class AuthController {
     return response.value;
   }
 
-  @UseGuards(AuthGuard)
   @Get('/user/telegram-status')
   async getTelegramStatus(@User('id') userId: string) {
     try {
@@ -203,17 +202,18 @@ export class AuthController {
     }
   }
 
+  @IsPublic()
   @Post('/password/send-reset-email')
   async sendResetPasswordEmail(@Body() { email }: SendResetPasswordEmailDto) {
     await this.commandBus.execute(new SendResetPasswordEmailCommand(email));
   }
 
+  @IsPublic()
   @Post('/password/reset')
   async resetUserPassword(@Body() { code, newPassword }: ResetUserPasswordDto) {
     await this.commandBus.execute(new ResetUserPasswordCommand(code, newPassword));
   }
 
-  @UseGuards(AuthGuard)
   @Put('/user')
   async updateUser(@User('id') userId: string, @Body() data: UpdateUserDto) {
     await this.commandBus.execute(new UpdateUserCommand(userId, data));

@@ -1,16 +1,13 @@
-import 'newrelic';
-
+import type { FastifyCookieOptions } from '@fastify/cookie';
+import * as fastifyCookie from '@fastify/cookie';
 import * as helmet from '@fastify/helmet';
+import * as fmp from '@fastify/multipart';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import * as fmp from '@fastify/multipart';
-import * as fastifyCookie from '@fastify/cookie';
-
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
-import type { FastifyCookieOptions } from '@fastify/cookie';
+import { AppModule } from './app.module';
 
 (async () => {
   const adapter = new FastifyAdapter();

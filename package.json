@@ -17,7 +17,6 @@
     "coverage": "jest --coverage",
     "dev": "docker compose -f ./docker-compose.dev.yml up",
     "test:watch": "jest --watch --coverage",
-    "prestart:dev": "yarn install && yarn prisma generate",
     "studio": "pnpm exec prisma studio"
   },
   "dependencies": {
@@ -56,8 +55,8 @@
     "fastify": "^4.22.0",
     "ioredis": "^5.3.2",
     "jest": "^29.6.4",
+    "kafkajs": "^2.2.4",
     "lodash": "^4.17.21",
-    "newrelic": "^11.0.0",
     "pm2": "^5.3.0",
     "prom-client": "^14.2.0",
     "reflect-metadata": "^0.1.13",
@@ -69,7 +68,7 @@
     "ts-jest": "^29.1.1",
     "unplugin-swc": "^1.4.2",
     "web-push": "^3.6.7",
-    "zod": "^3.21.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",

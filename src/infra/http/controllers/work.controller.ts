@@ -6,7 +6,6 @@ import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/que
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
-import { AuthGuard } from '@infra/crqs/auth/auth.guard';
 import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
@@ -35,7 +34,6 @@ import {
   Put,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -45,7 +43,6 @@ import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 
-@UseGuards(AuthGuard)
 @ApiTags('work')
 @Controller('work')
 export class WorkController {

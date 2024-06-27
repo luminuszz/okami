@@ -5,9 +5,9 @@ import { LoggerModule } from '@infra/logs/logs.module';
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { EnvModule } from './infra/env/env.module';
-import { PaymentModule } from './infra/payment/payment.module';
-import { SentryModule } from './infra/logs/sentry/sentry.module';
+import { EnvModule } from '@infra/env/env.module';
+import { PaymentModule } from '@infra/payment/payment.module';
+import { SentryModule } from '@infra/logs/sentry/sentry.module';
 
 @Module({
   imports: [

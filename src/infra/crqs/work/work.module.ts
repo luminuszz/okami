@@ -41,6 +41,10 @@ import { DeleteWork } from '@domain/work/application/usecases/delete-work';
 import { DeleteWorkCommandHandler } from './commands/delete-work.command';
 import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-all-user-read-works';
 import { MessagingModule } from '@app/infra/messaging/messaging.module';
+import { CreateTagCommandHandler } from './commands/create-tag.command';
+import { CreateTag } from '@domain/work/application/usecases/create-tag';
+import { FetchPagedTagsQueryHandler } from './queries/fetch-paged-tags';
+import { FetchAllTagsPaged } from '@domain/work/application/usecases/fetch-all-tags-paged';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -53,6 +57,7 @@ const CommandHandlers = [
   UpdateWorkRefreshStatusCommandHandler,
   MarkWorkAsDroppedCommandHandler,
   DeleteWorkCommandHandler,
+  CreateTagCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -61,6 +66,7 @@ const QueryHandlers = [
   FindOneWorkQueryHandler,
   FetchWorksScrapingPaginatedReportQueryHandler,
   FetchUserWorksWithFilterQueryHandler,
+  FetchPagedTagsQueryHandler,
 ];
 
 const EventHandlers = [];
@@ -86,6 +92,8 @@ const EventHandlers = [];
     ...CommandHandlers,
     ...QueryHandlers,
     ...EventHandlers,
+    CreateTag,
+    FetchAllTagsPaged,
     CreateWorkUseCase,
     UpdateWorkChapterUseCase,
     MarkWorkReadUseCase,

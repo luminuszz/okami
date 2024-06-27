@@ -18,6 +18,6 @@ export function IsObjectId(property?: string, validationOptions?: ValidationOpti
       validator: {
         validate: validateObjectIdType,
       },
-      name: 'isBsonId',
+      name: 'isObjectId',
     });
 }

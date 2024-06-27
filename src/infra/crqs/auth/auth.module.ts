@@ -37,6 +37,7 @@ import { UpdateUserCommandHandler } from './commands/update-user.command';
 import { UpdateUser } from '@domain/auth/application/useCases/update-user';
 import { SendConfirmEmailCommandHandler } from './commands/send-confirm-email.command';
 import { SendConfirmEmail } from '@domain/auth/application/useCases/send-confirm-email';
+import { RoleGuard } from './role.guard';
 
 const Commands = [
   LoginCommandHandler,
@@ -64,7 +65,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
       useFactory: (env: EnvService) => ({
         global: true,
         secret: env.get('JWT_SECRET'),
-        signOptions: { expiresIn: '3d' },
+        signOptions: { expiresIn: '7d' },
       }),
       inject: [EnvService],
     }),
@@ -92,6 +93,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     UpdateUser,
     ...Commands,
     ...Queries,
+    RoleGuard,
   ],
   exports: [
     AuthenticateUserUseCase,
@@ -107,6 +109,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     CheckUserSubscriptionStatus,
     SubscriberGuard,
     GetUserTrialQuote,
+    RoleGuard,
   ],
 })
 export class AuthModule {}

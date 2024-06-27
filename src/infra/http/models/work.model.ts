@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
+import { TagModel, tagSchema } from './tag.model';
 
 const workSchema = z
   .object({
@@ -22,6 +23,8 @@ const workSchema = z
     isDropped: z.boolean(),
     refreshStatus: z.string().nullable(),
     createdAt: z.date().transform((value) => value.toISOString()),
+    userId: z.string().nonempty(),
+    tags: z.array(tagSchema).optional(),
   })
   .transform((data) => {
     return {
@@ -31,6 +34,7 @@ const workSchema = z
   });
 
 export type WorkHttpType = z.infer<typeof workSchema>;
+export type TagHttpType = z.infer<typeof tagSchema>;
 
 export class WorkHttp implements WorkHttpType {
   @ApiProperty()
@@ -66,6 +70,12 @@ export class WorkHttp implements WorkHttpType {
 
   @ApiProperty()
   refreshStatus: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty({ type: TagModel, isArray: true })
+  tags: TagModel[];
 }
 
 export class WorkModel {
