@@ -219,7 +219,6 @@ export class AuthController {
     await this.commandBus.execute(new UpdateUserCommand(userId, data));
   }
 
-  @UseGuards(AuthGuard)
   @Post('/user/send-confirm-email')
   async sendConfirmEmail(@User('id') userId: string) {
     await this.commandBus.execute(new SendConfirmEmailCommand(userId));
