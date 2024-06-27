@@ -102,6 +102,11 @@ model User {
   trialWorkLimit   Int?      @map("trial_work_limit")
   resetPasswordCode String?  @map("reset_password_code")
   role             UserRole  @default(USER)
+  validateEmailCode String?   @map("validate_email_code")
+  emailIsValidated  Boolean?   @default(false) @map("email_is_validated")
+  emailValidationCodeExpirationAt DateTime? @map("email_validation_code_expiration_at")
+
+
 
   accessToken                  AccessToken?
   worksId                      String[]                       @map("works_id") @db.ObjectId

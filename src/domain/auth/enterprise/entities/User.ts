@@ -2,6 +2,7 @@ import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UserEmailUpdated } from '../events/user-email-updated';
+import { EmailValidationCode } from '../value-objects/email-validation-code';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
@@ -32,6 +33,7 @@ interface EntityProps {
   paymentSubscriptionStatus?: PaymentSubscriptionStatus;
   trialWorkLimit?: number;
   resetPasswordCode?: string | null;
+  emailValidationCode?: EmailValidationCode;
 }
 
 export const DEFAULT_TRIAL_WORK_LIMIT = 5;
@@ -189,6 +191,15 @@ export class User extends Entity<EntityProps> {
 
   public decreaseTrialWorkLimit() {
     this.props.trialWorkLimit = this.hasTrial ? this.props.trialWorkLimit - 1 : 0;
+  }
+
+  public get emailValidatedCode() {
+    return this.props.emailValidationCode;
+  }
+
+  public set emailValidatedCode(code: EmailValidationCode) {
+    this.props.emailValidationCode = code;
+    this.refresh();
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {

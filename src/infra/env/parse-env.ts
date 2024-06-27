@@ -30,6 +30,10 @@ export const envSchema = z.object({
   STRIPE_PRODUCT_PRICE_ID: z.string(),
   STRIPE_WEBHOOK_SECRET: z.string(),
   DEFAULT_WORK_IMAGE: z.string().optional(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.coerce.number(),
+  REDIS_USER: z.string(),
+  REDIS_PASSWORD: z.string(),
   CLOUD_FLARE_R2_KEY: z.string(),
   CLOUD_FLARE_R2_SECRET_KEY: z.string(),
   CLOUD_FLARE_PUBLIC_BUCKET_URL: z.string(),
@@ -39,6 +43,7 @@ export const envSchema = z.object({
   KAFKA_BROKER: z.string(),
   KAFKA_USER: z.string(),
   KAFKA_PASSWORD: z.string(),
+  FRONT_END_URL_CONFIRM_EMAIL: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;

@@ -6,17 +6,18 @@ import { Category, RefreshStatus, Work, WorkStatus } from '@domain/work/enterpri
 import {
   AccessToken as PrismaAccessToken,
   Category as PrismaCategory,
+  PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
+  RefreshStatus as PrismaRefreshStatus,
+  Tag as PrismaTag,
   User as PrismaUser,
   Work as PrismaWork,
-  RefreshStatus as PrismaRefreshStatus,
-  PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
-  Tag as PrismaTag,
 } from '@prisma/client';
 import { PaymentSubscriptionStatus, User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
 import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
+import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -110,6 +111,11 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | Pri
       trialWorkLimit: prismaUser.trialWorkLimit,
       resetPasswordCode: prismaUser.resetPasswordCode,
       role: prismaUser.role as UserRole,
+      emailValidationCode: new EmailValidationCode(
+        prismaUser.validateEmailCode,
+        prismaUser.emailIsValidated,
+        prismaUser.emailValidationCodeExpirationAt,
+      ),
     },
     new UniqueEntityID(prismaUser.id),
   );
@@ -131,6 +137,9 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   trialWorkLimit: user.trialWorkLimit,
   resetPasswordCode: user.resetPasswordCode,
   role: user.role,
+  emailIsValidated: user?.emailValidatedCode?.isEmailValidated() ?? null,
+  validateEmailCode: user?.emailValidatedCode.getCode() ?? null,
+  emailValidationCodeExpirationAt: user?.emailValidatedCode.getEmailValidationCodeExpirationAt() ?? null,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({
