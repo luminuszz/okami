@@ -2,6 +2,7 @@ import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UserEmailUpdated } from '../events/user-email-updated';
+import { Replace } from '@core/helpers/replace';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
@@ -18,37 +19,60 @@ interface EntityProps {
   name: string;
   email: string;
   passwordHash: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  avatarImageId?: string;
-  works?: Work[];
-  role?: UserRole;
-  readingWorksCount?: number;
-  finishedWorksCount?: number;
-  adminHashCodeKey?: string | null;
+  createdAt: Date;
+  updatedAt: Date | null;
+  avatarImageId: string | null;
+  works: Work[];
+  role: UserRole;
+  readingWorksCount: number;
+  finishedWorksCount: number;
+  adminHashCodeKey: string | null;
   notionDatabaseId?: string;
   paymentSubscriptionId?: string;
   paymentSubscriberId?: string;
   paymentSubscriptionStatus?: PaymentSubscriptionStatus;
   trialWorkLimit?: number;
-  resetPasswordCode?: string | null;
+  resetPasswordCode: string | null;
 }
+
+type ReplaceProps = Replace<
+  EntityProps,
+  {
+    createdAt?: Date;
+    updatedAt?: Date;
+    avatarImageId?: string;
+    works?: Work[];
+    role?: UserRole;
+    readingWorksCount?: number;
+    finishedWorksCount?: number;
+    adminHashCodeKey?: string;
+    resetPasswordCode?: string;
+  }
+>;
 
 export const DEFAULT_TRIAL_WORK_LIMIT = 5;
 
 export class User extends Entity<EntityProps> {
-  private constructor(props: Omit<EntityProps, 'updatedAt'>, id?: UniqueEntityID) {
-    super(props, id);
+  readonly __typename = 'User';
 
-    this.props.createdAt = props.createdAt ?? new Date();
-    this.props.works = props.works ?? [];
-    this.props.readingWorksCount = props.readingWorksCount ?? 0;
-    this.props.finishedWorksCount = props.finishedWorksCount ?? 0;
-    this.props.adminHashCodeKey = props.adminHashCodeKey ?? null;
-    this.props.paymentSubscriptionStatus = props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE;
-    this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
-    this.props.resetPasswordCode = props.resetPasswordCode ?? null;
-    this.props.role = props.role ?? UserRole.USER;
+  private constructor(props: ReplaceProps, id?: UniqueEntityID) {
+    super(
+      {
+        ...props,
+        createdAt: props.createdAt ?? new Date(),
+        works: props.works ?? [],
+        readingWorksCount: props.readingWorksCount ?? 0,
+        finishedWorksCount: props.finishedWorksCount ?? 0,
+        adminHashCodeKey: props.adminHashCodeKey ?? null,
+        paymentSubscriptionStatus: props.paymentSubscriptionStatus ?? PaymentSubscriptionStatus.INACTIVE,
+        trialWorkLimit: props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT,
+        resetPasswordCode: props.resetPasswordCode ?? null,
+        role: props.role ?? UserRole.USER,
+        updatedAt: null,
+        avatarImageId: props.avatarImageId ?? null,
+      },
+      id,
+    );
   }
 
   get email(): string {
@@ -75,19 +99,19 @@ export class User extends Entity<EntityProps> {
     this.props.name = name;
   }
 
-  get updatedAt(): Date {
-    return this.props.updatedAt;
+  get updatedAt(): Date | null {
+    return this.props.updatedAt ?? null;
   }
 
   get createdAt(): Date {
-    return this.props.createdAt;
+    return this.props.createdAt || new Date();
   }
 
-  get avatarImageId(): string {
-    return this.props.avatarImageId;
+  get avatarImageId(): string | null {
+    return this.props.avatarImageId ?? null;
   }
 
-  get resetPasswordCode(): string | null {
+  get resetPasswordCode() {
     return this.props.resetPasswordCode;
   }
 
@@ -102,19 +126,19 @@ export class User extends Entity<EntityProps> {
   }
 
   get works(): Work[] {
-    return this.props.works;
+    return this.props.works ?? [];
   }
 
   get adminHashCodeKey(): string | null {
-    return this.props.adminHashCodeKey;
+    return this.props.adminHashCodeKey ?? null;
   }
 
   get readingWorksCount(): number {
-    return this.props.readingWorksCount;
+    return this.props.readingWorksCount ?? 0;
   }
 
   get finishedWorksCount(): number {
-    return this.props.finishedWorksCount;
+    return this.props.finishedWorksCount ?? 0;
   }
 
   set adminHashCodeKey(key: string | null) {
@@ -131,24 +155,25 @@ export class User extends Entity<EntityProps> {
     this.props.updatedAt = new Date();
   }
 
-  public get notionDatabaseId(): string {
-    return this.props.notionDatabaseId;
+  public get notionDatabaseId(): string | null {
+    return this.props.notionDatabaseId ?? null;
   }
 
   public set notionDatabaseId(id: string) {
     this.props.notionDatabaseId = id;
     this.refresh();
   }
-  public get paymentSubscriptionId() {
-    return this.props.paymentSubscriptionId;
+
+  public get paymentSubscriptionId(): string | null {
+    return this.props.paymentSubscriptionId ?? null;
   }
 
-  public get paymentSubscriptionStatus() {
-    return this.props.paymentSubscriptionStatus;
+  public get paymentSubscriptionStatus(): PaymentSubscriptionStatus | null {
+    return this.props.paymentSubscriptionStatus ?? null;
   }
 
   get role() {
-    return this.props.role;
+    return this.props.role ?? UserRole.USER;
   }
 
   set role(role: UserRole) {
@@ -167,7 +192,7 @@ export class User extends Entity<EntityProps> {
   }
 
   public get paymentSubscriberId() {
-    return this.props.paymentSubscriberId;
+    return this.props.paymentSubscriberId ?? '';
   }
 
   public set paymentSubscriberId(paymentSubscriberId: string) {
@@ -180,7 +205,7 @@ export class User extends Entity<EntityProps> {
   }
 
   public get hasTrial() {
-    return this.props.trialWorkLimit > 0;
+    return this.props.trialWorkLimit && this.props.trialWorkLimit > 0;
   }
 
   public isAdmin() {
@@ -188,10 +213,14 @@ export class User extends Entity<EntityProps> {
   }
 
   public decreaseTrialWorkLimit() {
+    if (!this.props.trialWorkLimit) {
+      return;
+    }
+
     this.props.trialWorkLimit = this.hasTrial ? this.props.trialWorkLimit - 1 : 0;
   }
 
-  public static create(props: EntityProps, id?: UniqueEntityID): User {
+  public static create(props: ReplaceProps, id?: UniqueEntityID): User {
     return new User(props, id);
   }
 }

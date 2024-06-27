@@ -8,7 +8,7 @@ interface FetchUserAnalyticsRequest {
   userId: string;
 }
 
-interface AnalyticsResponse {
+export interface AnalyticsResponse {
   totalOfWorksRead: number;
   totalOfWorksCreated: number;
   totalOfWorksUnread: number;

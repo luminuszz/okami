@@ -46,6 +46,8 @@ export enum WorkStatus {
 }
 
 export class Work extends Entity<WorkProps> {
+  readonly __typename = 'Work';
+
   private constructor(props: WorkProps, id?: UniqueEntityID) {
     super(props, id);
 

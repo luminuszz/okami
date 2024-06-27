@@ -9,6 +9,8 @@ interface AccessTokenProps {
 }
 
 export class AccessToken extends Entity<AccessTokenProps> {
+  readonly __typename = 'AccessToken';
+
   private constructor(props: AccessTokenProps, id?: UniqueEntityID) {
     super(props, id);
   }
@@ -26,7 +28,7 @@ export class AccessToken extends Entity<AccessTokenProps> {
   }
 
   get revokedAt(): Date | null {
-    return this.props.revokedAt;
+    return this.props.revokedAt ?? null;
   }
 
   set revokedAt(date: Date) {

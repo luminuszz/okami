@@ -9,7 +9,7 @@ export class FetchUserAnalyticsQuery {
 export class FetchUserAnalyticsQueryHandler implements IQueryHandler<FetchUserAnalyticsQuery> {
   constructor(private readonly fetchUserAnalytics: FetchUserAnalytics) {}
 
-  async execute({ userId }: FetchUserAnalyticsQuery): Promise<any> {
+  async execute({ userId }: FetchUserAnalyticsQuery) {
     const response = await this.fetchUserAnalytics.execute({ userId });
 
     if (response.isLeft()) {
