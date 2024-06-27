@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
 import { AppModule } from './app.module';
+import { EnvService } from '@infra/env/env.service';
 
 (async () => {
   const adapter = new FastifyAdapter();
@@ -50,6 +51,8 @@ import { AppModule } from './app.module';
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true });
 
+  const envService = app.get(EnvService);
+
   app.useGlobalPipes(new ValidationPipe({ transformOptions: { enableImplicitConversion: true } }));
 
   const config = new DocumentBuilder()
@@ -63,7 +66,9 @@ import { AppModule } from './app.module';
 
   writeFileSync('./swagger.json', JSON.stringify(document));
 
-  SwaggerModule.setup('api', app, document);
+  if (envService.get('NODE_ENV') === 'development') {
+    SwaggerModule.setup('api', app, document);
+  }
 
   await app.listen(process.env.PORT, process.env.ADDRESS, (error, address) => console.log(address, { error }));
 })();

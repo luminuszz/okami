@@ -44,6 +44,7 @@ export const envSchema = z.object({
   KAFKA_USER: z.string(),
   KAFKA_PASSWORD: z.string(),
   FRONT_END_URL_CONFIRM_EMAIL: z.string(),
+  NODE_ENV: z.string(),
 });
 
 export type EnvSecrets = z.infer<typeof envSchema>;
