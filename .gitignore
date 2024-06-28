@@ -40,13 +40,12 @@ lerna-debug.log*
 .yarn/*
 
 
-# Envs 
+# Envs
 .env
-data
-
-
 
 requests/*.env.json
-
-
 core.*
+
+
+# Docker volumes
+volumes/*

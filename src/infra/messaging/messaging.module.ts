@@ -1,36 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { EnvService } from '../env/env.service';
+import { ClientsModule } from '@nestjs/microservices';
 import { MessageService } from './messaging-service';
+import { messageProviderConnectProvider } from '@infra/messaging/messaging-module.config';
 
 @Module({
-  imports: [
-    ClientsModule.registerAsync([
-      {
-        name: 'NOTIFICATION_SERVICE',
-        useFactory: (env: EnvService) => ({
-          transport: Transport.KAFKA,
-          options: {
-            client: {
-              clientId: 'okami-server',
-              brokers: [env.get('KAFKA_BROKER')],
-              ssl: true,
-              sasl: {
-                username: env.get('KAFKA_USER'),
-                password: env.get('KAFKA_PASSWORD'),
-                mechanism: 'scram-sha-256',
-              },
-            },
-
-            consumer: {
-              groupId: 'okami-server',
-            },
-          },
-        }),
-        inject: [EnvService],
-      },
-    ]),
-  ],
+  imports: [ClientsModule.registerAsync([messageProviderConnectProvider])],
   providers: [MessageService],
   exports: [MessageService],
 })
