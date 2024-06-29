@@ -6,7 +6,6 @@ import { randomUUID } from 'crypto';
 import { MailProvider } from '../contracts/mail-provider';
 import { UserNotFound } from '../errors/UserNotFound';
 import { UserRepository } from './repositories/user-repository';
-import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
 
 interface SendConfirmEmailRequest {
   userId: string;
@@ -28,13 +27,13 @@ export class SendConfirmEmail implements UseCaseImplementation<SendConfirmEmailR
       return left(new UserNotFound());
     }
 
-    existsUser.emailValidatedCode = new EmailValidationCode(randomUUID());
+    existsUser.emailValidationCode = randomUUID();
 
     await this.userRepository.save(existsUser);
 
     await this.mailProvider.sendConfirmEmail({
       email: existsUser.email,
-      confirmEmailCode: existsUser.emailValidatedCode.getCode(),
+      confirmEmailCode: existsUser.emailCode,
     });
 
     return right({

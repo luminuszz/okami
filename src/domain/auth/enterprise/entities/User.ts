@@ -3,6 +3,7 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UserEmailUpdated } from '../events/user-email-updated';
 import { EmailValidationCode } from '../value-objects/email-validation-code';
+import { UserEmailValidated } from '@domain/auth/enterprise/events/user-email-validated';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
@@ -51,6 +52,7 @@ export class User extends Entity<EntityProps> {
     this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
     this.props.resetPasswordCode = props.resetPasswordCode ?? null;
     this.props.role = props.role ?? UserRole.USER;
+    this.props.emailValidationCode = props.emailValidationCode ?? undefined;
   }
 
   get email(): string {
@@ -193,13 +195,26 @@ export class User extends Entity<EntityProps> {
     this.props.trialWorkLimit = this.hasTrial ? this.props.trialWorkLimit - 1 : 0;
   }
 
-  public get emailValidatedCode() {
-    return this.props.emailValidationCode;
+  public set emailValidationCode(code: string) {
+    this.props.emailValidationCode = new EmailValidationCode(code);
   }
 
-  public set emailValidatedCode(code: EmailValidationCode) {
-    this.props.emailValidationCode = code;
-    this.refresh();
+  public get isEmailValidated() {
+    return this.props.emailValidationCode.isEmailValidated();
+  }
+
+  public get emailCode() {
+    return this.props.emailValidationCode.getCode();
+  }
+
+  public emailCodeIsExpired() {
+    return this.props.emailValidationCode.isExpired();
+  }
+
+  public validateEmail() {
+    this.props.emailValidationCode?.validateEmail();
+
+    this.events.push(new UserEmailValidated(this));
   }
 
   public static create(props: EntityProps, id?: UniqueEntityID): User {
