@@ -39,6 +39,7 @@ import { SendConfirmEmailCommandHandler } from './commands/send-confirm-email.co
 import { SendConfirmEmail } from '@domain/auth/application/useCases/send-confirm-email';
 import { RoleGuard } from './role.guard';
 import { ValidateEmailCodeCommandHandler } from '@infra/crqs/auth/commands/validate-email-code.command';
+import { ValidateEmailCode } from '@domain/auth/application/useCases/validate-email-code';
 
 const Commands = [
   LoginCommandHandler,
@@ -92,6 +93,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     FetchUserAnalytics,
     GetUserTrialQuote,
     ResetUserPassword,
+    ValidateEmailCode,
     UpdateUser,
     ...Commands,
     ...Queries,
