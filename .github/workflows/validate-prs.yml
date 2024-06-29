@@ -31,6 +31,7 @@ jobs:
     name: "Print coverage report"
     permissions:
       pull-requests: write
+      repository-projects: read
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
