@@ -3,7 +3,7 @@ name: "Validate prs"
 
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - master
 
@@ -39,7 +39,8 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            package-manager: pnpm
+            test-script:  corepack enable & corepack prepare pnpm@latest --activate & pnpm run coverage-github-action
+
 
 
   validate_build:
