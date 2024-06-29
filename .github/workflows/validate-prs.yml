@@ -27,6 +27,12 @@ jobs:
       - name: "Run tests"
         run: |
           pnpm run coverage
+  coverage:
+    name: "Print coverage report"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ArtiomTr/jest-coverage-report-action@v2
 
   validate_build:
     name: "Validate build"
