@@ -39,7 +39,7 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            test-script:  corepack enable & corepack prepare pnpm@latest --activate & pnpm run coverage-github-action
+            test-script:  "corepack enable & corepack prepare pnpm@latest --activate & pnpm run coverage-github-action"
 
 
 
