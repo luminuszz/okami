@@ -37,13 +37,8 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            coverage_file: coverage/lcov.info
-            comment: true
-            comment_title: 'Coverage Report'
-            comment_details: 'Coverage report for this PR'
-            comment_failure: true
-            comment_flags: 'N/A'
-            comment_threshold: 80
+            package-manager: pnpm
+
 
   validate_build:
     name: "Validate build"
