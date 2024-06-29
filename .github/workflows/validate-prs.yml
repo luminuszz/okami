@@ -29,10 +29,21 @@ jobs:
           pnpm run coverage
   coverage:
     name: "Print coverage report"
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          coverage_file: coverage/lcov.info
+          comment: true
+          comment_title: 'Coverage Report'
+          comment_details: 'Coverage report for this PR'
+          comment_failure: true
+          comment_flags: 'N/A'
+          comment_threshold: 80
 
   validate_build:
     name: "Validate build"
