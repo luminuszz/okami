@@ -35,6 +35,8 @@ import { SendResetPasswordEmailDto } from '../validators/send-reset-password-ema
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 import { UpdateUserDto } from '../validators/update-user.dto';
 import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
+import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto';
+import { ValidateEmailCodeCommand } from '@infra/crqs/auth/commands/validate-email-code.command';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -222,5 +224,10 @@ export class AuthController {
   @Post('/user/send-confirm-email')
   async sendConfirmEmail(@User('id') userId: string) {
     await this.commandBus.execute(new SendConfirmEmailCommand(userId));
+  }
+
+  @Post('/user/validate-email')
+  async validateEmailCode(@Body() { code }: ValidateEmailDto, @User('id') userId: string) {
+    await this.commandBus.execute(new ValidateEmailCodeCommand(userId, code));
   }
 }

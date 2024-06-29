@@ -34,8 +34,8 @@ describe('SendConfirmEmail', () => {
 
     const { user: updatedUser } = results.value;
 
-    expect(updatedUser.emailValidatedCode.isEmailValidated()).toBe(false);
-    expect(updatedUser.emailValidatedCode.getCode()).not.toBeNull();
+    expect(updatedUser.isEmailValidated).toBe(false);
+    expect(updatedUser.emailCode).not.toBeNull();
     expect(spy).toBeCalledTimes(1);
   });
 

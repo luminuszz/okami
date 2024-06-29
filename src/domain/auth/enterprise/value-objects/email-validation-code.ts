@@ -12,10 +12,6 @@ export class EmailValidationCode {
   }
 
   public validateEmail(): void {
-    if (this.isExpired()) {
-      throw new Error('code expired');
-    }
-
     this.emailIsValidated = true;
     this.code = null;
     this.emailValidationCodeExpirationAt = null;

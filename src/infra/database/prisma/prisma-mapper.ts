@@ -137,9 +137,9 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   trialWorkLimit: user.trialWorkLimit,
   resetPasswordCode: user.resetPasswordCode,
   role: user.role,
-  emailIsValidated: user?.emailValidatedCode?.isEmailValidated() ?? null,
-  validateEmailCode: user?.emailValidatedCode.getCode() ?? null,
-  emailValidationCodeExpirationAt: user?.emailValidatedCode.getEmailValidationCodeExpirationAt() ?? null,
+  emailIsValidated: user?.isEmailValidated,
+  validateEmailCode: user?.emailCode,
+  emailValidationCodeExpirationAt: user?.emailCodeExpiresAt ?? null,
 });
 
 export const parseDomainAccessTokenToPrismaAccessToken = (accessToken: AccessToken): PrismaAccessToken => ({
