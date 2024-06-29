@@ -29,10 +29,15 @@ jobs:
           pnpm run coverage
   coverage:
     name: "Print coverage report"
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          package-manager: pnpm
 
   validate_build:
     name: "Validate build"
