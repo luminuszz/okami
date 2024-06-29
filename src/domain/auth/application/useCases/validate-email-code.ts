@@ -24,7 +24,7 @@ export class ValidateEmailCode implements UseCaseImplementation<ValidateEmailCod
       return left(new UserNotFound());
     }
 
-    const codeIsInvalid = user.emailCodeIsExpired() || user.emailCode !== code;
+    const codeIsInvalid = user.emailCodeIsExpired || user.emailCode !== code;
 
     if (codeIsInvalid) {
       return left(new InvalidCodeKey());

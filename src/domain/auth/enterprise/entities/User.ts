@@ -207,8 +207,12 @@ export class User extends Entity<EntityProps> {
     return this.props.emailValidationCode.getCode();
   }
 
-  public emailCodeIsExpired() {
+  public get emailCodeIsExpired() {
     return this.props.emailValidationCode.isExpired();
+  }
+
+  public get emailCodeExpiresAt() {
+    return this.props.emailValidationCode.getEmailValidationCodeExpirationAt();
   }
 
   public validateEmail() {

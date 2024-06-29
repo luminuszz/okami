@@ -38,7 +38,7 @@ describe('EmailValidationCode', () => {
     expect(emailValidationCode.isEmailValidated()).toBe(true);
   });
 
-  it('should  not be  able to validate email with email is expired', async () => {
+  it('verify if email code is expired', async () => {
     const code = faker.string.uuid();
 
     const emailValidationCode = new EmailValidationCode(code);
@@ -46,6 +46,6 @@ describe('EmailValidationCode', () => {
     // set system time to 2 hours in the future
     jest.useFakeTimers().setSystemTime(dayjs().add(2, 'hours').toDate());
 
-    expect(emailValidationCode.validateEmail).toThrowError(Error);
+    expect(emailValidationCode.isExpired()).toBe(true);
   });
 });
