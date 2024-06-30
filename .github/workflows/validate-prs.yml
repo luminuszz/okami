@@ -37,10 +37,14 @@ jobs:
         uses: actions/setup-node@v3
       - name: "Setup node action"
         uses: ArtiomTr/jest-coverage-report-action@v2
+      - name: "Install dependencies"
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          pnpm install
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            test-script:  "corepack enable & corepack prepare pnpm@latest --activate & pnpm run coverage-github-action"
-
+            package-manager: pnpm
 
 
   validate_build:
