@@ -1,0 +1,23 @@
+on:
+  pull_request_target:
+    branches:
+      - master
+
+jobs:
+  coverage:
+    name: "Print coverage report"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node action"
+        uses: actions/setup-node@v3
+      - name: "Print coverage"
+        uses: ArtiomTr/jest-coverage-report-action@v2
+      - name: "Install dependencies"
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          package-manager: pnpm

@@ -17,7 +17,8 @@
     "coverage": "jest --coverage",
     "dev": "docker compose -f ./docker-compose.dev.yml up",
     "test:watch": "jest --watch --coverage",
-    "studio": "pnpm exec prisma studio"
+    "studio": "pnpm exec prisma studio",
+    "coverage-github-action": "pnpm run jest --ci --json --coverage --testLocationInResults --outputFile=report.json"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
