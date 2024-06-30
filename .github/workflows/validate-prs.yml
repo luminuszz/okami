@@ -35,16 +35,11 @@ jobs:
         uses: actions/checkout@v3
       - name: "Setup node action"
         uses: actions/setup-node@v3
-      - name: "Install dependencies"
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          pnpm install
       - name: "Print coverage"
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            package-manager: pnpm
+
 
 
   validate_build:
