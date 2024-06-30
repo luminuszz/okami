@@ -1,3 +1,5 @@
+name: "Print coverage by pr"
+
 on:
   pull_request_target:
     branches:
@@ -21,5 +23,4 @@ jobs:
       - name: "Print coverage"
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           package-manager: pnpm
