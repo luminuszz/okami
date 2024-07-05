@@ -139,8 +139,8 @@ export const parseDomainUserToPrismaUser = (user: User): PrismaUser => ({
   trialWorkLimit: user.trialWorkLimit,
   resetPasswordCode: user.resetPasswordCode,
   role: user.role,
-  emailIsValidated: user?.isEmailValidated,
-  validateEmailCode: user?.emailCode,
+  emailIsValidated: user?.isEmailValidated ?? false,
+  validateEmailCode: user?.emailCode || null,
   emailValidationCodeExpirationAt: user?.emailCodeExpiresAt ?? null,
 });
 
