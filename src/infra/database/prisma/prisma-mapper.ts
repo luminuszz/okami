@@ -111,11 +111,13 @@ export const parsePrismaUserToDomainUser = (prismaUser: PrismaUserWithMeta | Pri
       trialWorkLimit: prismaUser.trialWorkLimit,
       resetPasswordCode: prismaUser.resetPasswordCode,
       role: prismaUser.role as UserRole,
-      emailValidationCode: new EmailValidationCode(
-        prismaUser.validateEmailCode,
-        prismaUser.emailIsValidated,
-        prismaUser.emailValidationCodeExpirationAt,
-      ),
+      emailValidationCode: prismaUser.validateEmailCode
+        ? new EmailValidationCode(
+            prismaUser.validateEmailCode,
+            prismaUser.emailIsValidated,
+            prismaUser.emailValidationCodeExpirationAt,
+          )
+        : null,
     },
     new UniqueEntityID(prismaUser.id),
   );

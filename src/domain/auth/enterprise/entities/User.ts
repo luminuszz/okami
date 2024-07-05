@@ -52,7 +52,7 @@ export class User extends Entity<EntityProps> {
     this.props.trialWorkLimit = props.trialWorkLimit ?? DEFAULT_TRIAL_WORK_LIMIT;
     this.props.resetPasswordCode = props.resetPasswordCode ?? null;
     this.props.role = props.role ?? UserRole.USER;
-    this.props.emailValidationCode = props.emailValidationCode ?? undefined;
+    this.props.emailValidationCode = props.emailValidationCode ?? null;
   }
 
   get email(): string {
