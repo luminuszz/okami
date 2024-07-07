@@ -222,6 +222,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.0.0
         version: 5.0.0(@types/eslint@8.44.2)(eslint-config-prettier@9.0.0(eslint@8.48.0))(eslint@8.48.0)(prettier@3.0.3)
+      husky:
+        specifier: ^9.0.11
+        version: 9.0.11
       prettier:
         specifier: ^3.0.2
         version: 3.0.3
@@ -3276,6 +3279,11 @@ packages:
   human-signals@4.3.1:
     resolution: {integrity: sha512-nZXjEF2nbo7lIw3mgYjItAfgQXog3OjJogSbKa2CQIIvSGWcKgeJnQlNXip6NglNzYH45nSRiEVimMvYL8DDqQ==}
     engines: {node: '>=14.18.0'}
+
+  husky@9.0.11:
+    resolution: {integrity: sha512-AB6lFlbwwyIqMdHYhwPe+kjOC3Oc5P3nThEoW/AaO2BX3vJDjWPFxYLxokUZOo6RNX20He3AaT8sESs9NJcmEw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -6942,7 +6950,7 @@ snapshots:
 
   '@pm2/pm2-version-check@1.0.4':
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.5
     transitivePeerDependencies:
       - supports-color
 
@@ -9260,6 +9268,8 @@ snapshots:
   human-signals@2.1.0: {}
 
   human-signals@4.3.1: {}
+
+  husky@9.0.11: {}
 
   iconv-lite@0.4.24:
     dependencies:

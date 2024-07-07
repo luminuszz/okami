@@ -19,7 +19,8 @@
     "test:watch": "jest --watch --coverage",
     "studio": "pnpm exec prisma studio",
     "coverage-github-action": "pnpm run jest --ci --json --coverage --testLocationInResults --outputFile=report.json",
-    "test:e2e": "jest --config  ./jest-e2e.config.ts --detectOpenHandles"
+    "test:e2e": "jest --config  ./jest-e2e.config.ts --detectOpenHandles",
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
@@ -95,6 +96,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.0.11",
     "prettier": "^3.0.2",
     "prisma": "5.2.0",
     "source-map-support": "^0.5.20",
