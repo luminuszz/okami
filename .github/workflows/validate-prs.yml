@@ -1,7 +1,5 @@
 name: "Validate prs"
 
-
-
 on:
   pull_request:
     branches:

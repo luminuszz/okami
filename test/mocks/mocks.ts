@@ -34,3 +34,8 @@ export const createUserPropsFactory = () => ({
   name: faker.person.firstName(),
   passwordHash: faker.string.uuid(),
 });
+
+export const fakerMessageEmit = {
+  send: jest.fn().mockImplementation(() => Promise.resolve()),
+  emit: jest.fn().mockImplementation(() => Promise.resolve()),
+};

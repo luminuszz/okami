@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   DATABASE_URL: z.string(),
+  DATABASE_TEST_URL: z.string().optional(),
   DOCKERFILE: z.string().optional(),
   NOTION_AUTH_TOKEN: z.string(),
   NOTION_DATABASE_ID: z.string(),

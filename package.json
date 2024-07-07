@@ -18,7 +18,9 @@
     "dev": "docker compose -f ./docker-compose.dev.yml up",
     "test:watch": "jest --watch --coverage",
     "studio": "pnpm exec prisma studio",
-    "coverage-github-action": "pnpm run jest --ci --json --coverage --testLocationInResults --outputFile=report.json"
+    "coverage-github-action": "pnpm run jest --ci --json --coverage --testLocationInResults --outputFile=report.json",
+    "test:e2e": "jest --config  ./jest-e2e.config.ts --detectOpenHandles",
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.374.0",
@@ -47,7 +49,7 @@
     "@types/cron": "^2.0.1",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
-    "axios": "^1.4.0",
+    "axios": "^1.7.2",
     "bcrypt": "^5.1.0",
     "bson": "^6.0.0",
     "class-transformer": "^0.5.1",
@@ -94,6 +96,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^9.0.11",
     "prettier": "^3.0.2",
     "prisma": "5.2.0",
     "source-map-support": "^0.5.20",
@@ -102,7 +105,7 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.2.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9",
+    "vite": "^4.5.3",
     "vite-tsconfig-paths": "^4.2.0"
   },
   "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
