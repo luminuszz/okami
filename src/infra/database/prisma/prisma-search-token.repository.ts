@@ -1,7 +1,7 @@
 import { SearchTokenRepository } from '@domain/work/application/repositories/search-token-repository';
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { SearchToken } from '@domain/work/enterprise/entities/search-token';
+import { PrismaService } from '@infra/database/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PrismaSearchTokenRepository implements SearchTokenRepository {
@@ -14,6 +14,16 @@ export class PrismaSearchTokenRepository implements SearchTokenRepository {
         createdAt: data.createdAt,
         id: data.id,
       },
+    });
+  }
+
+  async createMany(searchTokens: SearchToken[]): Promise<void> {
+    await this.prisma.searchToken.createMany({
+      data: searchTokens.map((vl) => ({
+        id: vl.id,
+        createdAt: vl.createdAt,
+        token: vl.token,
+      })),
     });
   }
 }

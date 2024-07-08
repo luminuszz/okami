@@ -14,39 +14,41 @@ import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
 import { UpdateWorkCommandHandler } from './commands/update-work.command';
 
+import { MessagingModule } from '@app/infra/messaging/messaging.module';
 import { Queue } from '@domain/work/application/queue/Queue';
+import { CreateManySearchTokens } from '@domain/work/application/usecases/create-many-search-tokens';
+import { CreateSearchToken } from '@domain/work/application/usecases/create-search-token';
+import { CreateTag } from '@domain/work/application/usecases/create-tag';
+import { DeleteWork } from '@domain/work/application/usecases/delete-work';
+import { FetchAllTagsPaged } from '@domain/work/application/usecases/fetch-all-tags-paged';
+import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-all-user-read-works';
+import { FetchUserWorksWithFilterUseCase } from '@domain/work/application/usecases/fetch-user-works-with-filter';
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
+import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
 import { MarkWorkAsDroppedUseCase } from '@domain/work/application/usecases/mark-work-as-dropped';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
+import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecases/mark-works-on-pending-status';
+import { RegisterNewWork } from '@domain/work/application/usecases/register-new-work';
 import { UpdateRefreshStatusUseCase } from '@domain/work/application/usecases/update-refresh-status';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { CreateSearchTokenCommandHandler } from '@infra/crqs/work/commands/create-search-token.command';
 import { MarkWorkFinishedCommandHandler } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { UpdateWorkRefreshStatusCommandHandler } from '@infra/crqs/work/commands/update-work-refresh-status.command';
 import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
 import { QueueModule } from '@infra/queue/queue.module';
 import { StorageModule } from '@infra/storage/storage.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CreateManySearchTokensCommandHandler } from './commands/create-many-search-tokens.command';
+import { CreateTagCommandHandler } from './commands/create-tag.command';
+import { DeleteWorkCommandHandler } from './commands/delete-work.command';
 import { MarkWorkAsDroppedCommandHandler } from './commands/mark-work-as-dropped.command';
 import { FetchForWorkersReadQueryHandler } from './queries/fetch-for-works-read';
-import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
-import { FindOneWorkQueryHandler } from './queries/find-one-work';
-import { MarkWorksOnPendingStatusUseCase } from '@domain/work/application/usecases/mark-works-on-pending-status';
 import { FetchWorksScrapingPaginatedReportQueryHandler } from './queries/fetch-for-works-scraping-report-paginated';
-import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { FetchUserWorksWithFilterUseCase } from '@domain/work/application/usecases/fetch-user-works-with-filter';
-import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works-with-filter.query';
-import { RegisterNewWork } from '@domain/work/application/usecases/register-new-work';
-import { DeleteWork } from '@domain/work/application/usecases/delete-work';
-import { DeleteWorkCommandHandler } from './commands/delete-work.command';
-import { FetchAllUserReadWorks } from '@domain/work/application/usecases/fetch-all-user-read-works';
-import { MessagingModule } from '@app/infra/messaging/messaging.module';
-import { CreateTagCommandHandler } from './commands/create-tag.command';
-import { CreateTag } from '@domain/work/application/usecases/create-tag';
+import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unread';
 import { FetchPagedTagsQueryHandler } from './queries/fetch-paged-tags';
-import { FetchAllTagsPaged } from '@domain/work/application/usecases/fetch-all-tags-paged';
-import { CreateSearchTokenCommandHandler } from '@infra/crqs/work/commands/create-search-token.command';
-import { CreateSearchToken } from '@domain/work/application/usecases/create-search-token';
+import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works-with-filter.query';
+import { FindOneWorkQueryHandler } from './queries/find-one-work';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -61,6 +63,7 @@ const CommandHandlers = [
   DeleteWorkCommandHandler,
   CreateTagCommandHandler,
   CreateSearchTokenCommandHandler,
+  CreateManySearchTokensCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -117,6 +120,7 @@ const EventHandlers = [];
     DeleteWork,
     FetchAllUserReadWorks,
     CreateSearchToken,
+    CreateManySearchTokens,
     Queue,
   ],
   exports: [

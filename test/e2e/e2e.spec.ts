@@ -1,16 +1,16 @@
-import { Test } from '@nestjs/testing';
 import { AppModule } from '@app/app.module';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 import { faker } from '@faker-js/faker';
-import { MessageService } from '@infra/messaging/messaging-service';
-import { fakerMessageEmit } from '@test/mocks/mocks';
 import * as fastifyCookie from '@fastify/cookie';
-import { PrismaClient } from '@prisma/client';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { EnvService } from '@infra/env/env.service';
+import { MessageService } from '@infra/messaging/messaging-service';
 import { JwtService } from '@nestjs/jwt';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
-import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
+import { fakerMessageEmit } from '@test/mocks/mocks';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -138,6 +138,30 @@ describe('E2E tests', () => {
       });
 
       expect(searchToken).toBeDefined();
+    });
+
+    it('POST /work/search-token/batch', async () => {
+      const data = {
+        tokens: Array.from({ length: 5 }, () => ({
+          token: faker.lorem.word(),
+          type: faker.helpers.arrayElement(Object.values(SearchTokenType)),
+        })),
+      };
+
+      const results = await app.inject({
+        url: '/work/search-token/batch',
+        method: 'POST',
+        body: data,
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const searchToken = await prisma.searchToken.findMany();
+
+      expect(searchToken.length).toBeGreaterThan(1);
     });
   });
 

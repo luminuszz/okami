@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { EnvService } from '../env/env.service';
-import { Resend } from 'resend';
 import {
   MailProvider,
   SendConfirmEmailDto,
   SendResetPasswordEmailDto,
 } from '@domain/auth/application/contracts/mail-provider';
+import { Injectable } from '@nestjs/common';
+import { Resend } from 'resend';
+import { EnvService } from '../env/env.service';
 
 @Injectable()
 export class ResendEmailProviderService implements MailProvider {

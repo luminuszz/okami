@@ -1,10 +1,10 @@
-import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 import { Either, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
-import { Injectable } from '@nestjs/common';
 import { SearchTokenRepository } from '@domain/work/application/repositories/search-token-repository';
+import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
+import { Injectable } from '@nestjs/common';
 
-interface CreateSearchTokenRequest {
+export interface CreateSearchTokenRequest {
   token: string;
   type: SearchTokenType;
 }
