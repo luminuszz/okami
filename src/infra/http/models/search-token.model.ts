@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
+import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 import { ApiProperty } from '@nestjs/swagger';
 
 const searchTokenSchema = z.object({
@@ -24,7 +24,7 @@ export class SearchTokenHttp implements SearchTokenHttpType {
 }
 
 export class SearchTokenModel {
-  static toHttpList(searchTokens: SearchTokenHttpType[]): SearchTokenHttpType[] {
+  static toHttpList(searchTokens: SearchToken[]): SearchTokenHttpType[] {
     return z.array(searchTokenSchema).parse(searchTokens);
   }
 }
