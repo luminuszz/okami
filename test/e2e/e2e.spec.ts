@@ -10,6 +10,7 @@ import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { EnvService } from '@infra/env/env.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -42,6 +43,10 @@ describe('E2E tests', () => {
     await app.register(fastifyCookie as any);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+  });
+
+  const generateValidTokenCookie = () => ({
+    '@okami-web:token': app.get(JwtService).sign({ id: faker.string.uuid() }),
   });
 
   describe('AuthController', () => {
@@ -108,6 +113,34 @@ describe('E2E tests', () => {
     });
   });
 
+  describe('WorkControler ', () => {
+    it('POST /work/search-token', async () => {
+      const data = {
+        token: faker.lorem.word(),
+        type: faker.helpers.arrayElement(Object.values(SearchTokenType)),
+      };
+
+      const results = await app.inject({
+        url: '/work/search-token',
+        method: 'POST',
+        body: data,
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const searchToken = await prisma.searchToken.findFirst({
+        where: {
+          token: data.token,
+        },
+      });
+
+      expect(searchToken).toBeDefined();
+    });
+  });
+
   afterAll(async () => {
     await app.close();
 
@@ -116,6 +149,7 @@ describe('E2E tests', () => {
       prisma.work.deleteMany(),
       prisma.accessToken.deleteMany(),
       prisma.tag.deleteMany(),
+      prisma.searchToken.deleteMany(),
     ]);
 
     await prisma.$disconnect();

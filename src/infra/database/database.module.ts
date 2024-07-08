@@ -15,6 +15,8 @@ import { NotionDatabaseModule } from './notion/notion-database.module';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
 import { TagRepository } from '@domain/work/application/repositories/tag-repository';
 import { PrismaTagRepository } from './prisma/prisma-tag.repository';
+import { SearchTokenRepository } from '@domain/work/application/repositories/search-token-repository';
+import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository';
 
 @Global()
 @Module({
@@ -27,7 +29,16 @@ import { PrismaTagRepository } from './prisma/prisma-tag.repository';
     { provide: UserRepository, useClass: PrismaUserRepository },
     { provide: AccessTokenRepository, useClass: PrismaAccessTokenRepository },
     { provide: TagRepository, useClass: PrismaTagRepository },
+    { provide: SearchTokenRepository, useClass: PrismaSearchTokenRepository },
   ],
-  exports: [WorkRepository, BatchService, UserRepository, PrismaService, AccessTokenRepository, TagRepository],
+  exports: [
+    WorkRepository,
+    BatchService,
+    UserRepository,
+    PrismaService,
+    AccessTokenRepository,
+    TagRepository,
+    SearchTokenRepository,
+  ],
 })
 export class DatabaseModule {}

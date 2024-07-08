@@ -45,6 +45,8 @@ import { CreateTagCommandHandler } from './commands/create-tag.command';
 import { CreateTag } from '@domain/work/application/usecases/create-tag';
 import { FetchPagedTagsQueryHandler } from './queries/fetch-paged-tags';
 import { FetchAllTagsPaged } from '@domain/work/application/usecases/fetch-all-tags-paged';
+import { CreateSearchTokenCommandHandler } from '@infra/crqs/work/commands/create-search-token.command';
+import { CreateSearchToken } from '@domain/work/application/usecases/create-search-token';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -58,6 +60,7 @@ const CommandHandlers = [
   MarkWorkAsDroppedCommandHandler,
   DeleteWorkCommandHandler,
   CreateTagCommandHandler,
+  CreateSearchTokenCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -113,6 +116,7 @@ const EventHandlers = [];
     RegisterNewWork,
     DeleteWork,
     FetchAllUserReadWorks,
+    CreateSearchToken,
     Queue,
   ],
   exports: [

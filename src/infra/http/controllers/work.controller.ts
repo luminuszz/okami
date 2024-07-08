@@ -42,6 +42,8 @@ import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import { CreateSearchTokenCommand } from '@infra/crqs/work/commands/create-search-token.command';
+import { CreateSearchTokenDto } from '@infra/http/validators/create-search-token.dto';
 
 @ApiTags('work')
 @Controller('work')
@@ -223,5 +225,10 @@ export class WorkController {
     const works = await this.queryBus.execute(new FetchUserWorksWithFilterQuery(userId, query.status));
 
     return WorkModel.toHttpList(works);
+  }
+
+  @Post('/search-token')
+  async createSearchToken(@Body() { token, type }: CreateSearchTokenDto) {
+    await this.commandBus.execute(new CreateSearchTokenCommand(token, type));
   }
 }
