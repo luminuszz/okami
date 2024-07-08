@@ -1,15 +1,18 @@
-import { Test } from '@nestjs/testing';
 import { AppModule } from '@app/app.module';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 import { faker } from '@faker-js/faker';
-import { MessageService } from '@infra/messaging/messaging-service';
-import { fakerMessageEmit } from '@test/mocks/mocks';
 import * as fastifyCookie from '@fastify/cookie';
-import { PrismaClient } from '@prisma/client';
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { EnvService } from '@infra/env/env.service';
+import { MessageService } from '@infra/messaging/messaging-service';
 import { JwtService } from '@nestjs/jwt';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
+import { fakerMessageEmit } from '@test/mocks/mocks';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { SearchTokenHttp } from '@infra/http/models/search-token.model';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -42,6 +45,10 @@ describe('E2E tests', () => {
     await app.register(fastifyCookie as any);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+  });
+
+  const generateValidTokenCookie = () => ({
+    '@okami-web:token': app.get(JwtService).sign({ id: faker.string.uuid() }),
   });
 
   describe('AuthController', () => {
@@ -108,6 +115,83 @@ describe('E2E tests', () => {
     });
   });
 
+  describe('WorkControler ', () => {
+    it('POST /work/search-token', async () => {
+      const data = {
+        token: faker.lorem.word(),
+        type: faker.helpers.arrayElement(Object.values(SearchTokenType)),
+      };
+
+      const results = await app.inject({
+        url: '/work/search-token',
+        method: 'POST',
+        body: data,
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const searchToken = await prisma.searchToken.findFirst({
+        where: {
+          token: data.token,
+        },
+      });
+
+      expect(searchToken).toBeDefined();
+    });
+
+    it('POST /work/search-token/batch', async () => {
+      const data = {
+        tokens: Array.from({ length: 5 }, () => ({
+          token: faker.lorem.word(),
+          type: faker.helpers.arrayElement(Object.values(SearchTokenType)),
+        })),
+      };
+
+      const results = await app.inject({
+        url: '/work/search-token/batch',
+        method: 'POST',
+        body: data,
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const searchToken = await prisma.searchToken.findMany();
+
+      expect(searchToken.length).toBeGreaterThan(1);
+    });
+
+    it('GET /work/search-token', async () => {
+      await prisma.searchToken.create({
+        data: {
+          token: 'token',
+          type: SearchTokenType.ANIME,
+          createdAt: new Date(),
+          id: new UniqueEntityID().toValue(),
+        },
+      });
+
+      const results = await app.inject({
+        url: '/work/search-token',
+        method: 'GET',
+        query: {
+          type: 'ANIME',
+        },
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+
+      expect(results.json<SearchTokenHttp[]>().every((token) => token.type === SearchTokenType.ANIME)).toBeTruthy();
+    });
+  });
   afterAll(async () => {
     await app.close();
 
@@ -116,6 +200,7 @@ describe('E2E tests', () => {
       prisma.work.deleteMany(),
       prisma.accessToken.deleteMany(),
       prisma.tag.deleteMany(),
+      prisma.searchToken.deleteMany(),
     ]);
 
     await prisma.$disconnect();

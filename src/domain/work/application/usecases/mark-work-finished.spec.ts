@@ -1,10 +1,10 @@
-import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
-import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
-import { Category } from '@domain/work/enterprise/entities/work';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
+import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
 import { WorkMarkedFinishedEvent } from '@domain/work/enterprise/entities/events/work-marked-finished-event';
+import { Category } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
+import { InMemoryWorkRepository } from '@test/mocks/in-mermory-work-repository';
 
 describe('MarkWorkFinished', () => {
   let stu: MarkWorkFinishedUseCase;

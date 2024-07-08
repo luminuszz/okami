@@ -8,6 +8,7 @@ import {
   Category as PrismaCategory,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
   RefreshStatus as PrismaRefreshStatus,
+  SearchToken as PrismaSearchToken,
   Tag as PrismaTag,
   User as PrismaUser,
   Work as PrismaWork,
@@ -18,6 +19,7 @@ import { map } from 'lodash';
 import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
+import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -159,3 +161,14 @@ export const parsePrismaAccessTokenToDomainAccessToken = (prismaAccessToken: Pri
     revokedAt: prismaAccessToken.revokedAt,
     userId: prismaAccessToken.userId,
   });
+
+export const parsePrismaSearchTokenToDomain = (prismaSearchToken: PrismaSearchToken): SearchToken => {
+  return SearchToken.create(
+    {
+      token: prismaSearchToken.token,
+      createdAt: prismaSearchToken.createdAt,
+      type: SearchTokenType[prismaSearchToken.type],
+    },
+    new UniqueEntityID(prismaSearchToken.id),
+  );
+};

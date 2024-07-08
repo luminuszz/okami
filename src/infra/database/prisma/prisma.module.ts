@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { PrismaTagRepository } from './prisma-tag.repository';
 import { PrismaWorkRepository } from './prisma-work.repository';
 import { PrismaService } from './prisma.service';
+import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository';
 
 @Module({
   providers: [
@@ -12,6 +13,7 @@ import { PrismaService } from './prisma.service';
     PrismaUserRepository,
     PrismaAccessTokenRepository,
     PrismaTagRepository,
+    PrismaSearchTokenRepository,
   ],
   exports: [
     PrismaService,
@@ -19,6 +21,7 @@ import { PrismaService } from './prisma.service';
     PrismaUserRepository,
     PrismaAccessTokenRepository,
     PrismaTagRepository,
+    PrismaSearchTokenRepository,
   ],
 })
 export class PrismaModule {}
