@@ -117,10 +117,17 @@ model AccessToken {
   user User? @relation(fields: [userId], references: [id])
 }
 
+enum SearchTokenType {
+  ANIME
+  MANGA
+}
+
 model SearchToken {
   id String @id @map("_id") @db.ObjectId
 
   token String
+
+  type SearchTokenType
 
   createdAt DateTime @map("created_at")
 }

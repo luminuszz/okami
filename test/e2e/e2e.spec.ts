@@ -11,6 +11,8 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { fakerMessageEmit } from '@test/mocks/mocks';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { SearchTokenHttp } from '@infra/http/models/search-token.model';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -163,8 +165,33 @@ describe('E2E tests', () => {
 
       expect(searchToken.length).toBeGreaterThan(1);
     });
-  });
 
+    it('GET /work/search-token', async () => {
+      await prisma.searchToken.create({
+        data: {
+          token: 'token',
+          type: SearchTokenType.ANIME,
+          createdAt: new Date(),
+          id: new UniqueEntityID().toValue(),
+        },
+      });
+
+      const results = await app.inject({
+        url: '/work/search-token',
+        method: 'GET',
+        query: {
+          type: 'ANIME',
+        },
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+
+      expect(results.json<SearchTokenHttp[]>().every((token) => token.type === SearchTokenType.ANIME)).toBeTruthy();
+    });
+  });
   afterAll(async () => {
     await app.close();
 

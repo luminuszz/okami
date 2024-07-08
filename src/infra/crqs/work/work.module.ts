@@ -49,6 +49,8 @@ import { FetchForWorkersUnreadQueryHandler } from './queries/fetch-for-works-unr
 import { FetchPagedTagsQueryHandler } from './queries/fetch-paged-tags';
 import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works-with-filter.query';
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
+import { FetchForSearchTokensByTypeQueryHandler } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
+import { ListSearchTokensByType } from '@domain/work/application/usecases/list-search-tokens-by-type';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -73,6 +75,7 @@ const QueryHandlers = [
   FetchWorksScrapingPaginatedReportQueryHandler,
   FetchUserWorksWithFilterQueryHandler,
   FetchPagedTagsQueryHandler,
+  FetchForSearchTokensByTypeQueryHandler,
 ];
 
 const EventHandlers = [];
@@ -121,6 +124,7 @@ const EventHandlers = [];
     FetchAllUserReadWorks,
     CreateSearchToken,
     CreateManySearchTokens,
+    ListSearchTokensByType,
     Queue,
   ],
   exports: [

@@ -46,6 +46,9 @@ import { User } from '../user-auth.decorator';
 import { CreateManySearchTokensDto } from '../validators/create-many-search-tokens';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import { ListSearchTokensByTypeDto } from '@infra/http/validators/list-search-tokens-by-type.dto';
+import { FetchForSearchTokensByTypeQuery } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
+import { SearchTokenModel } from '@infra/http/models/search-token.model';
 
 @ApiTags('work')
 @Controller('work')
@@ -237,5 +240,12 @@ export class WorkController {
   @Post('/search-token/batch')
   async createManySearchTokens(@Body() { tokens }: CreateManySearchTokensDto) {
     await this.commandBus.execute(new CreateManySearchTokensCommand(tokens));
+  }
+
+  @Get('/search-token')
+  async listSearchTokens(@Query() { type }: ListSearchTokensByTypeDto) {
+    const results = await this.queryBus.execute(new FetchForSearchTokensByTypeQuery(type));
+
+    return SearchTokenModel.toHttpList(results);
   }
 }
