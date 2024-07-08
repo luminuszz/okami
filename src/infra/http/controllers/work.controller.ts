@@ -48,7 +48,7 @@ import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { ListSearchTokensByTypeDto } from '@infra/http/validators/list-search-tokens-by-type.dto';
 import { FetchForSearchTokensByTypeQuery } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
-import { SearchTokenModel } from '@infra/http/models/search-token.model';
+import { SearchTokenHttp, SearchTokenModel } from '@infra/http/models/search-token.model';
 
 @ApiTags('work')
 @Controller('work')
@@ -243,6 +243,7 @@ export class WorkController {
   }
 
   @Get('/search-token')
+  @ApiOkResponse({ type: SearchTokenHttp, isArray: true })
   async listSearchTokens(@Query() { type }: ListSearchTokensByTypeDto) {
     const results = await this.queryBus.execute(new FetchForSearchTokensByTypeQuery(type));
 
