@@ -3,6 +3,7 @@ import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/s
 import { ApiProperty } from '@nestjs/swagger';
 
 const searchTokenSchema = z.object({
+  id: z.string(),
   token: z.string(),
   type: z.nativeEnum(SearchTokenType),
   createdAt: z.date(),
@@ -11,6 +12,9 @@ const searchTokenSchema = z.object({
 type SearchTokenHttpType = z.infer<typeof searchTokenSchema>;
 
 export class SearchTokenHttp implements SearchTokenHttpType {
+  @ApiProperty()
+  id: string;
+
   @ApiProperty({
     enum: SearchTokenType,
   })
