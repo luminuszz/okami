@@ -15,7 +15,7 @@ import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
+import { WorkHttp, WorkModel, WorkModelPaged } from '@infra/http/models/work.model';
 import { CreateWorkSchema } from '@infra/http/validators/create-work.dto';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
@@ -193,7 +193,7 @@ export class WorkController {
   }
 
   @Get('fetch-for-works-scraping-report')
-  @ApiOkResponse({ type: WorkHttp, isArray: true })
+  @ApiOkResponse({ type: WorkModelPaged })
   async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery, @User('id') userId: string) {
     const result = await this.queryBus.execute(
       new FetchWorksScrapingPaginatedReportQuery(query.page, userId, query.filter),

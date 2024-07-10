@@ -16,6 +16,11 @@ export class FetchPagedTagsQueryHandler implements IQueryHandler<FetchPagedTagsQ
       throw results.value;
     }
 
-    return results.value.tags;
+    const { tags, totalOfPages } = results.value;
+
+    return {
+      tags,
+      totalOfPages,
+    };
   }
 }

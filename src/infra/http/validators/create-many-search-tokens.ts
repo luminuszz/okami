@@ -4,7 +4,7 @@ import { IsArray, ValidateNested } from 'class-validator';
 import { CreateSearchTokenDto } from './create-search-token.dto';
 
 export class CreateManySearchTokensDto {
-  @ApiProperty({ isArray: true, type: Array })
+  @ApiProperty({ isArray: true, type: CreateSearchTokenDto })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateSearchTokenDto)

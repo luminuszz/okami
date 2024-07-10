@@ -4,10 +4,13 @@ import { Tag } from '@domain/work/enterprise/entities/tag';
 export class InMemoryTagRepository implements TagRepository {
   public tags: Tag[] = [];
 
-  async fetchAllTagsPaged(page: number): Promise<Tag[]> {
+  async fetchAllTagsPaged(page: number): Promise<{ tags: Tag[]; totalOfPages: number }> {
     console.log(page);
 
-    return this.tags;
+    return {
+      tags: this.tags,
+      totalOfPages: this.tags.length,
+    };
   }
 
   async create(tag: Tag): Promise<void> {
@@ -24,14 +27,10 @@ export class InMemoryTagRepository implements TagRepository {
     delete this.tags[tagIndex];
   }
   async findBySlug(slug: string): Promise<Tag> {
-    const tag = this.tags.find((t) => t.slug === slug);
-
-    return tag;
+    return this.tags.find((t) => t.slug === slug);
   }
   async findById(id: string): Promise<Tag> {
-    const tag = this.tags.find((t) => t.id === id);
-
-    return tag;
+    return this.tags.find((t) => t.id === id);
   }
 
   async linkTagToWork(workId: string, tagId: string): Promise<void> {

@@ -78,6 +78,14 @@ export class WorkHttp implements WorkHttpType {
   tags: TagModel[];
 }
 
+export class WorkModelPaged {
+  @ApiProperty({ type: WorkHttp, isArray: true })
+  data: WorkHttp[];
+
+  @ApiProperty()
+  totalOfPages: number;
+}
+
 export class WorkModel {
   static toHttpList(works: Work[]): WorkHttpType[] {
     return z.array(workSchema).parse(works);

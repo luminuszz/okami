@@ -109,14 +109,23 @@ export class PrismaTagRepository implements TagRepository {
     }
   }
 
-  async fetchAllTagsPaged(page: number): Promise<Tag[]> {
+  async fetchAllTagsPaged(page: number): Promise<{ tags: Tag[]; totalOfPages: number }> {
     const limit = 20;
 
-    const results = await this.prisma.tag.findMany({
-      take: limit,
-      skip: page * limit,
-    });
+    const [results, totalOfTags] = await this.prisma.$transaction([
+      this.prisma.tag.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.tag.count(),
+    ]);
 
-    return results.map(prismaTagToEntityTag);
+    return {
+      tags: results.map(prismaTagToEntityTag),
+      totalOfPages: Math.ceil(totalOfTags / limit),
+    };
   }
 }

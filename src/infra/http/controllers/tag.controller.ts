@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTagDto } from '../validators/create-tag.dto';
 import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
 import { ListTagParams } from '../validators/list-tags-params';
-import { TagModel, TahHttpModel } from '../models/tag.model';
+import { TagModelPaged, TahHttpModel } from '../models/tag.model';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -21,13 +21,10 @@ export class TagController {
   }
 
   @Get()
-  @ApiOkResponse({
-    isArray: true,
-    type: TagModel,
-  })
+  @ApiOkResponse({ type: TagModelPaged })
   async listTags(@Query() params: ListTagParams) {
     const response = await this.queryBus.execute(new FetchPagedTagsQuery(params.page));
 
-    return TahHttpModel.toHttpList(response);
+    return TahHttpModel.toHttpListPaged(response.tags, response.totalOfPages);
   }
 }

@@ -25,8 +25,24 @@ export class TagModel implements TagHttpType {
   color: string;
 }
 
+export class TagModelPaged {
+  @ApiProperty({ type: TagModel, isArray: true })
+  data: TagModel[];
+
+  @ApiProperty()
+  totalOfPages: number;
+}
+
 export class TahHttpModel {
   static toHttpList(tags: Tag[]) {
     return z.array(tagSchema).parse(tags);
+  }
+  static toHttpListPaged(data: Tag[], totalOfPages: number) {
+    return z
+      .object({
+        totalOfPages: z.coerce.number(),
+        data: z.array(tagSchema),
+      })
+      .parse({ data, totalOfPages });
   }
 }
