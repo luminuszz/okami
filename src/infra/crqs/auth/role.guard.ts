@@ -51,8 +51,6 @@ export class RoleGuard implements CanActivate {
 
     const { user } = response.value;
 
-    const canAccess = Array.isArray(availableRoles) ? availableRoles.includes(user.role) : availableRoles === user.role;
-
-    return canAccess;
+    return Array.isArray(availableRoles) ? availableRoles.includes(user.role) : availableRoles === user.role;
   }
 }

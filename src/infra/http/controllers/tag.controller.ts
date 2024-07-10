@@ -6,9 +6,11 @@ import { CreateTagDto } from '../validators/create-tag.dto';
 import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
 import { ListTagParams } from '../validators/list-tags-params';
 import { TagModelPaged, TahHttpModel } from '../models/tag.model';
+import { ProtectFor } from '@infra/crqs/auth/role.guard';
 
 @ApiTags('tags')
 @Controller('tags')
+@ProtectFor('ADMIN')
 export class TagController {
   constructor(
     private readonly commandBus: CommandBus,

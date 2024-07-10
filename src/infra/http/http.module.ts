@@ -19,8 +19,8 @@ import { SearchTokenController } from '@infra/http/controllers/search-token.cont
 @Module({
   imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
   providers: [
-    { provide: APP_GUARD, useClass: RoleGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RoleGuard },
   ],
   controllers: [
     WorkController,

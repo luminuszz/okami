@@ -13,6 +13,8 @@ import { PrismaClient } from '@prisma/client';
 import { fakerMessageEmit } from '@test/mocks/mocks';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { SearchTokenHttp } from '@infra/http/models/search-token.model';
+import { User, UserRole } from '@domain/auth/enterprise/entities/User';
+import { parseDomainUserToPrismaUser } from '@infra/database/prisma/prisma-mapper';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -47,8 +49,12 @@ describe('E2E tests', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const generateValidTokenCookie = () => ({
-    '@okami-web:token': app.get(JwtService).sign({ id: faker.string.uuid() }),
+  const generateValidTokenCookie = (user?: User) => ({
+    '@okami-web:token': app.get(JwtService).sign({
+      id: user?.id ?? faker.string.uuid(),
+      email: user?.email ?? faker.internet.email(),
+      name: user?.name ?? faker.internet.displayName(),
+    } satisfies UserTokenDto),
   });
 
   describe('AuthController', () => {
@@ -116,6 +122,21 @@ describe('E2E tests', () => {
   });
 
   describe('SearchTokenController ', () => {
+    let adminUser: User;
+
+    beforeAll(async () => {
+      adminUser = User.create({
+        name: faker.internet.userName(),
+        email: faker.internet.email(),
+        role: UserRole.ADMIN,
+        passwordHash: faker.internet.password(),
+      });
+
+      await prisma.user.create({
+        data: parseDomainUserToPrismaUser(adminUser),
+      });
+    });
+
     it('POST /search-token', async () => {
       const data = {
         token: faker.lorem.word(),
@@ -127,7 +148,7 @@ describe('E2E tests', () => {
         method: 'POST',
         body: data,
         cookies: {
-          ...generateValidTokenCookie(),
+          ...generateValidTokenCookie(adminUser),
         },
       });
 
@@ -155,7 +176,7 @@ describe('E2E tests', () => {
         method: 'POST',
         body: data,
         cookies: {
-          ...generateValidTokenCookie(),
+          ...generateValidTokenCookie(adminUser),
         },
       });
 
@@ -183,7 +204,7 @@ describe('E2E tests', () => {
           type: 'ANIME',
         },
         cookies: {
-          ...generateValidTokenCookie(),
+          ...generateValidTokenCookie(adminUser),
         },
       });
 
@@ -209,7 +230,7 @@ describe('E2E tests', () => {
         url: `/search-token/${tokenId}`,
         method: 'DELETE',
         cookies: {
-          ...generateValidTokenCookie(),
+          ...generateValidTokenCookie(adminUser),
         },
       });
 

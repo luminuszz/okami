@@ -10,9 +10,11 @@ import { FetchForSearchTokensByTypeQuery } from '@infra/crqs/work/queries/fetch-
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { DeleteSearchTokenCommand } from '@infra/crqs/work/commands/delete-search-token.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ProtectFor } from '@infra/crqs/auth/role.guard';
 
 @ApiTags('search-token')
 @Controller('search-token')
+@ProtectFor('ADMIN')
 export class SearchTokenController {
   constructor(
     private readonly commandBus: CommandBus,
