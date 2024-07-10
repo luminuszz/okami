@@ -115,7 +115,7 @@ describe('E2E tests', () => {
     });
   });
 
-  describe('WorkControler ', () => {
+  describe('WorkController ', () => {
     it('POST /work/search-token', async () => {
       const data = {
         token: faker.lorem.word(),
@@ -190,6 +190,38 @@ describe('E2E tests', () => {
       expect(results.statusCode).toBe(200);
 
       expect(results.json<SearchTokenHttp[]>().every((token) => token.type === SearchTokenType.ANIME)).toBeTruthy();
+    });
+
+    it('DELETE /work/search-token', async () => {
+      const { id: tokenId } = await prisma.searchToken.create({
+        data: {
+          token: faker.string.sample(),
+          type: SearchTokenType.ANIME,
+          createdAt: new Date(),
+          id: new UniqueEntityID().toValue(),
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const results = await app.inject({
+        url: `/work/search-token/${tokenId}`,
+        method: 'DELETE',
+        cookies: {
+          ...generateValidTokenCookie(),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+
+      const searchToken = await prisma.searchToken.findUnique({
+        where: {
+          id: tokenId,
+        },
+      });
+
+      expect(searchToken).toBeNull();
     });
   });
   afterAll(async () => {

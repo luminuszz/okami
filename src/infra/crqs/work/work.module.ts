@@ -51,6 +51,8 @@ import { FetchUserWorksWithFilterQueryHandler } from './queries/fetch-user-works
 import { FindOneWorkQueryHandler } from './queries/find-one-work';
 import { FetchForSearchTokensByTypeQueryHandler } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
 import { ListSearchTokensByType } from '@domain/work/application/usecases/list-search-tokens-by-type';
+import { DeleteSearchTokenCommandHandler } from '@infra/crqs/work/commands/delete-search-token.command';
+import { DeleteSearchToken } from '@domain/work/application/usecases/delete-search-token';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -66,6 +68,7 @@ const CommandHandlers = [
   CreateTagCommandHandler,
   CreateSearchTokenCommandHandler,
   CreateManySearchTokensCommandHandler,
+  DeleteSearchTokenCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -125,6 +128,7 @@ const EventHandlers = [];
     CreateSearchToken,
     CreateManySearchTokens,
     ListSearchTokensByType,
+    DeleteSearchToken,
     Queue,
   ],
   exports: [

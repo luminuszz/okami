@@ -49,6 +49,7 @@ import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { ListSearchTokensByTypeDto } from '@infra/http/validators/list-search-tokens-by-type.dto';
 import { FetchForSearchTokensByTypeQuery } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
 import { SearchTokenHttp, SearchTokenModel } from '@infra/http/models/search-token.model';
+import { DeleteSearchTokenCommand } from '@infra/crqs/work/commands/delete-search-token.command';
 
 @ApiTags('work')
 @Controller('work')
@@ -248,5 +249,10 @@ export class WorkController {
     const results = await this.queryBus.execute(new FetchForSearchTokensByTypeQuery(type));
 
     return SearchTokenModel.toHttpList(results);
+  }
+
+  @Delete('/search-token/:id')
+  async deleteSearchToken(@Param('id', ParseObjectIdPipe) id: string) {
+    await this.commandBus.execute(new DeleteSearchTokenCommand(id));
   }
 }

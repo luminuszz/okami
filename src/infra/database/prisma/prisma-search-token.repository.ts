@@ -8,6 +8,24 @@ import { parsePrismaSearchTokenToDomain } from '@infra/database/prisma/prisma-ma
 export class PrismaSearchTokenRepository implements SearchTokenRepository {
   constructor(private prisma: PrismaService) {}
 
+  async findById(id: string): Promise<SearchToken> {
+    const results = await this.prisma.searchToken.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return results ? parsePrismaSearchTokenToDomain(results) : null;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.searchToken.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
   async create(data: SearchToken): Promise<void> {
     await this.prisma.searchToken.create({
       data: {
