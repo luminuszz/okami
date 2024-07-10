@@ -14,6 +14,7 @@ import { TagController } from './controllers/tag.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from '../crqs/auth/role.guard';
 import { AuthGuard } from '../crqs/auth/auth.guard';
+import { SearchTokenController } from '@infra/http/controllers/search-token.controller';
 
 @Module({
   imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
@@ -21,6 +22,13 @@ import { AuthGuard } from '../crqs/auth/auth.guard';
     { provide: APP_GUARD, useClass: RoleGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  controllers: [WorkController, AuthController, NotificationController, PaymentController, TagController],
+  controllers: [
+    WorkController,
+    AuthController,
+    NotificationController,
+    PaymentController,
+    TagController,
+    SearchTokenController,
+  ],
 })
 export class HttpModule {}

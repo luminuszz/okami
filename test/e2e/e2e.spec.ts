@@ -115,15 +115,15 @@ describe('E2E tests', () => {
     });
   });
 
-  describe('WorkController ', () => {
-    it('POST /work/search-token', async () => {
+  describe('SearchTokenController ', () => {
+    it('POST /search-token', async () => {
       const data = {
         token: faker.lorem.word(),
         type: faker.helpers.arrayElement(Object.values(SearchTokenType)),
       };
 
       const results = await app.inject({
-        url: '/work/search-token',
+        url: '/search-token',
         method: 'POST',
         body: data,
         cookies: {
@@ -142,7 +142,7 @@ describe('E2E tests', () => {
       expect(searchToken).toBeDefined();
     });
 
-    it('POST /work/search-token/batch', async () => {
+    it('POST /search-token/batch', async () => {
       const data = {
         tokens: Array.from({ length: 5 }, () => ({
           token: faker.lorem.word(),
@@ -151,7 +151,7 @@ describe('E2E tests', () => {
       };
 
       const results = await app.inject({
-        url: '/work/search-token/batch',
+        url: '/search-token/batch',
         method: 'POST',
         body: data,
         cookies: {
@@ -166,7 +166,7 @@ describe('E2E tests', () => {
       expect(searchToken.length).toBeGreaterThan(1);
     });
 
-    it('GET /work/search-token', async () => {
+    it('GET /search-token', async () => {
       await prisma.searchToken.create({
         data: {
           token: 'token',
@@ -177,7 +177,7 @@ describe('E2E tests', () => {
       });
 
       const results = await app.inject({
-        url: '/work/search-token',
+        url: '/search-token',
         method: 'GET',
         query: {
           type: 'ANIME',
@@ -192,7 +192,7 @@ describe('E2E tests', () => {
       expect(results.json<SearchTokenHttp[]>().every((token) => token.type === SearchTokenType.ANIME)).toBeTruthy();
     });
 
-    it('DELETE /work/search-token', async () => {
+    it('DELETE /search-token', async () => {
       const { id: tokenId } = await prisma.searchToken.create({
         data: {
           token: faker.string.sample(),
@@ -206,7 +206,7 @@ describe('E2E tests', () => {
       });
 
       const results = await app.inject({
-        url: `/work/search-token/${tokenId}`,
+        url: `/search-token/${tokenId}`,
         method: 'DELETE',
         cookies: {
           ...generateValidTokenCookie(),

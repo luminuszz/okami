@@ -1,13 +1,11 @@
 import { BatchService } from '@infra/database/batchs/batch.service';
 
 import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
-import { CreateManySearchTokensCommand } from '@app/infra/crqs/work/commands/create-many-search-tokens.command';
 import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
 import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
-import { CreateSearchTokenCommand } from '@infra/crqs/work/commands/create-search-token.command';
 import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command';
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
@@ -18,7 +16,6 @@ import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-im
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { WorkHttp, WorkModel } from '@infra/http/models/work.model';
-import { CreateSearchTokenDto } from '@infra/http/validators/create-search-token.dto';
 import { CreateWorkSchema } from '@infra/http/validators/create-work.dto';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
@@ -43,13 +40,8 @@ import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command';
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
-import { CreateManySearchTokensDto } from '../validators/create-many-search-tokens';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
-import { ListSearchTokensByTypeDto } from '@infra/http/validators/list-search-tokens-by-type.dto';
-import { FetchForSearchTokensByTypeQuery } from '@infra/crqs/work/queries/fetch-for-search-tokens-by-type';
-import { SearchTokenHttp, SearchTokenModel } from '@infra/http/models/search-token.model';
-import { DeleteSearchTokenCommand } from '@infra/crqs/work/commands/delete-search-token.command';
 
 @ApiTags('work')
 @Controller('work')
@@ -197,7 +189,7 @@ export class WorkController {
 
   @Post('replace-image-from-notion/:databaseId')
   async setWorkImageFromNotion(@Param('databaseId') databaseId: string) {
-    this.batchService.setWorkImageFromNotion(databaseId);
+    void this.batchService.setWorkImageFromNotion(databaseId);
   }
 
   @Get('fetch-for-works-scraping-report')
@@ -231,28 +223,5 @@ export class WorkController {
     const works = await this.queryBus.execute(new FetchUserWorksWithFilterQuery(userId, query.status));
 
     return WorkModel.toHttpList(works);
-  }
-
-  @Post('/search-token')
-  async createSearchToken(@Body() { token, type }: CreateSearchTokenDto) {
-    await this.commandBus.execute(new CreateSearchTokenCommand(token, type));
-  }
-
-  @Post('/search-token/batch')
-  async createManySearchTokens(@Body() { tokens }: CreateManySearchTokensDto) {
-    await this.commandBus.execute(new CreateManySearchTokensCommand(tokens));
-  }
-
-  @Get('/search-token')
-  @ApiOkResponse({ type: SearchTokenHttp, isArray: true })
-  async listSearchTokens(@Query() { type }: ListSearchTokensByTypeDto) {
-    const results = await this.queryBus.execute(new FetchForSearchTokensByTypeQuery(type));
-
-    return SearchTokenModel.toHttpList(results);
-  }
-
-  @Delete('/search-token/:id')
-  async deleteSearchToken(@Param('id', ParseObjectIdPipe) id: string) {
-    await this.commandBus.execute(new DeleteSearchTokenCommand(id));
   }
 }

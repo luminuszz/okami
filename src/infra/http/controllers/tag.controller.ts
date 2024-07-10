@@ -1,15 +1,13 @@
-import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
 import { CreateTagCommand } from '@app/infra/crqs/work/commands/create-tag.command';
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTagDto } from '../validators/create-tag.dto';
 import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
 import { ListTagParams } from '../validators/list-tags-params';
-import { TahHttpModel } from '../models/tag.model';
+import { TagModel, TahHttpModel } from '../models/tag.model';
 
 @ApiTags('tags')
-@UseGuards(AuthGuard)
 @Controller('tags')
 export class TagController {
   constructor(
@@ -23,7 +21,11 @@ export class TagController {
   }
 
   @Get()
-  async litsTags(@Query() params: ListTagParams) {
+  @ApiOkResponse({
+    isArray: true,
+    type: TagModel,
+  })
+  async listTags(@Query() params: ListTagParams) {
     const response = await this.queryBus.execute(new FetchPagedTagsQuery(params.page));
 
     return TahHttpModel.toHttpList(response);
