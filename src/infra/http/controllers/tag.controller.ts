@@ -16,8 +16,8 @@ export class TagController {
   ) {}
 
   @Post()
-  async create(@Body() { name }: CreateTagDto) {
-    await this.commandBus.execute(new CreateTagCommand(name));
+  async create(@Body() { name, color }: CreateTagDto) {
+    await this.commandBus.execute(new CreateTagCommand(name, color));
   }
 
   @Get()

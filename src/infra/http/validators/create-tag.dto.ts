@@ -11,4 +11,9 @@ export class CreateTagDto {
   @IsOptional()
   @ApiProperty()
   workId?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  color?: string;
 }
