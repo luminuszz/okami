@@ -114,7 +114,7 @@ export class PrismaTagRepository implements TagRepository {
 
     const [results, totalOfTags] = await this.prisma.$transaction([
       this.prisma.tag.findMany({
-        skip: (page - 1) * limit,
+        skip: page * limit,
         take: limit,
         orderBy: {
           createdAt: 'desc',
