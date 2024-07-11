@@ -41,7 +41,6 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-
     const jwtToken = this.extractTokenFormRequest(request);
 
     try {
@@ -49,7 +48,7 @@ export class AuthGuard implements CanActivate {
         const accessToken = this.extractAccessTokenFromHeader(request);
 
         if (accessToken) {
-          return await this.validateAccessToken(accessToken);
+          return await this.validateAccessToken(accessToken, request);
         }
       }
 
@@ -73,9 +72,7 @@ export class AuthGuard implements CanActivate {
     }
 
     if (request.headers['authorization']) {
-      const bearerToken = request.headers.authorization.split(' ')[1];
-
-      token = bearerToken;
+      token = request.headers.authorization.split(' ')[1];
     }
 
     return token;
@@ -85,13 +82,24 @@ export class AuthGuard implements CanActivate {
     return request.headers[this.accessTokenHeaderKey] as string;
   }
 
-  private async validateAccessToken(token: string): Promise<boolean> {
+  private async validateAccessToken(token: string, request: { user: any }): Promise<boolean> {
     const results = await this.verifyAccessToken.execute({ token });
 
     if (results.isLeft()) {
       throw results.value;
     }
 
-    return results.value.isValid;
+    const { isValid, owner } = results.value;
+
+    if (isValid) {
+      request['user'] = {
+        email: owner.email,
+        name: owner.name,
+        notionDatabaseId: owner.notionDatabaseId,
+        id: owner.id,
+      } satisfies UserTokenDto;
+    }
+
+    return isValid;
   }
 }

@@ -18,7 +18,7 @@ describe('VerifyApiAccessToken', () => {
     userRepository = new InMemoryUserRepository();
     createUser = new CreateUserUseCase(fakeHashProvider, userRepository);
     accessTokenRepository = new InMemoryAccessTokenRepository();
-    stu = new VerifyApiAccessTokenUseCase(accessTokenRepository);
+    stu = new VerifyApiAccessTokenUseCase(accessTokenRepository, userRepository);
     createToken = new CreateApiAccessTokenUseCase(userRepository, accessTokenRepository);
   });
 
@@ -46,7 +46,7 @@ describe('VerifyApiAccessToken', () => {
     const results = await stu.execute({ token: accessToken.token });
 
     expect(results.isRight()).toBe(true);
-    expect(results.value).toEqual({ isValid: true });
+    expect(results.value).toHaveProperty('isValid', true);
   });
 
   it('should not be able to validate a token if token not exists', async () => {
@@ -100,5 +100,39 @@ describe('VerifyApiAccessToken', () => {
 
     expect(results.isLeft()).toBe(true);
     expect(results.value).toBeInstanceOf(TokenRevokedError);
+  });
+
+  it('should be return access token owner', async () => {
+    const userResults = await createUser.execute({
+      password: faker.internet.password(),
+      name: faker.person.firstName(),
+      email: faker.internet.email(),
+    });
+
+    if (userResults.isLeft()) {
+      throw userResults.value;
+    }
+
+    const { user } = userResults.value;
+
+    const accessTokenResults = await createToken.execute({
+      user_id: user.id,
+    });
+
+    if (accessTokenResults.isLeft()) {
+      throw accessTokenResults.value;
+    }
+
+    const { token } = accessTokenResults.value.accessToken;
+
+    const results = await stu.execute({ token });
+
+    expect(results.isRight()).toBe(true);
+
+    if (results.isRight()) {
+      const { owner } = results.value;
+
+      expect(owner.id).toBe(user.id);
+    }
   });
 });
