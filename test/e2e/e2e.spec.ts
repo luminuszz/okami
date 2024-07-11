@@ -15,6 +15,7 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { SearchTokenHttp } from '@infra/http/models/search-token.model';
 import { User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { parseDomainUserToPrismaUser } from '@infra/database/prisma/prisma-mapper';
+import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -245,10 +246,86 @@ describe('E2E tests', () => {
       expect(searchToken).toBeNull();
     });
   });
+
+  describe('AuthGuard', () => {
+    let adminUser: User;
+
+    beforeAll(async () => {
+      adminUser = User.create({
+        name: faker.internet.userName(),
+        email: faker.internet.email(),
+        role: UserRole.ADMIN,
+        passwordHash: faker.internet.password(),
+      });
+
+      await prisma.user.create({
+        data: parseDomainUserToPrismaUser(adminUser),
+      });
+    });
+
+    it('should be able to access a protected route', async () => {
+      const results = await app.inject({
+        url: '/search-token',
+        method: 'GET',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+    });
+
+    it('should not be able to access a protected route', async () => {
+      const user = User.create({
+        name: faker.internet.userName(),
+        email: faker.internet.email(),
+        role: UserRole.USER,
+        passwordHash: faker.internet.password(),
+      });
+
+      await prisma.user.create({
+        data: parseDomainUserToPrismaUser(user),
+      });
+
+      const results = await app.inject({
+        url: '/search-token',
+        method: 'GET',
+        cookies: {
+          ...generateValidTokenCookie(user),
+        },
+      });
+
+      expect(results.statusCode).toBe(403);
+    });
+
+    it('should  be able to access a protected route with access-token', async () => {
+      const tokenResponse = await app.get(CreateApiAccessTokenUseCase).execute({
+        user_id: adminUser.id,
+      });
+
+      if (tokenResponse.isLeft()) {
+        throw tokenResponse.value;
+      }
+
+      const { accessToken } = tokenResponse.value;
+
+      const results = await app.inject({
+        url: '/search-token',
+        method: 'GET',
+        headers: {
+          ['accesstoken']: accessToken.token,
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
 
     await prisma.$transaction([
+      prisma.accessToken.deleteMany(),
       prisma.user.deleteMany(),
       prisma.work.deleteMany(),
       prisma.accessToken.deleteMany(),
