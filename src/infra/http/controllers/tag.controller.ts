@@ -1,12 +1,14 @@
 import { CreateTagCommand } from '@app/infra/crqs/work/commands/create-tag.command';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
+import { ProtectFor } from '@infra/crqs/auth/role.guard';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateTagDto } from '../validators/create-tag.dto';
-import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
-import { ListTagParams } from '../validators/list-tags-params';
 import { TagModelPaged, TahHttpModel } from '../models/tag.model';
-import { ProtectFor } from '@infra/crqs/auth/role.guard';
+import { CreateTagDto } from '../validators/create-tag.dto';
+import { ListTagParams } from '../validators/list-tags-params';
+import { UpdateTagDto } from '../validators/update-tag.dto';
+import { UpdateTagCommand } from '@infra/crqs/work/commands/update-tag-command';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -20,6 +22,11 @@ export class TagController {
   @Post()
   async create(@Body() { name, color }: CreateTagDto) {
     await this.commandBus.execute(new CreateTagCommand(name, color));
+  }
+
+  @Put('/:id')
+  async updateTag(@Body() data: UpdateTagDto, @Param('id') id: string) {
+    await this.commandBus.execute(new UpdateTagCommand(id, data.name, data.color));
   }
 
   @Get()

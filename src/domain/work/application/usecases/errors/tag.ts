@@ -6,3 +6,10 @@ export class TagNotFoundException extends UseCaseError {
     this.name = 'TagNotFound';
   }
 }
+
+export class TagAlreadyExistsException extends UseCaseError {
+  constructor() {
+    super('Tag already exists');
+    this.name = 'TagAlreadyExists';
+  }
+}

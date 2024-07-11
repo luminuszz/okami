@@ -1,8 +1,14 @@
 export class Slug {
-  private value: string;
+  private readonly value: string;
 
   constructor(slug: string) {
-    this.value = slug.toLocaleLowerCase().replaceAll(' ', '-');
+    this.value = slug
+      .normalize('NFD')
+      .toLocaleLowerCase()
+      .replaceAll(/[\u0300-\u036f]/g, '')
+      .replaceAll(' ', '-')
+      .replaceAll('---', '-')
+      .normalize('NFC');
   }
 
   get name(): string {
