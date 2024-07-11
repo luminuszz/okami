@@ -53,6 +53,8 @@ import { FetchForSearchTokensByTypeQueryHandler } from '@infra/crqs/work/queries
 import { ListSearchTokensByType } from '@domain/work/application/usecases/list-search-tokens-by-type';
 import { DeleteSearchTokenCommandHandler } from '@infra/crqs/work/commands/delete-search-token.command';
 import { DeleteSearchToken } from '@domain/work/application/usecases/delete-search-token';
+import { UpdateTagCommandHandler } from '@infra/crqs/work/commands/update-tag-command';
+import { UpdateTag } from '@domain/work/application/usecases/update-tag';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -69,6 +71,7 @@ const CommandHandlers = [
   CreateSearchTokenCommandHandler,
   CreateManySearchTokensCommandHandler,
   DeleteSearchTokenCommandHandler,
+  UpdateTagCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -129,6 +132,7 @@ const EventHandlers = [];
     CreateManySearchTokens,
     ListSearchTokensByType,
     DeleteSearchToken,
+    UpdateTag,
     Queue,
   ],
   exports: [

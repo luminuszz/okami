@@ -123,11 +123,8 @@ enum SearchTokenType {
 }
 
 model SearchToken {
-  id String @id @map("_id") @db.ObjectId
-
-  token String
-
-  type SearchTokenType
-
-  createdAt DateTime @map("created_at")
+  id        String          @id @map("_id") @db.ObjectId
+  token     String
+  type      SearchTokenType
+  createdAt DateTime        @map("created_at")
 }

@@ -9,11 +9,11 @@ export class CreateTagDto {
 
   @IsObjectId()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   workId?: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   color?: string;
 }

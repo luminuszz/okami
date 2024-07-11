@@ -1,13 +1,13 @@
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { User } from '@domain/auth/enterprise/entities/User';
+import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
+import { Tag } from '@prisma/client';
+import { WorkCreatedEvent } from './events/work-created';
+import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
 import { WorkMarkReadEvent } from './events/work-marked-read';
 import { WorkMarkUnreadEvent } from './events/work-marked-unread';
 import { Chapter } from './values-objects/chapter';
-import { WorkMarkedFinishedEvent } from './events/work-marked-finished-event';
-import { User } from '@domain/auth/enterprise/entities/User';
-import { WorkRefreshStatusUpdatedEvent } from '@domain/work/enterprise/entities/events/work-refresh-status-updated';
-import { WorkCreatedEvent } from './events/work-created';
-import { Tag } from '@prisma/client';
 
 export interface WorkProps {
   name: string;

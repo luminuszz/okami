@@ -65,4 +65,8 @@ export class Tag extends Entity<TagProps> {
 
     this.commit();
   }
+
+  set color(value: string) {
+    this.props.color = value;
+  }
 }

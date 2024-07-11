@@ -3,7 +3,7 @@ import { UseCaseImplementation } from '@core/use-case';
 import { Injectable } from '@nestjs/common';
 import { TagRepository } from '../repositories/tag-repository';
 import { WorkRepository } from '../repositories/work-repository';
-import { TagNotFoundException } from './errors/tag-not-found';
+import { TagNotFoundException } from './errors/tag';
 import { WorkNotFoundError } from './errors/work-not-found';
 
 interface AddTagToWorkRequest {

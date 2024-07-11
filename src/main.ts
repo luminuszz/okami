@@ -40,7 +40,6 @@ import { EnvService } from '@infra/env/env.service';
       'Access-Control-Allow-Origin',
       'Origin',
       'X-Requested-With',
-
       'Accept',
       'Content-Type',
       'Authorization',
