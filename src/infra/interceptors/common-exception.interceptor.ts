@@ -4,8 +4,9 @@ import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
 import { InvalidWorkOperationError } from '@domain/work/application/usecases/errors/invalid-work-operation';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
-import { Observable, catchError } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { SentryService } from '../logs/sentry/sentry.service';
+import { UseCaseError } from '@core/entities/use-case-error';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
@@ -31,6 +32,10 @@ export class CommonExceptionInterceptor implements NestInterceptor {
         }
 
         if (err instanceof InvalidWorkOperationError) {
+          throw new BadRequestException(err.message);
+        }
+
+        if (err instanceof UseCaseError) {
           throw new BadRequestException(err.message);
         }
 

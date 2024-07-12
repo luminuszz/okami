@@ -56,6 +56,7 @@ export class PrismaTagRepository implements TagRepository {
         name: tag.name,
         slug: tag.slug,
         updatedAt: tag.updatedAt,
+        color: tag.color,
       },
       where: {
         id: tag.id,
