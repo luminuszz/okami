@@ -1,8 +1,9 @@
 import { FiletoUpload, FiletoUploadWithUrl, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
-import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ListObjectsCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import * as process from 'process';
 import { EnvService } from '../env/env.service';
+import { chain } from 'lodash';
 
 @Injectable()
 export class CloudFlareR2StorageAdapter implements StorageProvider {
@@ -79,5 +80,29 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
       fileName: file.fileName,
       fileMimeType: file.fileMimeType,
     });
+  }
+
+  async findAllWorkImagesVersions(workId: string) {
+    const command = new ListObjectsCommand({
+      Bucket: this.awsBucket,
+      Prefix: 'work-images/',
+    });
+
+    const results = await this.s3Client.send(command);
+
+    const hashMap = chain(results.Contents)
+      .map((item) => {
+        const keyWithoutPath = item.Key.replace('work-images/', '');
+
+        return {
+          originalKey: keyWithoutPath,
+          workOwnerId: keyWithoutPath.split('-')?.[0] ?? '',
+          url: CloudFlareR2StorageAdapter.createS3FileUrl(keyWithoutPath),
+        };
+      })
+      .groupBy('workOwnerId')
+      .value();
+
+    return hashMap[workId];
   }
 }

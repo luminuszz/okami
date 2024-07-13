@@ -1,12 +1,16 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
-export class MessageService implements OnModuleInit {
+export class MessageService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject('NOTIFICATION_SERVICE')
     private readonly client: ClientKafka,
   ) {}
+
+  async onModuleDestroy() {
+    await this.client.close();
+  }
 
   async onModuleInit() {
     this.client.subscribeToResponseOf('create-web-push-subscription');
@@ -16,7 +20,7 @@ export class MessageService implements OnModuleInit {
     this.client.subscribeToResponseOf('get-recent-notifications');
     this.client.subscribeToResponseOf('get-subscriber');
 
-    await this.client.connect();
+    void this.client.connect();
   }
 
   send(pattern: string, data: any) {

@@ -42,6 +42,7 @@ import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import { CloudFlareR2StorageAdapter } from '@infra/storage/cloudFlare-r2-storage.adapter';
 
 @ApiTags('work')
 @Controller('work')
@@ -51,6 +52,7 @@ export class WorkController {
     private readonly queryBus: QueryBus,
     private readonly batchService: BatchService,
     private readonly queue: Queue,
+    private readonly s3StorageProvider: CloudFlareR2StorageAdapter,
   ) {}
 
   @ApiConsumes('multipart/form-data')
@@ -122,7 +124,7 @@ export class WorkController {
   async syncToNotion(@User() user: UserTokenDto) {
     if (!user.notionDatabaseId) return new BadRequestException('Notion database id not found');
 
-    this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
+    void this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
   }
 
   @Get('/fetch-for-workers-read')
@@ -143,7 +145,7 @@ export class WorkController {
 
   @Post('refresh-chapters')
   async refreshChapters(@User('id') userId: string) {
-    this.queue.refreshAllWorksStatusByUserId(userId);
+    void this.queue.refreshAllWorksStatusByUserId(userId);
   }
 
   @Put('update-work/:id')
@@ -223,5 +225,10 @@ export class WorkController {
     const works = await this.queryBus.execute(new FetchUserWorksWithFilterQuery(userId, query.status));
 
     return WorkModel.toHttpList(works);
+  }
+
+  @Get('test-work-versions')
+  async testWorkImageVersions() {
+    return this.s3StorageProvider.findAllWorkImagesVersions('651b0aa5c68658ee975a02c9');
   }
 }

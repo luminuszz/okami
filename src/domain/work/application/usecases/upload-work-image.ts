@@ -33,15 +33,17 @@ export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkI
 
     await this.workRepository.save(work);
 
+    const fileName = `${work.id}-${imageId}`;
+
     if (typeof imageBuffer === 'string') {
       await this.storageProvider.uploadWorkImageWithUrl({
-        fileName: `${work.id}-${imageId}`,
+        fileName,
         fileData: imageBuffer,
         fileMimeType: fileType,
       });
     } else {
       await this.storageProvider.uploadWorkImage({
-        fileName: `${work.id}-${imageId}`,
+        fileName,
         fileData: imageBuffer,
         fileMimeType: fileType,
       });

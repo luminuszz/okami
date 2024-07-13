@@ -8,8 +8,9 @@ import { StorageProvider } from '@domain/work/application/contracts/storageProvi
       provide: StorageProvider,
       useClass: CloudFlareR2StorageAdapter,
     },
+    CloudFlareR2StorageAdapter,
   ],
 
-  exports: [StorageProvider],
+  exports: [StorageProvider, CloudFlareR2StorageAdapter],
 })
 export class StorageModule {}

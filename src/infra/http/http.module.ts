@@ -15,9 +15,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from '../crqs/auth/role.guard';
 import { AuthGuard } from '../crqs/auth/auth.guard';
 import { SearchTokenController } from '@infra/http/controllers/search-token.controller';
+import { StorageModule } from '@infra/storage/storage.module';
 
 @Module({
-  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
+  imports: [
+    PaymentModule,
+    CqrsModule,
+    WorkModule,
+    AuthModule,
+    NotificationModule,
+    DatabaseModule,
+    MessagingModule,
+    StorageModule,
+  ],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RoleGuard },
