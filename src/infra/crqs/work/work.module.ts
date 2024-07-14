@@ -55,6 +55,8 @@ import { DeleteSearchTokenCommandHandler } from '@infra/crqs/work/commands/delet
 import { DeleteSearchToken } from '@domain/work/application/usecases/delete-search-token';
 import { UpdateTagCommandHandler } from '@infra/crqs/work/commands/update-tag-command';
 import { UpdateTag } from '@domain/work/application/usecases/update-tag';
+import { DeleteTag } from '@domain/work/application/usecases/delete-tag';
+import { DeleteTagCommandHandler } from '@infra/crqs/work/commands/delete-tag.command';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -72,6 +74,7 @@ const CommandHandlers = [
   CreateManySearchTokensCommandHandler,
   DeleteSearchTokenCommandHandler,
   UpdateTagCommandHandler,
+  DeleteTagCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -133,6 +136,7 @@ const EventHandlers = [];
     ListSearchTokensByType,
     DeleteSearchToken,
     UpdateTag,
+    DeleteTag,
     Queue,
   ],
   exports: [

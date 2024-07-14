@@ -1,7 +1,7 @@
 import { CreateTagCommand } from '@app/infra/crqs/work/commands/create-tag.command';
 import { FetchPagedTagsQuery } from '@app/infra/crqs/work/queries/fetch-paged-tags';
 import { ProtectFor } from '@infra/crqs/auth/role.guard';
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TagModelPaged, TahHttpModel } from '../models/tag.model';
@@ -9,6 +9,8 @@ import { CreateTagDto } from '../validators/create-tag.dto';
 import { ListTagParams } from '../validators/list-tags-params';
 import { UpdateTagDto } from '../validators/update-tag.dto';
 import { UpdateTagCommand } from '@infra/crqs/work/commands/update-tag-command';
+import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
+import { DeleteTagCommand } from '@infra/crqs/work/commands/delete-tag.command';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -35,5 +37,10 @@ export class TagController {
     const response = await this.queryBus.execute(new FetchPagedTagsQuery(params.page));
 
     return TahHttpModel.toHttpListPaged(response.tags, response.totalOfPages);
+  }
+
+  @Delete('/:id')
+  async deleteTag(@Param('id', ParseObjectIdPipe) id: string) {
+    await this.commandBus.execute(new DeleteTagCommand(id));
   }
 }

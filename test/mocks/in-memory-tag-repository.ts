@@ -30,7 +30,7 @@ export class InMemoryTagRepository implements TagRepository {
     return this.tags.find((t) => t.slug === slug);
   }
   async findById(id: string): Promise<Tag> {
-    return this.tags.find((t) => t.id === id);
+    return this.tags.find((t) => t?.id === id);
   }
 
   async linkTagToWork(workId: string, tagId: string): Promise<void> {

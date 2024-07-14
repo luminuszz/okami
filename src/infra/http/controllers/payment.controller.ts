@@ -1,5 +1,5 @@
+/* eslint-disable prettier/prettier */
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
-import { User } from '../user-auth.decorator';
 import {
   parseStripeCheckoutSessionSchema,
   parseStripeSubscriptionSchema,
@@ -13,6 +13,7 @@ import { BadRequestException, Controller, Logger, Post, RawBodyRequest, Req, Use
 import { ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 import Stripe from 'stripe';
+import { User } from '../user-auth.decorator';
 
 @ApiTags('payment')
 @Controller('payment')

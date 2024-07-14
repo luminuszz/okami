@@ -16,10 +16,14 @@ import { SearchTokenHttp } from '@infra/http/models/search-token.model';
 import { User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { parseDomainUserToPrismaUser } from '@infra/database/prisma/prisma-mapper';
 import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
+import { TagRepository } from '@domain/work/application/repositories/tag-repository';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
   let prisma: PrismaClient;
+  let adminUser: User;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -48,6 +52,17 @@ describe('E2E tests', () => {
     await app.register(fastifyCookie as any);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+
+    adminUser = User.create({
+      name: faker.internet.userName(),
+      email: faker.internet.email(),
+      role: UserRole.ADMIN,
+      passwordHash: faker.internet.password(),
+    });
+
+    await prisma.user.create({
+      data: parseDomainUserToPrismaUser(adminUser),
+    });
   });
 
   const generateValidTokenCookie = (user?: User) => ({
@@ -123,21 +138,6 @@ describe('E2E tests', () => {
   });
 
   describe('SearchTokenController ', () => {
-    let adminUser: User;
-
-    beforeAll(async () => {
-      adminUser = User.create({
-        name: faker.internet.userName(),
-        email: faker.internet.email(),
-        role: UserRole.ADMIN,
-        passwordHash: faker.internet.password(),
-      });
-
-      await prisma.user.create({
-        data: parseDomainUserToPrismaUser(adminUser),
-      });
-    });
-
     it('POST /search-token', async () => {
       const data = {
         token: faker.lorem.word(),
@@ -318,6 +318,37 @@ describe('E2E tests', () => {
       });
 
       expect(results.statusCode).toBe(200);
+    });
+  });
+
+  describe('TagController', () => {
+    it('/tags DELETE', async () => {
+      const tag = Tag.create({
+        name: faker.company.name(),
+        color: faker.internet.color(),
+        slug: new Slug(faker.lorem.slug()),
+        createdAt: new Date(),
+      });
+
+      await app.get(TagRepository).create(tag);
+
+      const results = await app.inject({
+        url: `/tags/${tag.id}`,
+        method: 'DELETE',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+
+      const searchToken = await prisma.searchToken.findUnique({
+        where: {
+          id: tag.id,
+        },
+      });
+
+      expect(searchToken).toBeNull();
     });
   });
 
