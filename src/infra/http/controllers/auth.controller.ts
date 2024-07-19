@@ -198,6 +198,7 @@ export class AuthController {
 
       return {
         isSubscribed: !!telegramChatId,
+        telegramChatId: telegramChatId || null,
       };
     } catch (e) {
       throw new BadRequestException('Houve um erro');
