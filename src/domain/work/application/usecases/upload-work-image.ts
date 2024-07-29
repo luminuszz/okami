@@ -2,7 +2,7 @@ import { UseCaseImplementation } from '@core/use-case';
 import { Either, left, right } from '@core/either';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { Injectable } from '@nestjs/common';
-import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
+import { FileUploadResponse, StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { randomUUID } from 'node:crypto';
 import { Work } from '@domain/work/enterprise/entities/work';
@@ -29,23 +29,25 @@ export class UploadWorkImageUseCase implements UseCaseImplementation<UploadWorkI
 
     const imageId = randomUUID();
 
-    work.imageId = `${imageId}.${fileType}`;
-
-    await this.workRepository.save(work);
+    let imageResponse: FileUploadResponse;
 
     if (typeof imageBuffer === 'string') {
-      await this.storageProvider.uploadWorkImageWithUrl({
+      imageResponse = await this.storageProvider.uploadWorkImageWithUrl({
         fileName: `${work.id}-${imageId}`,
         fileData: imageBuffer,
         fileMimeType: fileType,
       });
     } else {
-      await this.storageProvider.uploadWorkImage({
+      imageResponse = await this.storageProvider.uploadWorkImage({
         fileName: `${work.id}-${imageId}`,
         fileData: imageBuffer,
         fileMimeType: fileType,
       });
     }
+
+    work.imageId = `${imageId}.${imageResponse.fileType}`;
+
+    await this.workRepository.save(work);
 
     return right(work);
   }

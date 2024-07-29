@@ -7,10 +7,17 @@ import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@
 import { catchError, Observable } from 'rxjs';
 import { SentryService } from '../logs/sentry/sentry.service';
 import { UseCaseError } from '@core/entities/use-case-error';
+import { ZodError } from 'zod';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
   constructor(private readonly sentryService: SentryService) {}
+
+  private isZodError(error: any): error is ZodError {
+    return (
+      (error as ZodError).issues !== undefined && (error as ZodError).issues.length > 0 && error?.name == 'ZodError'
+    );
+  }
 
   intercept(_, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
@@ -33,6 +40,13 @@ export class CommonExceptionInterceptor implements NestInterceptor {
 
         if (err instanceof InvalidWorkOperationError) {
           throw new BadRequestException(err.message);
+        }
+
+        if (this.isZodError(err)) {
+          throw new BadRequestException({
+            message: 'Validation error',
+            errors: err.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`),
+          });
         }
 
         if (err instanceof UseCaseError) {

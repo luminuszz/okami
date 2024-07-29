@@ -22,7 +22,7 @@ export class SharpImageTransformerProvider implements ImageTransformerProvider {
   async compressAndTransformImageToJPG({ fileName, fileData }: ImageData): Promise<ImageResponse> {
     const fileBuffer = await sharp(fileData)
       .webp({
-        quality: 60,
+        quality: 70,
       })
       .toBuffer();
 

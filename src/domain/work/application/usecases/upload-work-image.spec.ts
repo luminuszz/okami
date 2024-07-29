@@ -4,11 +4,7 @@ import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload
 import { CreateWorkUseCase } from '@domain/work/application/usecases/create-work';
 import { faker } from '@faker-js/faker';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
-
-const fakeStorageProvider = {
-  uploadWorkImage: jest.fn(),
-  uploadWorkImageWithUrl: jest.fn(),
-};
+import { fakeStorageProvider } from '@test/mocks/mocks';
 
 describe('UploadWorkImageUseCase', () => {
   let inMemoryWorkRepository: InMemoryWorkRepository;
@@ -34,7 +30,7 @@ describe('UploadWorkImageUseCase', () => {
 
     const { work } = createWorkResponse.value;
 
-    fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce(null);
+    fakeStorageProvider.uploadWorkImage.mockResolvedValueOnce({ fileType: 'png', fileName: 'image' });
 
     const results = await stu.execute({
       imageBuffer: new ArrayBuffer(1),
