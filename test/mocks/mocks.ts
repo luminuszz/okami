@@ -1,16 +1,17 @@
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
 import { MailProvider } from '@domain/auth/application/contracts/mail-provider';
-import { StorageProvider } from '@domain/work/application/contracts/storageProvider';
 import { faker } from '@faker-js/faker';
+import { ClientKafka } from '@nestjs/microservices';
 
 export const fakeHashProvider: HashProvider = {
   hash: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
   compare: jest.fn().mockImplementation(() => Promise.resolve(true)),
 };
 
-export const fakeStorageProvider: StorageProvider = {
+export const fakeStorageProvider = {
   uploadWorkImage: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
   uploadWorkImageWithUrl: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
+  uploadAvatarImage: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
 };
 
 export const fakeEmailProvider: MailProvider = {
@@ -39,3 +40,10 @@ export const fakerMessageEmit = {
   send: jest.fn().mockImplementation(() => Promise.resolve()),
   emit: jest.fn().mockImplementation(() => Promise.resolve()),
 };
+
+export const mockKafkaClient = {
+  subscribeToResponseOf: jest.fn().mockImplementation(() => Promise.resolve()),
+  connect: jest.fn().mockImplementation(() => Promise.resolve()),
+  emit: jest.fn().mockImplementation(() => Promise.resolve()),
+  send: jest.fn().mockImplementation(() => Promise.resolve()),
+} as unknown as ClientKafka;

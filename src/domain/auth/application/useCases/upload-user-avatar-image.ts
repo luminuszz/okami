@@ -31,13 +31,13 @@ export class UploadUserAvatarImage implements UseCaseImplementation<UploadAvatar
 
     const imageName = `${user_id}-${randomUUID()}`;
 
-    await this.storageProvider.uploadWorkImage({
+    const response = await this.storageProvider.uploadAvatarImage({
       fileName: imageName,
       fileData: image,
       fileMimeType: imageType,
     });
 
-    userOrUndefined.avatarImageId = `${imageName}.${imageType}`;
+    userOrUndefined.avatarImageId = `${response.fileName}.${response.fileType}`;
 
     await this.userRepository.save(userOrUndefined);
 

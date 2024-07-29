@@ -1,8 +1,14 @@
-import { FiletoUpload, FiletoUploadWithUrl, StorageProvider } from '@domain/work/application/contracts/storageProvider';
+import {
+  FiletoUpload,
+  FiletoUploadWithUrl,
+  FileUploadResponse,
+  StorageProvider,
+} from '@domain/work/application/contracts/storageProvider';
 import { Injectable } from '@nestjs/common';
 import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import * as process from 'process';
 import { EnvService } from '../env/env.service';
+import { ImageTransformerProvider } from '@infra/storage/image-transformer.provider';
 
 @Injectable()
 export class CloudFlareR2StorageAdapter implements StorageProvider {
@@ -10,7 +16,10 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
 
   public readonly awsBucket: string;
 
-  constructor(private env: EnvService) {
+  constructor(
+    private env: EnvService,
+    private imageTransformer: ImageTransformerProvider,
+  ) {
     this.s3Client = new S3Client({
       region: 'auto',
       endpoint: this.env.get('CLOUD_FLARE_BUCKET_URL'),
@@ -21,6 +30,29 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     });
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET');
+  }
+
+  async uploadAvatarImage({ fileName, fileData }: FiletoUpload): Promise<FileUploadResponse> {
+    await this.createFolderIfNotExists('user-avatars-images');
+
+    const parsedImage = await this.imageTransformer.compressAndTransformImageToJPG({
+      fileData,
+      fileName,
+    });
+
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.awsBucket,
+        Body: parsedImage.fileData,
+        Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
+        ContentType: `image/${parsedImage.fileMimeType}`,
+      }),
+    );
+
+    return {
+      fileType: parsedImage.fileMimeType,
+      fileName: parsedImage.fileName,
+    };
   }
 
   private async createFolderIfNotExists(folderPrefix: string) {
@@ -52,32 +84,53 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     await this.s3Client.send(createFolderCommand);
   }
 
-  async uploadWorkImage({ fileName, fileData, fileMimeType }: FiletoUpload): Promise<void> {
+  async uploadWorkImage({ fileName, fileData }: FiletoUpload): Promise<FileUploadResponse> {
     await this.createFolderIfNotExists('work-images');
+
+    const parsedImage = await this.imageTransformer.compressAndTransformImageToJPG({
+      fileData,
+      fileName,
+    });
 
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.awsBucket,
-        Body: Buffer.from(fileData),
-        Key: `work-images/${fileName}.${fileMimeType}`,
-        ContentType: `image/${fileMimeType}`,
+        Body: parsedImage.fileData,
+        Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
+        ContentType: `image/${parsedImage.fileMimeType}`,
       }),
     );
+
+    return {
+      fileType: parsedImage.fileMimeType,
+      fileName: parsedImage.fileName,
+    };
   }
 
   static createS3FileUrl(fileName: string): string {
     return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
   }
 
-  async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<void> {
-    const response = await fetch(file.fileData);
+  async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<FileUploadResponse> {
+    await this.createFolderIfNotExists('work-images');
 
+    const response = await fetch(file.fileData);
     const buffer = await response.arrayBuffer();
 
-    await this.uploadWorkImage({
+    const { fileMimeType, fileName, fileData } = await this.imageTransformer.compressAndTransformImageToJPG({
       fileData: buffer,
       fileName: file.fileName,
-      fileMimeType: file.fileMimeType,
     });
+
+    await this.uploadWorkImage({
+      fileData: fileData,
+      fileName: fileName,
+      fileMimeType: `image/${fileMimeType}`,
+    });
+
+    return {
+      fileType: fileMimeType,
+      fileName: fileName,
+    };
   }
 }
