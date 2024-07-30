@@ -44,7 +44,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
       new PutObjectCommand({
         Bucket: this.awsBucket,
         Body: parsedImage.fileData,
-        Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
+        Key: `user-avatars-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
       }),
     );
@@ -112,25 +112,18 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
   }
 
   async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<FileUploadResponse> {
-    await this.createFolderIfNotExists('work-images');
-
     const response = await fetch(file.fileData);
     const buffer = await response.arrayBuffer();
 
-    const { fileMimeType, fileName, fileData } = await this.imageTransformer.compressAndTransformImageToJPG({
+    await this.uploadWorkImage({
       fileData: buffer,
       fileName: file.fileName,
-    });
-
-    await this.uploadWorkImage({
-      fileData: fileData,
-      fileName: fileName,
-      fileMimeType: `image/${fileMimeType}`,
+      fileMimeType: file.fileMimeType,
     });
 
     return {
-      fileType: fileMimeType,
-      fileName: fileName,
+      fileType: file.fileMimeType,
+      fileName: file.fileName,
     };
   }
 }
