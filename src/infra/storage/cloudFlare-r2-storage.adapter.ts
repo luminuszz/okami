@@ -35,7 +35,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
   async uploadAvatarImage({ fileName, fileData }: FiletoUpload): Promise<FileUploadResponse> {
     await this.createFolderIfNotExists('user-avatars-images');
 
-    const parsedImage = await this.imageTransformer.compressAndTransformImageToJPG({
+    const parsedImage = await this.imageTransformer.compressAndTransformImageToWebp({
       fileData,
       fileName,
     });
@@ -87,7 +87,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
   async uploadWorkImage({ fileName, fileData }: FiletoUpload): Promise<FileUploadResponse> {
     await this.createFolderIfNotExists('work-images');
 
-    const parsedImage = await this.imageTransformer.compressAndTransformImageToJPG({
+    const parsedImage = await this.imageTransformer.compressAndTransformImageToWebp({
       fileData,
       fileName,
     });
@@ -111,19 +111,29 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
   }
 
-  async uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<FileUploadResponse> {
-    const response = await fetch(file.fileData);
+  async uploadWorkImageWithUrl({ fileName, fileData }: FiletoUploadWithUrl): Promise<FileUploadResponse> {
+    await this.createFolderIfNotExists('work-images');
+
+    const response = await fetch(fileData);
+
     const buffer = await response.arrayBuffer();
 
-    await this.uploadWorkImage({
+    const parsedImage = await this.imageTransformer.compressAndTransformImageToWebp({
       fileData: buffer,
-      fileName: file.fileName,
-      fileMimeType: file.fileMimeType,
+      fileName,
     });
 
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.awsBucket,
+        Body: parsedImage.fileData,
+        Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
+        ContentType: `image/${parsedImage.fileMimeType}`,
+      }),
+    );
     return {
-      fileType: file.fileMimeType,
-      fileName: file.fileName,
+      fileType: parsedImage.fileMimeType,
+      fileName: parsedImage.fileName,
     };
   }
 }
