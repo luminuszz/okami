@@ -5,6 +5,9 @@ import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-updated';
+import { TagRepository } from '@domain/work/application/repositories/tag-repository';
+import { WatchList } from '@core/WatchList';
+import { map } from 'lodash';
 
 type UpdateWorkUseCaseInput = {
   id: string;
@@ -13,6 +16,7 @@ type UpdateWorkUseCaseInput = {
     chapter: number;
     url: string;
     name: string;
+    tagsId: string[];
   }>;
 };
 
@@ -20,7 +24,10 @@ type UpdateWorkUseCaseOutput = Either<WorkNotFoundError, { work: Work }>;
 
 @Injectable()
 export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCaseInput, UpdateWorkUseCaseOutput> {
-  constructor(private readonly workRepository: WorkRepository) {}
+  constructor(
+    private readonly workRepository: WorkRepository,
+    private readonly tagRepository: TagRepository,
+  ) {}
 
   async execute({ data, id, userId }: UpdateWorkUseCaseInput): Promise<UpdateWorkUseCaseOutput> {
     const existsWork = await this.workRepository.findUserWorkById(userId, id);
@@ -29,9 +36,20 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
       return left(new WorkNotFoundError());
     }
 
+    if (data.tagsId?.length) {
+      const tags = await this.tagRepository.findAllTagsByWorkId(id);
+      const list = new WatchList(map(tags, 'id'));
+
+      const removedTags = list.getRemovedList(data?.tagsId ?? []);
+      const addedTags = list.getAddedList(data?.tagsId ?? []);
+
+      await this.tagRepository.updateTagList(id, addedTags, removedTags);
+    }
+
     existsWork.updateChapter(data?.chapter ?? existsWork.chapter.getChapter());
     existsWork.url = data?.url ?? existsWork.url;
     existsWork.name = data?.name ?? existsWork.name;
+    existsWork.tagsId = data?.tagsId ?? existsWork.tagsId;
 
     await this.workRepository.save(existsWork);
 

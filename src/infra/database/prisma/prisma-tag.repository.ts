@@ -6,10 +6,47 @@ import { PrismaService } from './prisma.service';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { prismaTagToEntityTag } from './prisma-mapper';
+import { map } from 'lodash';
 
 @Injectable()
 export class PrismaTagRepository implements TagRepository {
   constructor(private prisma: PrismaService) {}
+
+  async findAllTagsByWorkId(workId: string): Promise<Tag[]> {
+    const { tags } = await this.prisma.work.findUnique({
+      where: {
+        id: workId,
+      },
+      select: {
+        tags: true,
+      },
+    });
+
+    return map(tags, prismaTagToEntityTag);
+  }
+  async updateTagList(workId: string, tagsToAdd: string[], tagsToRemove: string[]): Promise<void> {
+    console.log('tagsToAdd', tagsToAdd);
+    console.log('tagsToRemove', tagsToRemove);
+
+    await this.prisma.work.update({
+      where: {
+        id: workId,
+      },
+      data: {
+        tags: {
+          connect: tagsToAdd.map((tagId) => ({
+            id: tagId,
+          })),
+          disconnect: tagsToRemove.map((tagId) => ({
+            id: tagId,
+          })),
+        },
+      },
+      include: {
+        tags: true,
+      },
+    });
+  }
 
   async linkTagToWork(workId: string, tagId: string): Promise<void> {
     await this.prisma.work.update({

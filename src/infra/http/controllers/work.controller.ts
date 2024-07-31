@@ -145,7 +145,7 @@ export class WorkController {
 
   @Post('refresh-chapters')
   async refreshChapters(@User('id') userId: string) {
-    this.queue.refreshAllWorksStatusByUserId(userId);
+    void this.queue.refreshAllWorksStatusByUserId(userId);
   }
 
   @Put('update-work/:id')

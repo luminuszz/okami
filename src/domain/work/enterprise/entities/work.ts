@@ -223,4 +223,8 @@ export class Work extends Entity<WorkProps> {
   public get tagsId() {
     return this.props.tagsId;
   }
+  public set tagsId(tagsId: string[]) {
+    this.props.tagsId = tagsId;
+    this.commit();
+  }
 }
