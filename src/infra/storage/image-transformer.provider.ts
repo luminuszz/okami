@@ -14,21 +14,21 @@ export interface ImageResponse {
 }
 
 export abstract class ImageTransformerProvider {
-  abstract compressAndTransformImageToJPG(image: ImageData): Promise<ImageResponse>;
+  abstract compressAndTransformImageToWebp(image: ImageData): Promise<ImageResponse>;
 }
 
 @Injectable()
 export class SharpImageTransformerProvider implements ImageTransformerProvider {
-  async compressAndTransformImageToJPG({ fileName, fileData }: ImageData): Promise<ImageResponse> {
+  async compressAndTransformImageToWebp({ fileName, fileData }: ImageData): Promise<ImageResponse> {
     const fileBuffer = await sharp(fileData)
       .webp({
-        quality: 70,
+        quality: 80,
       })
       .toBuffer();
 
     return {
       fileData: fileBuffer,
-      fileMimeType: 'jpg',
+      fileMimeType: 'webp',
       fileName,
     };
   }
