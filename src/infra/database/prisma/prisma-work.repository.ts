@@ -43,8 +43,19 @@ export class PrismaWorkRepository implements WorkRepository {
   async create(work: Work): Promise<void> {
     const data = workEntityToPrismaMapper(work);
 
+    console.log({
+      tags: work.tagsId,
+    });
+
     await this.prisma.work.create({
-      data,
+      data: {
+        ...data,
+        tags: {
+          connect: work.tagsId?.map((tagId) => ({
+            id: tagId,
+          })),
+        },
+      },
     });
   }
 

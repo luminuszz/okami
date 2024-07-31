@@ -16,6 +16,7 @@ export interface CreateWorkInput {
     imageType: string;
   };
   userId: string;
+  tagsId: string[];
 }
 
 type CreateWorkOutput = Either<InvalidWorkOperationError, { work: Work }>;
@@ -24,7 +25,7 @@ type CreateWorkOutput = Either<InvalidWorkOperationError, { work: Work }>;
 export class CreateWorkUseCase implements UseCaseImplementation<CreateWorkInput, CreateWorkOutput> {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ category, chapter, name, url, userId }: CreateWorkInput): Promise<CreateWorkOutput> {
+  async execute({ category, chapter, name, url, userId, tagsId }: CreateWorkInput): Promise<CreateWorkOutput> {
     const work = Work.create({
       category,
       chapter: new Chapter(chapter),
@@ -34,6 +35,7 @@ export class CreateWorkUseCase implements UseCaseImplementation<CreateWorkInput,
       createdAt: new Date(),
       userId,
       status: WorkStatus.READ,
+      tagsId,
     });
 
     await this.workRepository.create(work);

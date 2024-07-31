@@ -67,6 +67,7 @@ export class WorkController {
       name: name.value,
       url: url.value,
       file: formData,
+      tagsId: formData.fields.tagsId.value?.replaceAll('\n', '')?.split(','),
     };
 
     const imageData = await formData.toBuffer();
@@ -77,6 +78,7 @@ export class WorkController {
         chapter: Number(data.chapter),
         name: data.name,
         url: data.url,
+        tagsId: data.tagsId,
         userId,
         image: {
           imageFile: imageData,
