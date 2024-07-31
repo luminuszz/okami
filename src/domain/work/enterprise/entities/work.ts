@@ -25,6 +25,7 @@ export interface WorkProps {
   refreshStatus?: RefreshStatus | null;
   status: WorkStatus;
   tags?: Tag[];
+  tagsId?: string[];
 }
 
 export enum Category {
@@ -55,6 +56,7 @@ export class Work extends Entity<WorkProps> {
     this.props.nextChapterUpdatedAt = props.nextChapterUpdatedAt ?? null;
     this.props.refreshStatus = props.refreshStatus ?? null;
     this.props.tags = props.tags ?? [];
+    this.props.tagsId = props.tagsId ?? [];
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -216,5 +218,13 @@ export class Work extends Entity<WorkProps> {
 
   public get hasNewChapter() {
     return !!this.props.nextChapter?.getChapter();
+  }
+
+  public get tagsId() {
+    return this.props.tagsId;
+  }
+  public set tagsId(tagsId: string[]) {
+    this.props.tagsId = tagsId;
+    this.commit();
   }
 }

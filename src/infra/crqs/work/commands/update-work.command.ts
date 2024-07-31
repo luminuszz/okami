@@ -5,6 +5,7 @@ type UpdateWorkInput = Partial<{
   chapter: number;
   url: string;
   name: string;
+  tagsId?: string[];
 }>;
 
 export class UpdateWorkCommand {
