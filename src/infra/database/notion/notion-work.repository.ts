@@ -273,6 +273,22 @@ export class NotionWorkRepository {
     });
   }
 
+  async deleteSyncIdInNotionPage(page_id: string) {
+    await this.notion.pages.update({
+      page_id,
+      properties: {
+        sync_id: [
+          {
+            type: 'text',
+            text: {
+              content: '',
+            },
+          },
+        ],
+      },
+    });
+  }
+
   async saveMany(works: Work[]): Promise<void> {
     for (const work of works) {
       await this.notion.pages.update({

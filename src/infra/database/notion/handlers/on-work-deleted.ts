@@ -9,6 +9,9 @@ export class OnWorkDeletedHandler implements IEventHandler<WorkDeletedEvent> {
   async handle({ payload: work }: WorkDeletedEvent) {
     if (!work.recipientId) return;
 
-    await this.workNotionRepository.moveWorkToArchive(work.recipientId);
+    await Promise.all([
+      this.workNotionRepository.deleteSyncIdInNotionPage(work.recipientId),
+      this.workNotionRepository.moveWorkToArchive(work.recipientId),
+    ]);
   }
 }
