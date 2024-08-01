@@ -16,7 +16,7 @@ export interface CreateWorkInput {
     imageType: string;
   };
   userId: string;
-  tagsId: string[];
+  tagsId?: string[];
 }
 
 type CreateWorkOutput = Either<InvalidWorkOperationError, { work: Work }>;

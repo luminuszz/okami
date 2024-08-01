@@ -19,11 +19,11 @@ export class WatchList {
     return Array.from(this.originalList.values());
   }
 
-  getRemovedList(list: string[]): string[] {
-    return difference(this.getList(), list);
+  getRemovedList(newList: string[]): string[] {
+    return difference(this.getList(), newList);
   }
 
-  getAddedList(list: string[]): string[] {
-    return difference(list, this.getList());
+  getAddedList(newList: string[]): string[] {
+    return difference(newList, this.getList());
   }
 }
