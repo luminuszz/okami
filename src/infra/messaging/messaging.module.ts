@@ -13,7 +13,7 @@ const developBlockerMock = {
 
 @Module({
   imports: [ClientsModule.registerAsync([messageProviderConnectProvider])],
-  providers: [MessageService, { provide: 'NOTIFICATION_SERVICE', useValue: developBlockerMock }],
+  providers: [MessageService /* { provide: 'NOTIFICATION_SERVICE', useValue: developBlockerMock }*/],
   exports: [MessageService],
 })
 export class MessagingModule {}
