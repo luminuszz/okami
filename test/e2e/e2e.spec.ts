@@ -19,6 +19,8 @@ import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/c
 import { TagRepository } from '@domain/work/application/repositories/tag-repository';
 import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
+import { map } from 'lodash';
+import { TagHttpType } from '@infra/http/models/tag.model';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -350,11 +352,36 @@ describe('E2E tests', () => {
 
       expect(searchToken).toBeNull();
     });
+
+    it('/tags/filter, GET', async () => {
+      const tagName = 'garças da vida';
+
+      const tag = Tag.create({
+        name: tagName,
+        color: faker.internet.color(),
+        slug: new Slug(tagName),
+        createdAt: new Date(),
+      });
+
+      await app.get(TagRepository).create(tag);
+
+      const results = await app.inject({
+        url: `/tags/filter`,
+        query: {
+          search: 'gar',
+        },
+        method: 'GET',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+      expect(map(results.json<TagHttpType[]>(), 'name').includes(tagName)).toBeTruthy();
+    });
   });
 
   afterAll(async () => {
-    await app.close();
-
     await prisma.$transaction([
       prisma.accessToken.deleteMany(),
       prisma.user.deleteMany(),
@@ -365,5 +392,6 @@ describe('E2E tests', () => {
     ]);
 
     await prisma.$disconnect();
+    await app.close();
   });
 });
