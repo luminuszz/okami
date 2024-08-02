@@ -33,7 +33,7 @@ export class TagModelPaged {
   totalOfPages: number;
 }
 
-export class TahHttpModel {
+export class TagHttpModel {
   static toHttpList(tags: Tag[]) {
     return z.array(tagSchema).parse(tags);
   }

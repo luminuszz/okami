@@ -4,13 +4,15 @@ import { ProtectFor } from '@infra/crqs/auth/role.guard';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { TagModelPaged, TahHttpModel } from '../models/tag.model';
+import { TagHttpModel, TagModelPaged } from '../models/tag.model';
 import { CreateTagDto } from '../validators/create-tag.dto';
 import { ListTagParams } from '../validators/list-tags-params';
 import { UpdateTagDto } from '../validators/update-tag.dto';
 import { UpdateTagCommand } from '@infra/crqs/work/commands/update-tag-command';
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 import { DeleteTagCommand } from '@infra/crqs/work/commands/delete-tag.command';
+import { FilterTagBySearchQuery } from '@infra/crqs/work/queries/filter-tag-by-search';
+import { FilterTagDto } from '@infra/http/validators/filter-tag.dto';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -36,11 +38,18 @@ export class TagController {
   async listTags(@Query() params: ListTagParams) {
     const response = await this.queryBus.execute(new FetchPagedTagsQuery(params.page));
 
-    return TahHttpModel.toHttpListPaged(response.tags, response.totalOfPages);
+    return TagHttpModel.toHttpListPaged(response.tags, response.totalOfPages);
   }
 
   @Delete('/:id')
   async deleteTag(@Param('id', ParseObjectIdPipe) id: string) {
     await this.commandBus.execute(new DeleteTagCommand(id));
+  }
+
+  @Get('/filter')
+  async filterTag(@Query() { search }: FilterTagDto) {
+    const results = await this.queryBus.execute(new FilterTagBySearchQuery(search));
+
+    return TagHttpModel.toHttpList(results);
   }
 }

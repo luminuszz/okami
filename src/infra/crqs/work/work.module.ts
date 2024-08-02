@@ -38,7 +38,6 @@ import { UpdateWorkRefreshStatusCommandHandler } from '@infra/crqs/work/commands
 import { UploadWorkImageCommandHandler } from '@infra/crqs/work/commands/upload-work-image.command';
 import { QueueModule } from '@infra/queue/queue.module';
 import { StorageModule } from '@infra/storage/storage.module';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CreateManySearchTokensCommandHandler } from './commands/create-many-search-tokens.command';
 import { CreateTagCommandHandler } from './commands/create-tag.command';
 import { DeleteWorkCommandHandler } from './commands/delete-work.command';
@@ -57,6 +56,7 @@ import { UpdateTagCommandHandler } from '@infra/crqs/work/commands/update-tag-co
 import { UpdateTag } from '@domain/work/application/usecases/update-tag';
 import { DeleteTag } from '@domain/work/application/usecases/delete-tag';
 import { DeleteTagCommandHandler } from '@infra/crqs/work/commands/delete-tag.command';
+import { FilterTagBySearchQueryHandler } from '@infra/crqs/work/queries/filter-tag-by-search';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -85,27 +85,13 @@ const QueryHandlers = [
   FetchUserWorksWithFilterQueryHandler,
   FetchPagedTagsQueryHandler,
   FetchForSearchTokensByTypeQueryHandler,
+  FilterTagBySearchQueryHandler,
 ];
 
 const EventHandlers = [];
 
 @Module({
-  imports: [
-    MessagingModule,
-    CqrsModule,
-    StorageModule,
-    QueueModule,
-    ClientsModule.register([
-      {
-        name: 'NOTIFICATION_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.AMQP_URL],
-          queue: 'notification-service-queue',
-        },
-      },
-    ]),
-  ],
+  imports: [MessagingModule, CqrsModule, StorageModule, QueueModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,
