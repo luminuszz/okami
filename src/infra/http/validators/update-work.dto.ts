@@ -17,6 +17,12 @@ export class UpdateWorkDto {
   @IsString()
   name: string;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  alternativeName: string;
+
+  @IsOptional()
   @ApiProperty({
     isArray: true,
     type: String,

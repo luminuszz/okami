@@ -126,7 +126,7 @@ export class WorkController {
   async syncToNotion(@User() user: UserTokenDto) {
     if (!user.notionDatabaseId) return new BadRequestException('Notion database id not found');
 
-    this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
+    void this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
   }
 
   @Get('/fetch-for-workers-read')
