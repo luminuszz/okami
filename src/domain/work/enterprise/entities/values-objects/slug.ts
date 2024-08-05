@@ -3,6 +3,7 @@ export class Slug {
 
   constructor(slug: string) {
     this.value = slug
+      .trim()
       .normalize('NFD')
       .toLocaleLowerCase()
       .replaceAll(/[\u0300-\u036f]/g, '')

@@ -10,7 +10,7 @@ import { WorkRepository } from '../repositories/work-repository';
 import { InvalidWorkOperationError } from './errors/invalid-work-operation';
 import { UploadWorkImageUseCase } from './upload-work-image';
 
-interface RegisterNewWorkRequest {
+export interface RegisterNewWorkRequest {
   name: string;
   chapter: number;
   url: string;
@@ -21,6 +21,7 @@ interface RegisterNewWorkRequest {
   };
   userId: string;
   tagsId?: string[];
+  alternativeName?: string;
 }
 
 type RegisterNewWorkResponse = Either<UserNotFound | InvalidWorkOperationError, { work: Work }>;
@@ -40,6 +41,7 @@ export class RegisterNewWork implements UseCaseImplementation<RegisterNewWorkReq
     userId,
     image,
     tagsId,
+    alternativeName,
   }: RegisterNewWorkRequest): Promise<RegisterNewWorkResponse> {
     const user = await this.userRepository.findById(userId);
 
@@ -65,6 +67,7 @@ export class RegisterNewWork implements UseCaseImplementation<RegisterNewWorkReq
       userId,
       status: WorkStatus.READ,
       tagsId: tagsId,
+      alternativeName: alternativeName,
     });
 
     await this.workRepository.create(work);

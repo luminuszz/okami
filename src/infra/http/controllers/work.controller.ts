@@ -59,7 +59,7 @@ export class WorkController {
   async createWork(@Req() req: any, @User('id') userId: string) {
     const formData = await req.file();
 
-    const { category, chapter, name, url } = formData.fields;
+    const { category, chapter, name, url, alternativeName } = formData.fields;
 
     const data = {
       category: category.value,
@@ -68,6 +68,7 @@ export class WorkController {
       url: url.value,
       file: formData,
       tagsId: formData.fields.tagsId.value?.replaceAll('\n', '')?.split(','),
+      alternativeName: alternativeName.value,
     };
 
     const imageData = await formData.toBuffer();
@@ -76,6 +77,7 @@ export class WorkController {
       new CreateWorkCommand({
         category: data.category,
         chapter: Number(data.chapter),
+        alternativeName: data.alternativeName,
         name: data.name,
         url: data.url,
         tagsId: data.tagsId,
@@ -124,7 +126,7 @@ export class WorkController {
   async syncToNotion(@User() user: UserTokenDto) {
     if (!user.notionDatabaseId) return new BadRequestException('Notion database id not found');
 
-    this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
+    void this.batchService.importNotionDatabaseToMongoDB(user.notionDatabaseId, user.id);
   }
 
   @Get('/fetch-for-workers-read')

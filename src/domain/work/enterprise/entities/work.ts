@@ -26,6 +26,7 @@ export interface WorkProps {
   status: WorkStatus;
   tags?: Tag[];
   tagsId?: string[];
+  alternativeName?: string;
 }
 
 export enum Category {
@@ -57,6 +58,7 @@ export class Work extends Entity<WorkProps> {
     this.props.refreshStatus = props.refreshStatus ?? null;
     this.props.tags = props.tags ?? [];
     this.props.tagsId = props.tagsId ?? [];
+    this.props.alternativeName = props.alternativeName ?? '';
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -226,5 +228,14 @@ export class Work extends Entity<WorkProps> {
   public set tagsId(tagsId: string[]) {
     this.props.tagsId = tagsId;
     this.commit();
+  }
+
+  public set alternativeName(alternativeName: string) {
+    this.props.alternativeName = alternativeName;
+    this.commit();
+  }
+
+  public get alternativeName() {
+    return this.props.alternativeName;
   }
 }

@@ -6,6 +6,7 @@ type UpdateWorkInput = Partial<{
   url: string;
   name: string;
   tagsId?: string[];
+  alternativeName: string;
 }>;
 
 export class UpdateWorkCommand {
@@ -20,7 +21,7 @@ export class UpdateWorkCommand {
 export class UpdateWorkCommandHandler implements ICommandHandler<UpdateWorkCommand> {
   constructor(
     private readonly updateWorkUseCase: UpdateWorkUseCase,
-    private eventBus: EventBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute({ id, data, userId }: UpdateWorkCommand): Promise<any> {

@@ -58,6 +58,7 @@ model Work {
   isUpserted           Boolean?       @default(false) @map("is_upserted")
   refreshStatus        RefreshStatus? @map("refresh_status")
   status               WorkStatus     @default(READ)
+  alternativeName      String?        @map("alternative_name")
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
