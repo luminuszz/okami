@@ -5,9 +5,13 @@ import { IsOptional, IsString } from 'class-validator';
 export class ListUserWorksQuery {
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional({ type: String })
+  @ApiPropertyOptional({
+    type: String,
+    enum: ['unread', 'read', 'finished', 'dropped'],
+  })
   status?: Status;
 
+  @ApiPropertyOptional({ type: String })
   @IsOptional()
   @IsString()
   search?: string;
