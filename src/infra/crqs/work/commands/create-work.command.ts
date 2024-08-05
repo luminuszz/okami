@@ -1,9 +1,8 @@
-import { CreateWorkInput } from '@domain/work/application/usecases/create-work';
-import { RegisterNewWork } from '@domain/work/application/usecases/register-new-work';
+import { RegisterNewWork, RegisterNewWorkRequest } from '@domain/work/application/usecases/register-new-work';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 
 export class CreateWorkCommand {
-  constructor(public payload: CreateWorkInput) {}
+  constructor(public payload: RegisterNewWorkRequest) {}
 }
 
 @CommandHandler(CreateWorkCommand)
