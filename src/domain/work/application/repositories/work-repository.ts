@@ -3,6 +3,7 @@ import { RefreshStatus } from '@prisma/client';
 
 export interface FetchUserWorksInput {
   status?: 'unread' | 'read' | 'finished' | 'dropped';
+  search?: string;
   userId: string;
 }
 

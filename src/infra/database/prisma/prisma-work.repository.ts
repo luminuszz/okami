@@ -3,7 +3,7 @@ import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable, Logger } from '@nestjs/common';
 import { RefreshStatus, WorkStatus } from '@prisma/client';
-import { map } from 'lodash';
+import { map, merge } from 'lodash';
 import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper';
 import { PrismaService } from './prisma.service';
 
@@ -13,21 +13,43 @@ export class PrismaWorkRepository implements WorkRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async fetchWorksByUserIdWithFilters({ userId, status }: FetchUserWorksInput): Promise<Work[]> {
-    const parserFilter = {
-      unread: WorkStatus.UNREAD,
-      read: WorkStatus.READ,
-      finished: WorkStatus.FINISHED,
-      dropped: WorkStatus.DROPPED,
+  async fetchWorksByUserIdWithFilters({ userId, status, search }: FetchUserWorksInput): Promise<Work[]> {
+    const query = {
+      userId,
     };
 
-    const filter = parserFilter[status];
+    if (status) {
+      const parserFilterStatus = {
+        unread: WorkStatus.UNREAD,
+        read: WorkStatus.READ,
+        finished: WorkStatus.FINISHED,
+        dropped: WorkStatus.DROPPED,
+      };
+
+      merge(query, { status: parserFilterStatus[status] });
+    }
+
+    if (search) {
+      merge(query, {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            alternativeName: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      });
+    }
 
     const results = await this.prisma.work.findMany({
-      where: {
-        status: filter,
-        userId,
-      },
+      where: query,
       orderBy: {
         createdAt: 'desc',
       },
@@ -42,10 +64,6 @@ export class PrismaWorkRepository implements WorkRepository {
 
   async create(work: Work): Promise<void> {
     const data = workEntityToPrismaMapper(work);
-
-    console.log({
-      tags: work.tagsId,
-    });
 
     await this.prisma.work.create({
       data: {

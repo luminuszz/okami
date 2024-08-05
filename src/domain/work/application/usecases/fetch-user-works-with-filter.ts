@@ -9,6 +9,7 @@ export type Status = 'unread' | 'read' | 'finished' | 'dropped';
 interface FetchUserWorksInput {
   userId: string;
   status?: Status;
+  search?: string;
 }
 
 type FetchUserWorksOutput = Either<void, { works: Work[] }>;
@@ -19,10 +20,11 @@ export class FetchUserWorksWithFilterUseCase
 {
   constructor(private readonly workRepository: WorkRepository) {}
 
-  async execute({ status, userId }: FetchUserWorksInput): Promise<FetchUserWorksOutput> {
+  async execute({ status, userId, search }: FetchUserWorksInput): Promise<FetchUserWorksOutput> {
     const works = await this.workRepository.fetchWorksByUserIdWithFilters({
       status,
       userId,
+      search,
     });
 
     return right({

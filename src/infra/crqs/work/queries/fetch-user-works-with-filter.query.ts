@@ -4,10 +4,15 @@ import {
 } from '@domain/work/application/usecases/fetch-user-works-with-filter';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 
+export interface FetchUserWorksWithFilterQueryParams {
+  status?: Status;
+  search?: string;
+}
+
 export class FetchUserWorksWithFilterQuery {
   constructor(
     public readonly userId: string,
-    public readonly status: Status,
+    public readonly searchParams: FetchUserWorksWithFilterQueryParams,
   ) {}
 }
 
@@ -15,10 +20,11 @@ export class FetchUserWorksWithFilterQuery {
 export class FetchUserWorksWithFilterQueryHandler implements IQueryHandler<FetchUserWorksWithFilterQuery> {
   constructor(private readonly fetchUserWorksWithFilter: FetchUserWorksWithFilterUseCase) {}
 
-  async execute({ status, userId }: FetchUserWorksWithFilterQuery) {
+  async execute({ searchParams, userId }: FetchUserWorksWithFilterQuery) {
     const results = await this.fetchUserWorksWithFilter.execute({
       userId,
-      status,
+      status: searchParams.status,
+      search: searchParams.search,
     });
 
     if (results.isLeft()) {

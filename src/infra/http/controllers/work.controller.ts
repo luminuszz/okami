@@ -224,7 +224,12 @@ export class WorkController {
   @Get('list')
   @ApiOkResponse({ type: WorkHttp, isArray: true })
   async listUserWorks(@User('id') userId: string, @Query() query: ListUserWorksQuery) {
-    const works = await this.queryBus.execute(new FetchUserWorksWithFilterQuery(userId, query.status));
+    const works = await this.queryBus.execute(
+      new FetchUserWorksWithFilterQuery(userId, {
+        status: query.status,
+        search: query.search,
+      }),
+    );
 
     return WorkModel.toHttpList(works);
   }

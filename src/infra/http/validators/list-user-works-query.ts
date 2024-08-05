@@ -7,4 +7,8 @@ export class ListUserWorksQuery {
   @IsOptional()
   @ApiPropertyOptional({ type: String })
   status?: Status;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }
