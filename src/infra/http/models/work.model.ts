@@ -25,6 +25,7 @@ const workSchema = z
     createdAt: z.date().transform((value) => value.toISOString()),
     userId: z.string().nonempty(),
     tags: z.array(tagSchema).optional(),
+    alternativeName: z.string().optional().nullable(),
   })
   .transform((data) => {
     return {
