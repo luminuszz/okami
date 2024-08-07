@@ -81,6 +81,22 @@ export class NotionWorkRepository {
         ],
         cap: notionWork.cap,
         URL: notionWork.URL,
+        Nome_alternativo: [
+          {
+            type: 'text',
+            text: {
+              content: work.alternativeName,
+            },
+          },
+        ],
+        Notas: [
+          {
+            type: 'text',
+            text: {
+              content: `${'Updated'}  by Okami integration ${new Date().toLocaleString()} `,
+            },
+          },
+        ],
       },
     });
   }

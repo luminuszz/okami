@@ -9,13 +9,15 @@ export type NotionDocument = {
   object: 'page';
 };
 
-type NotionCategory = 'Anime' | 'Manga' | 'Webtoon';
+type NotionCategory = 'Anime' | 'Manga' | 'Webtoon' | 'MANHUA' | 'Light novel';
 
 export class NotionMapper {
   private static notionCategoryToDomainMapper: Record<NotionCategory, Category> = {
     Anime: Category.ANIME,
     Manga: Category.MANGA,
     Webtoon: Category.MANGA,
+    MANHUA: Category.MANGA,
+    'Light novel': Category.MANGA,
   };
 
   static toDomain({ properties, id }: NotionPage): Work {
@@ -37,6 +39,7 @@ export class NotionMapper {
         tags: properties['Gêneros']?.multi_select.map((notionTag) =>
           Tag.create({ name: notionTag.name, slug: new Slug(notionTag.name) }),
         ),
+        alternativeName: properties['Nome Alternativo']?.rich_text?.[0]?.text?.content ?? '',
       },
       new UniqueEntityID(properties?.sync_id?.rich_text?.[0]?.text?.content || null),
     );
