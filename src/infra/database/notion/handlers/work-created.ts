@@ -2,6 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { NotionImageObject } from '@infra/database/notion/dto/notion-image';
 
 @EventsHandler(WorkCreatedEvent)
 export class SetSyncIdOnNotionPageEventHandler implements IEventHandler<WorkCreatedEvent> {
@@ -26,7 +27,7 @@ export class UploadNotionWorkImageFromNotionEventHandler implements IEventHandle
 
     const notionPageDetails = await this.notionRepository.getNotionPageContent(payload.recipientId);
 
-    const results: any = notionPageDetails.find((item: any) => item.type === 'image') || null;
+    const results = (notionPageDetails.find((item: any) => item.type === 'image') as NotionImageObject) || null;
 
     if (results) {
       const { image } = results;
