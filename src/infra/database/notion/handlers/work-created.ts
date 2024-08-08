@@ -2,7 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { NotionImageObject } from '@infra/database/notion/dto/notion-image';
+import { NotionImageObject } from '@infra/database/notion/dto/notion-image.dto';
 
 @EventsHandler(WorkCreatedEvent)
 export class SetSyncIdOnNotionPageEventHandler implements IEventHandler<WorkCreatedEvent> {
