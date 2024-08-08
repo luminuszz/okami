@@ -39,7 +39,7 @@ export class NotionMapper {
         tags: properties['Gêneros']?.multi_select.map((notionTag) =>
           Tag.create({ name: notionTag.name, slug: new Slug(notionTag.name) }),
         ),
-        alternativeName: properties['Nome Alternativo']?.rich_text?.[0]?.text?.content ?? '',
+        alternativeName: properties['Nome_alternativo']?.rich_text?.[0]?.text?.content ?? '',
       },
       new UniqueEntityID(properties?.sync_id?.rich_text?.[0]?.text?.content || null),
     );
