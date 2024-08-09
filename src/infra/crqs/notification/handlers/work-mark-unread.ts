@@ -4,13 +4,21 @@ import { WorkMarkUnreadEvent } from '@domain/work/enterprise/entities/events/wor
 import { Category } from '@domain/work/enterprise/entities/work';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
-interface ContentObject {
+interface WorkContentObject {
   name: string;
   imageUrl: string;
   chapter: number;
   message: string;
   url: string;
   nextChapter: number;
+  workId: string;
+}
+
+export interface CreateNotificationEventPayload {
+  content: string;
+  recipientId: string;
+  channels: string[];
+  providers: string[];
 }
 
 @EventsHandler(WorkMarkUnreadEvent)
@@ -36,13 +44,14 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       name: payload.name,
       url: payload.url,
       nextChapter: payload.nextChapter.getChapter(),
-    } satisfies ContentObject;
+      workId: payload.id,
+    } satisfies WorkContentObject;
 
     this.clientEmitter.emit('create-notification', {
       content: JSON.stringify(content),
       recipientId: payload.userId,
       channels: ['on-new-chapter'],
       providers: ['all'],
-    });
+    } satisfies CreateNotificationEventPayload);
   }
 }
