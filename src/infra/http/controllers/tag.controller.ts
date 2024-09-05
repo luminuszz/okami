@@ -16,23 +16,25 @@ import { FilterTagDto } from '@infra/http/validators/filter-tag.dto';
 
 @ApiTags('tags')
 @Controller('tags')
-@ProtectFor('ADMIN')
 export class TagController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
+  @ProtectFor('ADMIN')
   @Post()
   async create(@Body() { name, color }: CreateTagDto) {
     await this.commandBus.execute(new CreateTagCommand(name, color));
   }
 
+  @ProtectFor('ADMIN')
   @Put('/:id')
   async updateTag(@Body() data: UpdateTagDto, @Param('id') id: string) {
     await this.commandBus.execute(new UpdateTagCommand(id, data.name, data.color));
   }
 
+  @ProtectFor(['USER', 'SUBSCRIBED_USER'])
   @Get()
   @ApiOkResponse({ type: TagModelPaged })
   async listTags(@Query() params: ListTagParams) {
@@ -41,11 +43,13 @@ export class TagController {
     return TagHttpModel.toHttpListPaged(response.tags, response.totalOfPages);
   }
 
+  @ProtectFor('ADMIN')
   @Delete('/:id')
   async deleteTag(@Param('id', ParseObjectIdPipe) id: string) {
     await this.commandBus.execute(new DeleteTagCommand(id));
   }
 
+  @ProtectFor('ADMIN')
   @Get('/filter')
   async filterTag(@Query() { search }: FilterTagDto) {
     const results = await this.queryBus.execute(new FilterTagBySearchQuery(search));

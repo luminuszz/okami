@@ -111,6 +111,10 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
   }
 
+  static createS3AvatarUrl(fileName: string): string {
+    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/user-avatars-images/${fileName}`;
+  }
+
   async uploadWorkImageWithUrl({ fileName, fileData }: FiletoUploadWithUrl): Promise<FileUploadResponse> {
     await this.createFolderIfNotExists('work-images');
 

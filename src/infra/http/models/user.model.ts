@@ -18,7 +18,7 @@ const userSchema = z
   })
   .transform((data) => ({
     ...data,
-    avatarImageUrl: data.avatarImageId ? CloudFlareR2StorageAdapter.createS3FileUrl(data.avatarImageId) : null,
+    avatarImageUrl: data.avatarImageId ? CloudFlareR2StorageAdapter.createS3AvatarUrl(data.avatarImageId) : null,
   }));
 
 export type UserHttpType = z.infer<typeof userSchema>;
