@@ -34,7 +34,7 @@ export class TagController {
     await this.commandBus.execute(new UpdateTagCommand(id, data.name, data.color));
   }
 
-  @ProtectFor(['USER', 'SUBSCRIBED_USER'])
+  @ProtectFor(['USER', 'SUBSCRIBED_USER', 'ADMIN'])
   @Get()
   @ApiOkResponse({ type: TagModelPaged })
   async listTags(@Query() params: ListTagParams) {
