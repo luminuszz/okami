@@ -17,7 +17,15 @@ import { AuthGuard } from '../crqs/auth/auth.guard';
 import { SearchTokenController } from '@infra/http/controllers/search-token.controller';
 
 @Module({
-  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, MessagingModule],
+  imports: [
+    PaymentModule,
+    CqrsModule,
+    WorkModule,
+    AuthModule,
+    NotificationModule,
+    DatabaseModule,
+    MessagingModule
+  ],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RoleGuard },
