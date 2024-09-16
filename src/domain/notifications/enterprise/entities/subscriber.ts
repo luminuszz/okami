@@ -1,5 +1,4 @@
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
-import { Channel } from './channel';
 import { MobilePushSubscription } from './mobile-push-subscription';
 import { WebPushSubscription } from './web-push-subscription';
 import { Notification } from './notifications';
@@ -12,7 +11,6 @@ export interface SubscriberProps {
   email: string;
   telegramChatId?: string;
 
-  channels?: Channel[];
   mobilePushSubscriptions?: MobilePushSubscription[];
   webPushSubscriptions?: WebPushSubscription[];
   authCode?: string;
@@ -43,10 +41,6 @@ export class Subscriber extends Entity<SubscriberProps> {
 
   private update() {
     this.props.updatedAt = new Date();
-  }
-
-  public get channels() {
-    return this.props.channels;
   }
 
   public set telegramChatId(telegramChatId: string) {

@@ -31,8 +31,6 @@ describe('E2E tests', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(MessageService)
-      .useValue(fakerMessageEmit)
       .overrideProvider(PrismaService)
       .useFactory({
         inject: [EnvService],
@@ -47,6 +45,8 @@ describe('E2E tests', () => {
           return prisma;
         },
       })
+      .overrideProvider(MessageService)
+      .useValue(fakerMessageEmit)
       .compile();
 
     app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());

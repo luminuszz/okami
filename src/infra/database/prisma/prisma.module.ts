@@ -5,6 +5,10 @@ import { PrismaTagRepository } from './prisma-tag.repository';
 import { PrismaWorkRepository } from './prisma-work.repository';
 import { PrismaService } from './prisma.service';
 import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository';
+import { PrismaMobilePushSubscriptionRepository } from '@infra/database/prisma/prisma-mobile-subscription.repository';
+import { PrismaWebPushSubscriptionRepository } from '@infra/database/prisma/prisma-web-push-subscription.repository';
+import { PrismaNotificationRepository } from '@infra/database/prisma/prisma-notification.repository';
+import { PrismaSubscriberRepository } from '@infra/database/prisma/prisma-subscriber.repository';
 
 @Module({
   providers: [
@@ -14,6 +18,10 @@ import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-searc
     PrismaAccessTokenRepository,
     PrismaTagRepository,
     PrismaSearchTokenRepository,
+    PrismaMobilePushSubscriptionRepository,
+    PrismaWebPushSubscriptionRepository,
+    PrismaNotificationRepository,
+    PrismaSubscriberRepository,
   ],
   exports: [
     PrismaService,
@@ -22,6 +30,10 @@ import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-searc
     PrismaAccessTokenRepository,
     PrismaTagRepository,
     PrismaSearchTokenRepository,
+    PrismaMobilePushSubscriptionRepository,
+    PrismaWebPushSubscriptionRepository,
+    PrismaNotificationRepository,
+    PrismaSubscriberRepository,
   ],
 })
 export class PrismaModule {}
