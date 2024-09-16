@@ -1,17 +1,27 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
 import { User } from '../user-auth.decorator';
-import { MessageService } from '@app/infra/messaging/messaging-service';
+
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { lastValueFrom } from 'rxjs';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
-import { RegisterTelegramChatIdDto } from '../validators/register-telegram-chat-id.dto';
 import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
+import { CreateWebPushSubscription } from '@domain/notifications/application/use-cases/create-web-push-subscription';
+import { EnvService } from '@infra/env/env.service';
+import { CreateMobilePushSubscription } from '@domain/notifications/application/use-cases/create-mobile-push-subscription';
+import { FetchRecentSubscriberNotifications } from '@domain/notifications/application/use-cases/fetch-recent-subscriber-notifications';
+import { NotificationHttp, NotificationsModel } from '@infra/http/models/notifications.model';
+import { MarkNotificationAsRead } from '@domain/notifications/application/use-cases/mark-notification-as-read';
 
 @ApiTags('notification')
 @Controller('notification')
 export class NotificationController {
-  constructor(private readonly notificationServiceEmitter: MessageService) {}
+  constructor(
+    private readonly createWebPushSubscription: CreateWebPushSubscription,
+    private readonly createSubscriberMobilePush: CreateMobilePushSubscription,
+    private readonly fetchRecentSubscriberNotifications: FetchRecentSubscriberNotifications,
+    private readonly markNotificationAsReadUseCase: MarkNotificationAsRead,
+    private readonly envService: EnvService,
+  ) {}
 
   @UseGuards(AuthGuard)
   @Post('/push/browser/subscribe')
@@ -19,61 +29,61 @@ export class NotificationController {
     @Body() { auth, endpoint, p256dh }: SubscribeUserBrowserNotificationDto,
     @User('id') user_id: string,
   ) {
-    return lastValueFrom(
-      this.notificationServiceEmitter.send('create-web-push-subscription', {
-        webPushSubscriptionAuth: auth,
-        webPushSubscriptionP256dh: p256dh,
-        endpoint: endpoint,
-        subscriberId: user_id,
-      }),
-      { defaultValue: '' },
-    );
+    const results = await this.createWebPushSubscription.execute({
+      recipientId: user_id,
+      endpoint,
+      webPushSubscriptionAuth: auth,
+      webPushSubscriptionP256dh: p256dh,
+    });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
   }
 
   @UseGuards(AuthGuard)
   @Get('/push/browser/public-key')
   async getPublicKey() {
-    return this.notificationServiceEmitter.send('send-web-push-public-key', {});
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('/push/telegram/subscribe')
-  async subscribeInTelegram(@Body() { telegramChatId }: RegisterTelegramChatIdDto, @User('id') userId: string) {
-    return lastValueFrom(
-      this.notificationServiceEmitter.send('register-telegram-chat', {
-        telegramChatId,
-        subscriberId: userId,
-      }),
-      { defaultValue: '' },
-    );
+    return {
+      publicKey: this.envService.get('WEB_PUSH_PUBLIC_KEY'),
+    };
   }
 
   @UseGuards(AuthGuard)
   @Post('/push/mobile/subscribe')
   async subscribeInMobile(@Body() { token }: RegisterMobilePushSubscriberDto, @User('id') userId: string) {
-    return lastValueFrom(
-      this.notificationServiceEmitter.send('create-mobile-push-subscription', {
-        subscriberId: userId,
-        subscriptionToken: token,
-      }),
-      { defaultValue: '' },
-    );
+    const response = await this.createSubscriberMobilePush.execute({
+      recipientId: userId,
+      subscriptionToken: token,
+    });
+
+    if (response.isLeft()) {
+      throw response.value;
+    }
   }
 
   @UseGuards(AuthGuard)
   @Get('recent')
+  @ApiOkResponse({ type: NotificationHttp, isArray: true })
   async getRecentNotifications(@User('id') userId: string) {
-    return lastValueFrom(
-      this.notificationServiceEmitter.send('get-recent-notifications', {
-        recipientId: userId,
-      }),
-      { defaultValue: [] },
-    );
+    const results = await this.fetchRecentSubscriberNotifications.execute({ recipientId: userId });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
+
+    const { notifications } = results.value;
+
+    return NotificationsModel.toList(notifications);
   }
 
   @UseGuards(AuthGuard)
   @Post('mark-read/:notificationId')
   async markNotificationAsRead(@Param('notificationId', ParseUUIDPipe) notificationId: string) {
-    this.notificationServiceEmitter.emit('mark-notification-as-read', { notificationId });
+    const results = await this.markNotificationAsReadUseCase.execute({ notificationId });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
   }
 }

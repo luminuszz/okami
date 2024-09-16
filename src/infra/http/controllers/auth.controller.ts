@@ -37,6 +37,7 @@ import { UpdateUserDto } from '../validators/update-user.dto';
 import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
 import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto';
 import { ValidateEmailCodeCommand } from '@infra/crqs/auth/commands/validate-email-code.command';
+import { FindSubscriberByRecipientId } from '@domain/notifications/application/use-cases/find-subscriber-by-recipient-id';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -46,6 +47,7 @@ export class AuthController {
     private readonly queryBus: QueryBus,
     private readonly getUserTrialQuote: GetUserTrialQuote,
     private readonly notificationService: MessageService,
+    private readonly getSubscriberByRecipientId: FindSubscriberByRecipientId,
   ) {}
 
   @IsPublic()
@@ -189,20 +191,17 @@ export class AuthController {
 
   @Get('/user/telegram-status')
   async getTelegramStatus(@User('id') userId: string) {
-    try {
-      const response = await firstValueFrom(this.notificationService.send('get-subscriber', { recipientId: userId }), {
-        defaultValue: null,
-      });
+    const results = await this.getSubscriberByRecipientId.execute({ recipientId: userId });
 
-      const { telegramChatId } = response as { telegramChatId: string };
-
-      return {
-        isSubscribed: !!telegramChatId,
-        telegramChatId: telegramChatId || null,
-      };
-    } catch (e) {
-      throw new BadRequestException('Houve um erro');
+    if (results.isLeft()) {
+      throw new BadRequestException(results.value);
     }
+    const { telegramChatId } = results.value.subscriber;
+
+    return {
+      isSubscribed: !!telegramChatId,
+      telegramChatId: telegramChatId || null,
+    };
   }
 
   @IsPublic()

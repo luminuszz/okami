@@ -20,6 +20,10 @@ import { FindSubscriberByEmail } from '@domain/notifications/application/use-cas
 import { DeleteWebPushSubscription } from '@domain/notifications/application/use-cases/delete-web-push-subscription';
 import { FindSubscriberByRecipientId } from '@domain/notifications/application/use-cases/find-subscriber-by-recipient-id';
 import { MailModule } from '@infra/mail/mail.module';
+import { CreateWebPushSubscription } from '@domain/notifications/application/use-cases/create-web-push-subscription';
+import { CreateMobilePushSubscription } from '@domain/notifications/application/use-cases/create-mobile-push-subscription';
+import { FetchRecentSubscriberNotifications } from '@domain/notifications/application/use-cases/fetch-recent-subscriber-notifications';
+import { MarkNotificationAsRead } from '@domain/notifications/application/use-cases/mark-notification-as-read';
 
 @Module({
   imports: [
@@ -53,6 +57,10 @@ import { MailModule } from '@infra/mail/mail.module';
     FindSubscriberByEmail,
     DeleteWebPushSubscription,
     FindSubscriberByRecipientId,
+    CreateWebPushSubscription,
+    CreateMobilePushSubscription,
+    FetchRecentSubscriberNotifications,
+    MarkNotificationAsRead,
   ],
 })
 export class NotificationModule {}
