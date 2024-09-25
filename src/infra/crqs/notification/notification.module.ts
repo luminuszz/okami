@@ -1,4 +1,3 @@
-import { MessagingModule } from '@app/infra/messaging/messaging.module';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -85,5 +84,27 @@ import { MarkNotificationAsRead } from '@domain/notifications/application/use-ca
     MarkNotificationAsRead,
     FindSubscriberByRecipientId,
   ],
+  exports: [
+    TelegrafProvider,
+    NotificationWorkMarkUnreadEventHandler,
+    OnUserCreatedEventHandler,
+    OnUserEmailUpdatedHandler,
+    OneSignalNotificationPublisher,
+    TelegramNotificationHandler,
+    WebPushNotificationHandler,
+    CreateSubscriber,
+    UpdateSubscriberTelegramChatId,
+    UpdateSubscriberEmailByRecipientId,
+    SendNotificationUseCase,
+    SendAuthCodeEmail,
+    CompareSubscriberAuthCode,
+    FindSubscriberByEmail,
+    DeleteWebPushSubscription,
+    FindSubscriberByRecipientId,
+    CreateWebPushSubscription,
+    CreateMobilePushSubscription,
+    FetchRecentSubscriberNotifications,
+    MarkNotificationAsRead,
+  ]
 })
 export class NotificationModule {}
