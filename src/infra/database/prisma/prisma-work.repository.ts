@@ -13,6 +13,24 @@ export class PrismaWorkRepository implements WorkRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  async fetchForWorksForScrapping(): Promise<Work[]> {
+    const results = await this.prisma.work.findMany({
+      where: {
+        status: WorkStatus.READ,
+        OR: [
+          {
+            refreshStatus: RefreshStatus.SUCCESS,
+          },
+          {
+            refreshStatus: RefreshStatus.FAILED,
+          },
+        ],
+      },
+    });
+
+    return results.map(prismaWorkToEntityMapper);
+  }
+
   async fetchWorksByUserIdWithFilters({ userId, status, search }: FetchUserWorksInput): Promise<Work[]> {
     const query = {
       userId,
@@ -173,16 +191,6 @@ export class PrismaWorkRepository implements WorkRepository {
     });
 
     return results ? prismaWorkToEntityMapper(results) : null;
-  }
-
-  async fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse(): Promise<Work[]> {
-    const results = await this.prisma.work.findMany({
-      where: {
-        status: WorkStatus.READ,
-      },
-    });
-
-    return results.map(prismaWorkToEntityMapper);
   }
 
   async findAll() {

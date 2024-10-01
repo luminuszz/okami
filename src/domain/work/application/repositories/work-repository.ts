@@ -13,7 +13,6 @@ export abstract class WorkRepository {
   abstract findById(id: string): Promise<Work>;
   abstract fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]>;
   abstract fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]>;
-  abstract fetchForWorksWithHasNewChapterFalseAndWithIsFinishedFalseAndIsDroppedFalse(): Promise<Work[]>;
   abstract findOne(id: string): Promise<Work>;
   abstract saveMany(works: Work[]): Promise<void>;
   abstract fetchWorksScrapingPaginated(
@@ -21,6 +20,8 @@ export abstract class WorkRepository {
     page: number,
     filter?: RefreshStatus,
   ): Promise<{ data: Work[]; totalOfPages: number }>;
+
+  abstract fetchForWorksForScrapping(): Promise<Work[]>;
 
   abstract fetchWorksByUserIdWithFilters(payload: FetchUserWorksInput): Promise<Work[]>;
 
