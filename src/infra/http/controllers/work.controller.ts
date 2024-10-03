@@ -34,6 +34,7 @@ import {
   Put,
   Query,
   Req,
+  HttpCode,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -56,6 +57,7 @@ export class WorkController {
   @ApiConsumes('multipart/form-data')
   @ApiBody(CreateWorkSchema)
   @Post()
+  @HttpCode(201)
   async createWork(@Req() req: any, @User('id') userId: string) {
     const formData = await req.file();
 
@@ -67,8 +69,8 @@ export class WorkController {
       name: name.value,
       url: url.value,
       file: formData,
-      tagsId: formData.fields.tagsId.value?.replaceAll('\n', '')?.split(','),
-      alternativeName: alternativeName.value,
+      tagsId: formData.fields.tagsId?.value?.replaceAll('\n', '')?.split(','),
+      alternativeName: alternativeName?.value,
     };
 
     const imageData = await formData.toBuffer();
