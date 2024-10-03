@@ -5,6 +5,7 @@ import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { SendNotificationUseCase } from '@domain/notifications/application/use-cases/send-notification';
 import { SubscriberRepository } from '@domain/notifications/application/contracts/subscriber-repository';
 import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
+import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 
 export interface CreateNotificationEventPayload {
   content: string;
@@ -18,20 +19,22 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
   constructor(
     private readonly sendNotification: SendNotificationUseCase,
     private readonly subscriberRepository: SubscriberRepository,
+    private readonly useRepository: UserRepository,
     private readonly eventBus: EventBus,
   ) {}
 
   async handle({ payload }: WorkMarkUnreadEvent) {
-    const subscriber = await this.subscriberRepository.findByRecipientId(payload.id);
+    const user = await this.useRepository.findById(payload.userId);
 
-    if (!subscriber) return;
+    if (!user) return;
+
+    const subscriber = await this.subscriberRepository.findByRecipientId(user.id);
 
     const predicate = payload.category === Category.MANGA ? 'Capítulo' : 'Episódio';
 
     const message = `
     Obra Atualizada - ${payload.name} !
     Novo ${predicate} de ${payload.name} - ${predicate} ${payload?.nextChapter?.getChapter()} disponível !
-    
     ${payload.url}
     `;
 
@@ -45,14 +48,14 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       url: payload.url,
       nextChapter: payload.nextChapter.getChapter(),
       workId: payload.id,
-      subscriber: subscriber,
+      subscriber: subscriber as any,
     } satisfies WorkContentObject;
 
     const results = await this.sendNotification.execute({
       channels: ['on-new-chapter'],
       providers: ['all'],
       content: JSON.stringify(content),
-      recipientId: subscriber.recipientId,
+      subscriberId: subscriber.id,
     });
 
     if (results.isLeft()) {

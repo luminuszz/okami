@@ -8,9 +8,11 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { EnvModule } from '@infra/env/env.module';
 import { PaymentModule } from '@infra/payment/payment.module';
 import { SentryModule } from '@infra/logs/sentry/sentry.module';
+import { NotificationModule } from '@infra/crqs/notification/notification.module';
 
 @Module({
   imports: [
+    NotificationModule,
     SentryModule,
     PaymentModule,
     HttpModule,

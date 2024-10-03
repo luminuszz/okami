@@ -30,7 +30,12 @@ export class TelegramNotificationHandler implements IEventHandler<NotificationCr
 
     if (!canNotify) return;
 
-    const { subscriber, message, url, imageUrl } = JSON.parse(notification.content) as WorkContentObject;
+    const {
+      subscriber: { props: subscriber },
+      message,
+      url,
+      imageUrl,
+    } = JSON.parse(notification.content) as WorkContentObject;
 
     if (!subscriber.telegramChatId) return;
 

@@ -28,7 +28,7 @@ export class PrismaSubscriberRepository implements SubscriberRepository {
     return Subscriber.create(
       {
         recipientId: subscriber.recipientId,
-        telegramChatId: subscriber.telegramId || '',
+        telegramChatId: subscriber.telegramId ?? '',
         createdAt: subscriber.createdAt,
         email: subscriber.email ?? '',
         authCode: subscriber.authCode ?? '',
