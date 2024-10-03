@@ -5,7 +5,6 @@ import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/upd
 import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
 import { ProtectFor } from '@app/infra/crqs/auth/role.guard';
-import { MessageService } from '@app/infra/messaging/messaging-service';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
 import { IsPublic } from '@infra/crqs/auth/auth.guard';
 import {
@@ -27,7 +26,6 @@ import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from 
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
-import { firstValueFrom } from 'rxjs';
 import { User } from '../user-auth.decorator';
 import { CreateUserDto } from '../validators/create-user.dto';
 import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
@@ -46,7 +44,6 @@ export class AuthController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
     private readonly getUserTrialQuote: GetUserTrialQuote,
-    private readonly notificationService: MessageService,
     private readonly getSubscriberByRecipientId: FindSubscriberByRecipientId,
   ) {}
 

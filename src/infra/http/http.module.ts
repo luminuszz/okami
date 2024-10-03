@@ -5,7 +5,6 @@ import { AuthController } from '@infra/http/controllers/auth.controller';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { WorkModule } from '../crqs/work/work.module';
-import { MessagingModule } from '../messaging/messaging.module';
 import { PaymentModule } from '../payment/payment.module';
 import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
@@ -17,15 +16,7 @@ import { AuthGuard } from '../crqs/auth/auth.guard';
 import { SearchTokenController } from '@infra/http/controllers/search-token.controller';
 
 @Module({
-  imports: [
-    PaymentModule,
-    CqrsModule,
-    WorkModule,
-    AuthModule,
-    NotificationModule,
-    DatabaseModule,
-    MessagingModule
-  ],
+  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RoleGuard },

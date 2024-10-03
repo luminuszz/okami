@@ -5,12 +5,10 @@ import * as fastifyCookie from '@fastify/cookie';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { EnvService } from '@infra/env/env.service';
-import { MessageService } from '@infra/messaging/messaging-service';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
-import { fakerMessageEmit } from '@test/mocks/mocks';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { SearchTokenHttp } from '@infra/http/models/search-token.model';
 import { User, UserRole } from '@domain/auth/enterprise/entities/User';
@@ -45,8 +43,6 @@ describe('E2E tests', () => {
           return prisma;
         },
       })
-      .overrideProvider(MessageService)
-      .useValue(fakerMessageEmit)
       .compile();
 
     app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
