@@ -17,6 +17,14 @@ import { TagRepository } from '@domain/work/application/repositories/tag-reposit
 import { PrismaTagRepository } from './prisma/prisma-tag.repository';
 import { SearchTokenRepository } from '@domain/work/application/repositories/search-token-repository';
 import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository';
+import { SubscriberRepository } from '@domain/notifications/application/contracts/subscriber-repository';
+import { PrismaSubscriberRepository } from '@infra/database/prisma/prisma-subscriber.repository';
+import { MobilePushSubscriptionRepository } from '@domain/notifications/application/contracts/mobile-push-subscription-repository';
+import { PrismaMobilePushSubscriptionRepository } from '@infra/database/prisma/prisma-mobile-subscription.repository';
+import { PrismaWebPushSubscriptionRepository } from '@infra/database/prisma/prisma-web-push-subscription.repository';
+import { WePushSubscriptionRepository } from '@domain/notifications/application/contracts/web-push-subscription-repository';
+import { NotificationRepository } from '@domain/notifications/application/contracts/notification.repository';
+import { PrismaNotificationRepository } from '@infra/database/prisma/prisma-notification.repository';
 
 @Global()
 @Module({
@@ -25,11 +33,15 @@ import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-searc
     PrismaService,
     BatchService,
     UploadWorkImageUseCase,
+    { provide: NotificationRepository, useClass: PrismaNotificationRepository },
     { provide: WorkRepository, useClass: PrismaWorkRepository },
     { provide: UserRepository, useClass: PrismaUserRepository },
     { provide: AccessTokenRepository, useClass: PrismaAccessTokenRepository },
     { provide: TagRepository, useClass: PrismaTagRepository },
     { provide: SearchTokenRepository, useClass: PrismaSearchTokenRepository },
+    { provide: SubscriberRepository, useClass: PrismaSubscriberRepository },
+    { provide: MobilePushSubscriptionRepository, useClass: PrismaMobilePushSubscriptionRepository },
+    { provide: WePushSubscriptionRepository, useClass: PrismaWebPushSubscriptionRepository },
   ],
   exports: [
     WorkRepository,
@@ -39,6 +51,10 @@ import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-searc
     AccessTokenRepository,
     TagRepository,
     SearchTokenRepository,
+    SubscriberRepository,
+    WePushSubscriptionRepository,
+    MobilePushSubscriptionRepository,
+    NotificationRepository,
   ],
 })
 export class DatabaseModule {}

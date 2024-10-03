@@ -1,15 +1,15 @@
-import { MessageService } from '@app/infra/messaging/messaging-service';
 import { UserEmailUpdated } from '@domain/auth/enterprise/events/user-email-updated';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { UpdateSubscriberEmailByRecipientId } from '@domain/notifications/application/use-cases/update-subscriber-email-by-recipient-id';
 
 @EventsHandler(UserEmailUpdated)
 export class OnUserEmailUpdatedHandler implements IEventHandler<UserEmailUpdated> {
-  constructor(private readonly notificationService: MessageService) {}
+  constructor(private readonly updateSubscriberEmail: UpdateSubscriberEmailByRecipientId) {}
 
   async handle({ payload: user }: UserEmailUpdated) {
-    this.notificationService.emit('subscriber-email-updated', {
-      recipientId: user.id,
+    await this.updateSubscriberEmail.execute({
       email: user.email,
+      recipientId: user.id,
     });
   }
 }

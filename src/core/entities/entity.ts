@@ -6,7 +6,7 @@ export interface DomainEvent<Payload = unknown> {
 }
 
 export class Entity<EntityProps> {
-  private _id: UniqueEntityID;
+  private readonly _id: UniqueEntityID;
 
   protected props: EntityProps;
 

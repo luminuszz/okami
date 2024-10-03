@@ -1,13 +1,13 @@
-import { MessageService } from '@app/infra/messaging/messaging-service';
 import { UserCreated } from '@domain/auth/application/events/user-created';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { CreateSubscriber } from '@domain/notifications/application/use-cases/create-subscriber';
 
 @EventsHandler(UserCreated)
 export class OnUserCreatedEventHandler implements IEventHandler<UserCreated> {
-  constructor(private readonly notificationService: MessageService) {}
+  constructor(private readonly createSubscriber: CreateSubscriber) {}
 
   async handle({ payload }: UserCreated) {
-    this.notificationService.emit('new-subscriber', {
+    await this.createSubscriber.execute({
       recipientId: payload.id,
       email: payload.email,
     });

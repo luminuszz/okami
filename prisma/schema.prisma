@@ -104,6 +104,7 @@ model User {
   accessToken AccessToken?
   worksId     String[]     @map("works_id") @db.ObjectId
   works       Work[]
+  Subscriber  Subscriber?
 }
 
 model AccessToken {
@@ -128,4 +129,49 @@ model SearchToken {
   token     String
   type      SearchTokenType
   createdAt DateTime        @map("created_at")
+}
+
+model Notification {
+  id           String     @id @map("_id") @db.ObjectId
+  subscriberId String     @db.ObjectId
+  content      String
+  createdAt    DateTime   @default(now())
+  readAt       DateTime?
+  channels     String[]   @default([])
+  providers    String[]   @default(["all"])
+  susbscriber  Subscriber @relation(fields: [subscriberId], references: [id])
+}
+
+model Subscriber {
+  id                   String                @id @map("_id") @db.ObjectId
+  telegramId           String?               @unique
+  createdAt            DateTime              @default(now())
+  recipientId          String                @unique @db.ObjectId
+  email                String?               @unique
+  mobileSubscriptions  MobileSubscription[]
+  notifications        Notification[]
+  webPushSubscriptions WebPushSubscription[]
+  channelsId           String[]              @db.ObjectId
+  authCode             String?               @map("auth_code")
+  recipient            User                  @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+}
+
+model WebPushSubscription {
+  id           String     @id @map("_id") @db.ObjectId
+  p256dh       String
+  auth         String
+  createdAt    DateTime
+  updatedAt    DateTime   @updatedAt
+  subscriberId String     @db.ObjectId
+  endpoint     String
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id])
+}
+
+model MobileSubscription {
+  id                String     @id @map("_id") @db.ObjectId
+  subscriberId      String     @db.ObjectId
+  subscriptionToken String     @unique
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  subscriber        Subscriber @relation(fields: [subscriberId], references: [id])
 }

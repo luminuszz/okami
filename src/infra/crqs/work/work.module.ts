@@ -13,8 +13,6 @@ import { FetchForWorkersUnreadUseCase } from '@domain/work/application/usecases/
 import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
 import { UpdateWorkCommandHandler } from './commands/update-work.command';
-
-import { MessagingModule } from '@app/infra/messaging/messaging.module';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { CreateManySearchTokens } from '@domain/work/application/usecases/create-many-search-tokens';
 import { CreateSearchToken } from '@domain/work/application/usecases/create-search-token';
@@ -91,7 +89,7 @@ const QueryHandlers = [
 const EventHandlers = [];
 
 @Module({
-  imports: [MessagingModule, CqrsModule, StorageModule, QueueModule],
+  imports: [CqrsModule, StorageModule, QueueModule],
   providers: [
     ...CommandHandlers,
     ...QueryHandlers,

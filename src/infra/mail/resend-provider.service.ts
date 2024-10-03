@@ -1,6 +1,7 @@
 import {
   MailProvider,
   SendConfirmEmailDto,
+  SendEmailDto,
   SendResetPasswordEmailDto,
 } from '@domain/auth/application/contracts/mail-provider';
 import { Injectable } from '@nestjs/common';
@@ -13,6 +14,19 @@ export class ResendEmailProviderService implements MailProvider {
 
   constructor(private readonly env: EnvService) {
     this.resend = new Resend(env.get('RESEND_API_SECRET_KEY'));
+  }
+
+  async sendMail({ body, subject, to }: SendEmailDto): Promise<void> {
+    const { error } = await this.resend.emails.send({
+      to: to,
+      subject: subject,
+      text: body,
+      from: 'Okami Platform <okami@okami-mail.daviribeiro.com>',
+    });
+
+    if (error) {
+      throw new Error(`resend error ${error.name} - ${error.message} `);
+    }
   }
 
   private readonly from = 'Okami Platform <okami@okami-mail.daviribeiro.com>';
