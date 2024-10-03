@@ -1,7 +1,13 @@
 import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
-import { Work } from '@domain/work/enterprise/entities/work';
+import { RefreshStatus, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 
 export class InMemoryWorkRepository implements WorkRepository {
+  async fetchForWorksForScrapping(): Promise<Work[]> {
+    return this.works.filter(
+      (item) =>
+        (item.status === WorkStatus.READ && item.refreshStatus === RefreshStatus.FAILED) || RefreshStatus.SUCCESS,
+    );
+  }
   async fetchWorksByUserIdWithFilters(payload: FetchUserWorksInput): Promise<Work[]> {
     return this.works.filter((work) => work.userId === payload.userId);
   }

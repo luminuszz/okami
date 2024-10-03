@@ -2,6 +2,11 @@ import { TagRepository } from '@domain/work/application/repositories/tag-reposit
 import { Tag } from '@domain/work/enterprise/entities/tag';
 
 export class InMemoryTagRepository implements TagRepository {
+  async findAllTagsByWorkId(workId: string): Promise<Tag[]> {
+    return this.tags.filter((t) => t.worksId.includes(workId));
+  }
+  async updateTagList(workId: string, tagsToAdd: string[], tagsToRemove: string[]): Promise<void> {}
+
   public tags: Tag[] = [];
 
   async fetchAllTagsPaged(page: number): Promise<{ tags: Tag[]; totalOfPages: number }> {

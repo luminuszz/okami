@@ -4,15 +4,18 @@ import { CreateWorkUseCase } from './create-work';
 import { WorkNotFoundError } from './errors/work-not-found';
 import { UpdateWorkUseCase } from './update-work';
 import { faker } from '@faker-js/faker';
+import { InMemoryTagRepository } from '@test/mocks/in-memory-tag-repository';
 
 describe('UpdateWorkChapterUseCase', () => {
   let stu: UpdateWorkUseCase;
   let workRepository: InMemoryWorkRepository;
   let createWork: CreateWorkUseCase;
+  let tagRepository: InMemoryTagRepository;
 
   beforeEach(() => {
+    tagRepository = new InMemoryTagRepository();
     workRepository = new InMemoryWorkRepository();
-    stu = new UpdateWorkUseCase(workRepository);
+    stu = new UpdateWorkUseCase(workRepository, tagRepository);
     createWork = new CreateWorkUseCase(workRepository);
   });
 

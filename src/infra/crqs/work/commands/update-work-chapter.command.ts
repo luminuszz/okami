@@ -17,11 +17,15 @@ export class UpdateWorkChapterCommandHandler implements ICommandHandler<UpdateWo
   ) {}
 
   async execute({ chapter, id, userId }: UpdateWorkChapterCommand): Promise<any> {
-    const { work } = await this.updateChapter.execute({
+    const results = await this.updateChapter.execute({
       chapter,
       id,
       userId,
     });
+
+    if (results.isLeft()) throw results.value;
+
+    const { work } = results.value;
 
     this.eventBus.publishAll(work.events);
   }
