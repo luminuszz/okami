@@ -4,7 +4,6 @@ import { Category } from '@domain/work/enterprise/entities/work';
 import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { SendNotificationUseCase } from '@domain/notifications/application/use-cases/send-notification';
 import { SubscriberRepository } from '@domain/notifications/application/contracts/subscriber-repository';
-import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
 import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 
 export interface CreateNotificationEventPayload {
@@ -49,7 +48,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       nextChapter: payload.nextChapter.getChapter(),
       workId: payload.id,
       subscriber: subscriber as any,
-    } satisfies WorkContentObject;
+    };
 
     const results = await this.sendNotification.execute({
       channels: ['on-new-chapter'],
