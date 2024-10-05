@@ -14,7 +14,5 @@ export interface WorkContentObject {
   url: string;
   nextChapter: number;
   workId: string;
-  subscriber: {
-    props: Subscriber;
-  };
+  subscriber: Subscriber;
 }

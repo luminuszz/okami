@@ -48,8 +48,10 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       url: payload.url,
       nextChapter: payload.nextChapter.getChapter(),
       workId: payload.id,
-      subscriber: subscriber as any,
+      subscriber: subscriber.toJSON() as any,
     } satisfies WorkContentObject;
+
+    console.log('content', content);
 
     const results = await this.sendNotification.execute({
       channels: ['on-new-chapter'],

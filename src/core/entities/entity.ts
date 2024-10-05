@@ -28,5 +28,9 @@ export class Entity<EntityProps> {
     return this._id.equals(entity?._id);
   }
 
+  public toJSON() {
+    return this.props;
+  }
+
   public events: DomainEvent[] = [];
 }
