@@ -9,6 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'node:fs';
 import { AppModule } from './app.module';
 import { EnvService } from '@infra/env/env.service';
+import { parseMultipartFormData } from '@infra/utils/parseMultipartFormData';
 
 (async () => {
   const adapter = new FastifyAdapter();
@@ -24,7 +25,7 @@ import { EnvService } from '@infra/env/env.service';
         },
       },
     }),
-    adapter.register(fmp as any),
+    adapter.register(fmp as any, { attachFieldsToBody: 'keyValues', fields: 10, onFile: parseMultipartFormData }),
     adapter.register(
       fastifyCookie as any,
       {

@@ -16,7 +16,7 @@ import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-im
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { WorkHttp, WorkModel, WorkModelPaged } from '@infra/http/models/work.model';
-import { CreateWorkSchema } from '@infra/http/validators/create-work.dto';
+import { CreateWorkApiShape, createWorkSchema } from '@infra/http/validators/create-work.dto';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
 import { UpdateChapterDto } from '@infra/http/validators/update-chapter.dto';
@@ -43,6 +43,7 @@ import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import * as fs from 'node:fs';
 
 @ApiTags('work')
 @Controller('work')
@@ -55,25 +56,13 @@ export class WorkController {
   ) {}
 
   @ApiConsumes('multipart/form-data')
-  @ApiBody(CreateWorkSchema)
+  @ApiBody(CreateWorkApiShape)
   @Post()
   @HttpCode(201)
   async createWork(@Req() req: any, @User('id') userId: string) {
-    const formData = await req.file();
+    console.log(req.body);
 
-    const { category, chapter, name, url, alternativeName } = formData.fields;
-
-    const data = {
-      category: category.value,
-      chapter: chapter.value,
-      name: name.value,
-      url: url.value,
-      file: formData,
-      tagsId: formData.fields.tagsId?.value?.replaceAll('\n', '')?.split(','),
-      alternativeName: alternativeName?.value,
-    };
-
-    const imageData = await formData.toBuffer();
+    const data = createWorkSchema.parse(req.body);
 
     await this.commandBus.execute(
       new CreateWorkCommand({
@@ -85,8 +74,8 @@ export class WorkController {
         tagsId: data.tagsId,
         userId,
         image: {
-          imageFile: imageData,
-          imageType: formData.filename,
+          imageFile: data.file.buffer,
+          imageType: data.file.filename,
         },
       }),
     );
