@@ -24,7 +24,9 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
 
     const content = JSON.parse(notification.content) as WorkContentObject;
 
-    const { subscriber } = content;
+    const {
+      subscriber: { props: subscriber },
+    } = content;
 
     if (!subscriber.mobilePushSubscriptions?.length) return;
 
