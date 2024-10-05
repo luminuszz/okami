@@ -29,7 +29,12 @@ export class WebPushNotificationHandler implements OnModuleInit, IEventHandler {
 
     if (!canNotify) return;
 
-    const { subscriber, message, name, workId } = JSON.parse(notification.content) as WorkContentObject;
+    const {
+      subscriber: { props: subscriber },
+      message,
+      name,
+      workId,
+    } = JSON.parse(notification.content) as WorkContentObject;
 
     if (!subscriber.webPushSubscriptions?.length) return;
 
