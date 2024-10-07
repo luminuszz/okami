@@ -30,17 +30,25 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
 
     const subscribersTokens = map(subscriber.mobilePushSubscriptions, 'subscriptionToken');
 
+    console.log(this.envService.get('ONE_SIGNAL_SERVICE_ENDPOINT'));
+
     this.httpService
-      .post('notifications', {
-        app_id: this.envService.get('ONE_SIGNAL_APP_ID'),
-        include_subscription_ids: subscribersTokens,
-        contents: {
-          en: content.message,
+      .post<any>(
+        'notifications',
+        {
+          app_id: this.envService.get('ONE_SIGNAL_APP_ID'),
+          include_subscription_ids: subscribersTokens,
+          contents: {
+            en: content.message,
+          },
+          big_picture: content.imageUrl,
         },
-        big_picture: content.imageUrl,
-      })
-      .subscribe((response) =>
-        this.logger.log(`Notification sent to ${subscribersTokens.length} subscribers. Response: ${response.data?.id}`),
-      );
+        {
+          params: {
+            c: 'push',
+          },
+        },
+      )
+      .subscribe();
   }
 }

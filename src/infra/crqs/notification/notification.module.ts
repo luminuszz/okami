@@ -28,7 +28,6 @@ import { MarkNotificationAsRead } from '@domain/notifications/application/use-ca
   imports: [
     MailModule,
     CqrsModule,
-    HttpModule,
     HttpModule.registerAsync({
       useFactory: (env: EnvService) => ({
         baseURL: env.get('ONE_SIGNAL_SERVICE_ENDPOINT'),
