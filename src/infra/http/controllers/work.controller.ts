@@ -110,7 +110,7 @@ export class WorkController {
 
   @Patch(':id/mark-unread')
   async markUnread(@Param('id', ParseObjectIdPipe) id: string, @Body() data: MarkWorkUnreadDto) {
-    await this.commandBus.execute(new MarkWorkUnreadCommand(id, data?.nextChapter));
+    await this.commandBus.execute(new MarkWorkUnreadCommand(id, data.nextChapter));
   }
 
   @Post('sync-to-notion')
