@@ -11,6 +11,7 @@ import { CreateMobilePushSubscription } from '@domain/notifications/application/
 import { FetchRecentSubscriberNotifications } from '@domain/notifications/application/use-cases/fetch-recent-subscriber-notifications';
 import { NotificationHttp, NotificationsModel } from '@infra/http/models/notifications.model';
 import { MarkNotificationAsRead } from '@domain/notifications/application/use-cases/mark-notification-as-read';
+import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 
 @ApiTags('notification')
 @Controller('notification')
@@ -79,7 +80,7 @@ export class NotificationController {
 
   @UseGuards(AuthGuard)
   @Post('mark-read/:notificationId')
-  async markNotificationAsRead(@Param('notificationId', ParseUUIDPipe) notificationId: string) {
+  async markNotificationAsRead(@Param('notificationId', ParseObjectIdPipe) notificationId: string) {
     const results = await this.markNotificationAsReadUseCase.execute({ notificationId });
 
     if (results.isLeft()) {
