@@ -24,6 +24,20 @@ interface PrismaSubscriberWithRelations extends PrismaSubscriber {
 export class PrismaSubscriberRepository implements SubscriberRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getSubscriptionsByRecipientId(recipientId: string): Promise<Subscriber> {
+    const results = await this.prisma.subscriber.findUnique({
+      where: {
+        recipientId,
+      },
+      include: {
+        mobileSubscriptions: true,
+        webPushSubscriptions: true,
+      },
+    });
+
+    return results ? this.toEntity(results) : null;
+  }
+
   private toEntity(subscriber: PrismaSubscriberWithRelations): Subscriber {
     return Subscriber.create(
       {

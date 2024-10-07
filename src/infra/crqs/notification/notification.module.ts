@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { OnUserCreatedEventHandler } from './handlers/on-user-created';
 import { OnUserEmailUpdatedHandler } from './handlers/on-user-email-updated';
-import { NotificationWorkMarkUnreadEventHandler } from './handlers/work-mark-unread';
+import { NotificationWorkMarkUnreadEventHandler } from './handlers/on-work-mark-unread';
 import { EnvService } from '@infra/env/env.service';
 import { OneSignalNotificationPublisher } from '@infra/crqs/notification/handlers/one-sginal-notification-handler';
 import { TelegramNotificationHandler } from '@infra/crqs/notification/handlers/telegram-notification-handler';

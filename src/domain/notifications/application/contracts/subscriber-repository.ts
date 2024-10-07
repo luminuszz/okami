@@ -6,5 +6,6 @@ export abstract class SubscriberRepository {
   abstract save(subscriber: Subscriber): Promise<void>;
   abstract findByRecipientId(recipientId: string): Promise<Subscriber | null>;
   abstract getSubscriptions(subscriberId: string): Promise<Subscriber | null>;
+  abstract getSubscriptionsByRecipientId(recipientId: string): Promise<Subscriber | null>;
   abstract findByEmail(email: string): Promise<Subscriber | null>;
 }

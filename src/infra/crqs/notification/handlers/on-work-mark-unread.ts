@@ -28,7 +28,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
 
     if (!user) return;
 
-    const subscriber = await this.subscriberRepository.findByRecipientId(user.id);
+    const subscriberWithSubscriptions = await this.subscriberRepository.getSubscriptionsByRecipientId(user.id);
 
     const predicate = payload.category === Category.MANGA ? 'Capítulo' : 'Episódio';
 
@@ -48,7 +48,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       url: payload.url,
       nextChapter: payload.nextChapter.getChapter(),
       workId: payload.id,
-      subscriber: subscriber.toJSON() as any,
+      subscriber: subscriberWithSubscriptions.toJSON() as any,
     } satisfies WorkContentObject;
 
     console.log('content', content);
@@ -57,7 +57,7 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       channels: ['on-new-chapter'],
       providers: ['all'],
       content: JSON.stringify(content),
-      subscriberId: subscriber.id,
+      subscriberId: subscriberWithSubscriptions.id,
     });
 
     if (results.isLeft()) {
