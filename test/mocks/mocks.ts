@@ -2,6 +2,8 @@ import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
 import { MailProvider } from '@domain/auth/application/contracts/mail-provider';
 import { faker } from '@faker-js/faker';
 import { ClientKafka } from '@nestjs/microservices';
+import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
+import { WorkProps, WorkStatus } from '@domain/work/enterprise/entities/work';
 
 export const fakeHashProvider: HashProvider = {
   hash: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
@@ -17,17 +19,19 @@ export const fakeStorageProvider = {
 export const fakeEmailProvider: MailProvider = {
   sendResetPasswordEmail: jest.fn().mockImplementation(() => Promise.resolve()),
   sendConfirmEmail: jest.fn().mockImplementation(() => Promise.resolve()),
+  sendMail: jest.fn().mockImplementation(() => Promise.resolve()),
 };
 
-export const createWorkPropsFactory = () => ({
+export const createWorkPropsFactory = (props?: Partial<WorkProps>) => ({
   name: faker.internet.userName(),
   url: faker.internet.url(),
-  chapter: faker.number.int({ max: 1000, min: 1 }),
+  chapter: new Chapter(faker.number.int({ max: 1000, min: 1 })),
   hasNewChapter: false,
   createdAt: faker.date.recent(),
   category: faker.helpers.arrayElement(['MANGA', 'ANIME']) as any,
   userId: faker.string.uuid(),
-  status: faker.helpers.arrayElement(['READING', 'FINISHED', 'DROPPED']) as any,
+  status: faker.helpers.arrayElement(Object.values(WorkStatus)) as any,
+  ...props,
 });
 
 export const createUserPropsFactory = () => ({

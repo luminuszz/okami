@@ -75,9 +75,6 @@ export class TelegrafProvider implements OnModuleDestroy {
         
           /confirmarchat
           `,
-          {
-            reply_to_message_id: ctx.message.message_id,
-          },
         );
 
         return;

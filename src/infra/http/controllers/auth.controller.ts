@@ -6,7 +6,7 @@ import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.com
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
 import { ProtectFor } from '@app/infra/crqs/auth/role.guard';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
-import { IsPublic } from '@infra/crqs/auth/auth.guard';
+import { IsPublic, OKAMI_COOKIE_NAME } from '@infra/crqs/auth/auth.guard';
 import {
   CreateAccessTokenCommand,
   CreateAccessTokenCommandResponse,
@@ -150,7 +150,7 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: FastifyReply) {
-    return res.clearCookie('@okami-web:token').status(201).send();
+    return res.clearCookie(OKAMI_COOKIE_NAME).status(201).send();
   }
 
   @IsPublic()

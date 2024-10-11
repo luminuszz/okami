@@ -27,6 +27,7 @@ export interface WorkProps {
   tags?: Tag[];
   tagsId?: string[];
   alternativeName?: string;
+  isFavorite?: boolean;
 }
 
 export enum Category {
@@ -59,6 +60,7 @@ export class Work extends Entity<WorkProps> {
     this.props.tags = props.tags ?? [];
     this.props.tagsId = props.tagsId ?? [];
     this.props.alternativeName = props.alternativeName ?? '';
+    this.props.isFavorite = props.isFavorite ?? false;
 
     if (this.props.updatedAt) {
       this.props.updatedAt = props.updatedAt;
@@ -221,7 +223,6 @@ export class Work extends Entity<WorkProps> {
   public get hasNewChapter() {
     return !!this.props.nextChapter?.getChapter();
   }
-
   public get tagsId() {
     return this.props.tagsId;
   }
@@ -235,7 +236,16 @@ export class Work extends Entity<WorkProps> {
     this.commit();
   }
 
+  public toggleFavorite() {
+    this.props.isFavorite = !this.props.isFavorite;
+    this.commit();
+  }
+
   public get alternativeName() {
     return this.props.alternativeName;
+  }
+
+  public get isFavorite() {
+    return this.props.isFavorite;
   }
 }
