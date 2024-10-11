@@ -19,6 +19,8 @@ export const WithAuth = () => UseGuards(AuthGuard);
 
 export const IsPublic = () => SetMetadata(IS_PUBLIC_METADATA_KEY, true);
 
+export const OKAMI_COOKIE_NAME = 'okami-web-token';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -67,8 +69,8 @@ export class AuthGuard implements CanActivate {
   private extractTokenFormRequest(request: FastifyRequest): string | undefined {
     let token: string;
 
-    if (request.cookies['@okami-web:token']) {
-      token = request.cookies['@okami-web:token'];
+    if (request.cookies[OKAMI_COOKIE_NAME]) {
+      token = request.cookies[OKAMI_COOKIE_NAME];
     }
 
     if (request.headers['authorization']) {

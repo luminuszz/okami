@@ -43,7 +43,7 @@ import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
-import * as fs from 'node:fs';
+import { ToggleFavoriteCommand } from '@infra/crqs/work/commands/toggle-favorite.command';
 
 @ApiTags('work')
 @Controller('work')
@@ -223,5 +223,11 @@ export class WorkController {
     );
 
     return WorkModel.toHttpList(works);
+  }
+
+  @Patch(':id/toggle-favorite')
+  @HttpCode(201)
+  async toggleFavorite(@Param('id', ParseObjectIdPipe) workId: string) {
+    await this.commandBus.execute(new ToggleFavoriteCommand(workId));
   }
 }

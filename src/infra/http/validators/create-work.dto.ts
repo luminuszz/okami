@@ -100,3 +100,5 @@ export const createWorkSchema = z.object({
     })
     .optional(),
 });
+
+export type CreateWorkSchemaType = z.infer<typeof createWorkSchema>;

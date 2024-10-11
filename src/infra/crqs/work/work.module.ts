@@ -55,6 +55,8 @@ import { UpdateTag } from '@domain/work/application/usecases/update-tag';
 import { DeleteTag } from '@domain/work/application/usecases/delete-tag';
 import { DeleteTagCommandHandler } from '@infra/crqs/work/commands/delete-tag.command';
 import { FilterTagBySearchQueryHandler } from '@infra/crqs/work/queries/filter-tag-by-search';
+import { ToggleFavoriteCommandHandler } from '@infra/crqs/work/commands/toggle-favorite.command';
+import { ToggleWorkFavorite } from '@domain/work/application/usecases/toggle-work-favorite';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -73,6 +75,7 @@ const CommandHandlers = [
   DeleteSearchTokenCommandHandler,
   UpdateTagCommandHandler,
   DeleteTagCommandHandler,
+  ToggleFavoriteCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -122,6 +125,7 @@ const EventHandlers = [];
     UpdateTag,
     DeleteTag,
     Queue,
+    ToggleWorkFavorite,
   ],
   exports: [
     CreateWorkUseCase,

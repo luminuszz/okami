@@ -19,6 +19,12 @@ import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import { map } from 'lodash';
 import { TagHttpType } from '@infra/http/models/tag.model';
+import { CreateWorkSchemaType } from '@infra/http/validators/create-work.dto';
+import { FastifyCookieOptions } from '@fastify/cookie';
+import { OKAMI_COOKIE_NAME } from '@infra/crqs/auth/auth.guard';
+import { WorkRepository } from '@domain/work/application/repositories/work-repository';
+import { createWorkPropsFactory } from '@test/mocks/mocks';
+import { Work } from '@domain/work/enterprise/entities/work';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -47,7 +53,11 @@ describe('E2E tests', () => {
 
     app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
 
-    await app.register(fastifyCookie as any);
+    await app.register(fastifyCookie, {
+      parseOptions: {
+        httpOnly: true,
+      },
+    } as FastifyCookieOptions);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
 
@@ -64,10 +74,10 @@ describe('E2E tests', () => {
   });
 
   const generateValidTokenCookie = (user?: User) => ({
-    '@okami-web:token': app.get(JwtService).sign({
+    [OKAMI_COOKIE_NAME]: app.get(JwtService).sign({
       id: user?.id ?? faker.string.uuid(),
       email: user?.email ?? faker.internet.email(),
-      name: user?.name ?? faker.internet.displayName(),
+      name: user?.name ?? faker.internet.userName(),
     } satisfies UserTokenDto),
   });
 
@@ -123,7 +133,7 @@ describe('E2E tests', () => {
         url: '/auth/logout',
         method: 'POST',
         cookies: {
-          '@okami-web:token': app
+          [OKAMI_COOKIE_NAME]: app
             .get(JwtService)
             .sign({ id: user.id, email: user.email, name: user.name } satisfies UserTokenDto),
         },
@@ -377,12 +387,41 @@ describe('E2E tests', () => {
     });
   });
 
+  describe('WorkController', () => {
+    it('/PATCH /work/:id/toggle-favorite', async () => {
+      const work = Work.create(
+        createWorkPropsFactory({
+          userId: adminUser.id,
+        }),
+      );
+
+      await app.get(WorkRepository).create(work);
+
+      const results = await app.inject({
+        url: `/work/${work.id}/toggle-favorite`,
+        method: 'PATCH',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const workUpdated = await prisma.work.findUnique({
+        where: {
+          id: work.id,
+        },
+      });
+
+      expect(workUpdated?.isFavorite).toBeTruthy();
+    });
+  });
+
   afterAll(async () => {
     await prisma.$transaction([
-      prisma.accessToken.deleteMany(),
-      prisma.user.deleteMany(),
       prisma.work.deleteMany(),
       prisma.accessToken.deleteMany(),
+      prisma.user.deleteMany(),
       prisma.tag.deleteMany(),
       prisma.searchToken.deleteMany(),
     ]);
