@@ -60,8 +60,6 @@ export class WorkController {
   @Post()
   @HttpCode(201)
   async createWork(@Req() req: any, @User('id') userId: string) {
-    console.log(req.body);
-
     const data = createWorkSchema.parse(req.body);
 
     await this.commandBus.execute(
@@ -175,11 +173,9 @@ export class WorkController {
       });
     }
 
-    const file = await req.file();
+    const { file } = req.body;
 
-    const imageData = await file.toBuffer();
-
-    await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, imageData));
+    await this.commandBus.execute(new UploadWorkImageCommand(id, file.filename, file.buffer));
   }
 
   @Post('replace-image-from-notion/:databaseId')
