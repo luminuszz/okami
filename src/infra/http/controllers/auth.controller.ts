@@ -128,7 +128,7 @@ export class AuthController {
     );
 
     return res
-      .setCookie('@okami-web:token', sessionCreated.token, {
+      .setCookie(OKAMI_COOKIE_NAME, sessionCreated.token, {
         httpOnly: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         path: '/',
