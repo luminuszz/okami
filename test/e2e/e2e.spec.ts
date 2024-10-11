@@ -119,7 +119,7 @@ describe('E2E tests', () => {
 
       expect(results.statusCode).toBe(201);
       expect(results.cookies.length).toBe(1);
-      expect(results.cookies[0].name).toBe('@okami-web:token');
+      expect(results.cookies[0].name).toBe(OKAMI_COOKIE_NAME);
       expect(results.cookies[0].httpOnly).toBe(true);
       expect(results.cookies[0].path).toBe('/');
 

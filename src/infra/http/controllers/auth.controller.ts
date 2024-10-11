@@ -56,7 +56,7 @@ export class AuthController {
     const { token } = await this.commandBus.execute<unknown, { token: string }>(new LoginCommand(email, password));
 
     return res
-      .setCookie('@okami-web:token', token, {
+      .setCookie(OKAMI_COOKIE_NAME, token, {
         httpOnly: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         path: '/',
