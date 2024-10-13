@@ -44,6 +44,7 @@ import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
 import { ToggleFavoriteCommand } from '@infra/crqs/work/commands/toggle-favorite.command';
+import { FetchFavoritesWorksQuery } from '@infra/crqs/work/queries/fetch-favorites-works';
 
 @ApiTags('work')
 @Controller('work')
@@ -225,5 +226,13 @@ export class WorkController {
   @HttpCode(201)
   async toggleFavorite(@Param('id', ParseObjectIdPipe) workId: string) {
     await this.commandBus.execute(new ToggleFavoriteCommand(workId));
+  }
+
+  @Get('/favorites')
+  @ApiOkResponse({ type: WorkHttp, isArray: true })
+  async fetchWorksFavorites(@User('id') userId: string) {
+    const results = await this.queryBus.execute(new FetchFavoritesWorksQuery(userId));
+
+    return WorkModel.toHttpList(results);
   }
 }

@@ -415,6 +415,27 @@ describe('E2E tests', () => {
 
       expect(workUpdated?.isFavorite).toBeTruthy();
     });
+
+    it('/GET /work/favorites', async () => {
+      const work = Work.create(
+        createWorkPropsFactory({
+          userId: adminUser.id,
+        }),
+      );
+
+      await app.get(WorkRepository).create(work);
+
+      const results = await app.inject({
+        url: `/work/favorites`,
+        method: 'GET',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+      expect(results.json().length).toBe(1);
+    });
   });
 
   afterAll(async () => {

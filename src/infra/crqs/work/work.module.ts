@@ -57,6 +57,7 @@ import { DeleteTagCommandHandler } from '@infra/crqs/work/commands/delete-tag.co
 import { FilterTagBySearchQueryHandler } from '@infra/crqs/work/queries/filter-tag-by-search';
 import { ToggleFavoriteCommandHandler } from '@infra/crqs/work/commands/toggle-favorite.command';
 import { ToggleWorkFavorite } from '@domain/work/application/usecases/toggle-work-favorite';
+import { FetchFavoritesWorksQueryHandler } from '@infra/crqs/work/queries/fetch-favorites-works';
 
 const CommandHandlers = [
   CreateWorkHandler,
@@ -87,6 +88,7 @@ const QueryHandlers = [
   FetchPagedTagsQueryHandler,
   FetchForSearchTokensByTypeQueryHandler,
   FilterTagBySearchQueryHandler,
+  FetchFavoritesWorksQueryHandler,
 ];
 
 const EventHandlers = [];
