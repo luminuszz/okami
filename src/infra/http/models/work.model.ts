@@ -26,6 +26,7 @@ const workSchema = z
     userId: z.string().nonempty(),
     tags: z.array(tagSchema).optional(),
     alternativeName: z.string().optional().nullable(),
+    isFavorite: z.boolean().optional().default(false),
   })
   .transform((data) => {
     return {
