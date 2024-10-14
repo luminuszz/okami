@@ -1,9 +1,9 @@
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { UserEmailValidated } from '@domain/auth/enterprise/events/user-email-validated';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UserEmailUpdated } from '../events/user-email-updated';
 import { EmailValidationCode } from '../value-objects/email-validation-code';
-import { UserEmailValidated } from '@domain/auth/enterprise/events/user-email-validated';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
