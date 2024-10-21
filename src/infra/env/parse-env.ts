@@ -8,7 +8,7 @@ export const envSchema = z.object({
   NOTION_DATABASE_ID: z.string(),
   TELEGRAM_NOTIFICATION_BOT: z.string(),
   TELEGRAM_CHAT_ID: z.string().optional().default(''),
-  PORT: z.coerce.date(),
+  PORT: z.coerce.number(),
   ADDRESS: z.string(),
   NEW_RELIC_LICENSE_KEY: z.string(),
   NEW_RELIC_APP_NAME: z.string(),

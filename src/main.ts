@@ -71,5 +71,7 @@ let app: NestFastifyApplication<RawServerDefault>;
     SwaggerModule.setup('api', app, document);
   }
 
-  await app.listen(process.env.PORT, process.env.ADDRESS, (error, address) => console.log(address, { error }));
+  await app.listen(envService.get('PORT'), envService.get('ADDRESS'), (error, address) =>
+    console.log(address, { error }),
+  );
 })();
