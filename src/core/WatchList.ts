@@ -3,7 +3,9 @@ import { difference } from 'lodash';
 export class WatchList {
   private readonly originalList: Map<string, string>;
 
-  constructor(list: string[]) {
+  private static instance: WatchList;
+
+  private constructor(list: string[]) {
     this.originalList = new Map(list.map((item) => [item, item]));
   }
 
@@ -25,5 +27,13 @@ export class WatchList {
 
   getAddedList(newList: string[]): string[] {
     return difference(newList, this.getList());
+  }
+
+  static create(list: string[]): WatchList {
+    if (!WatchList.instance) {
+      WatchList.instance = new WatchList(list);
+    }
+
+    return WatchList.instance;
   }
 }

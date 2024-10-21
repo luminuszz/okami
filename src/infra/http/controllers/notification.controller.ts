@@ -1,17 +1,17 @@
 import { AuthGuard } from '@app/infra/crqs/auth/auth.guard';
 import { User } from '../user-auth.decorator';
 
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import { CreateMobilePushSubscription } from '@domain/notifications/application/use-cases/create-mobile-push-subscription';
+import { CreateWebPushSubscription } from '@domain/notifications/application/use-cases/create-web-push-subscription';
+import { FetchRecentSubscriberNotifications } from '@domain/notifications/application/use-cases/fetch-recent-subscriber-notifications';
+import { MarkNotificationAsRead } from '@domain/notifications/application/use-cases/mark-notification-as-read';
+import { EnvService } from '@infra/env/env.service';
+import { NotificationHttp, NotificationsModel } from '@infra/http/models/notifications.model';
+import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { RegisterMobilePushSubscriberDto } from '../validators/register-mobile-push-subscriber.dto';
 import { SubscribeUserBrowserNotificationDto } from '../validators/subscribe-user-browser-notification.dto';
-import { CreateWebPushSubscription } from '@domain/notifications/application/use-cases/create-web-push-subscription';
-import { EnvService } from '@infra/env/env.service';
-import { CreateMobilePushSubscription } from '@domain/notifications/application/use-cases/create-mobile-push-subscription';
-import { FetchRecentSubscriberNotifications } from '@domain/notifications/application/use-cases/fetch-recent-subscriber-notifications';
-import { NotificationHttp, NotificationsModel } from '@infra/http/models/notifications.model';
-import { MarkNotificationAsRead } from '@domain/notifications/application/use-cases/mark-notification-as-read';
-import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe';
 
 @ApiTags('notification')
 @Controller('notification')

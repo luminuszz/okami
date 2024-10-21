@@ -8,8 +8,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RawServerDefault } from 'fastify';
 import { writeFileSync } from 'node:fs';
 import { AppModule } from './app.module';
+
+let app: NestFastifyApplication<RawServerDefault>;
 
 (async () => {
   const adapter = new FastifyAdapter();
@@ -47,7 +50,7 @@ import { AppModule } from './app.module';
     methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE', 'PATCH'],
   });
 
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true });
+  app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true });
 
   const envService = app.get(EnvService);
 

@@ -1,13 +1,13 @@
 import { Either, left, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
+import { WatchList } from '@core/WatchList';
+import { TagRepository } from '@domain/work/application/repositories/tag-repository';
+import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-updated';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
+import { map } from 'lodash';
 import { WorkRepository } from '../repositories/work-repository';
 import { WorkNotFoundError } from './errors/work-not-found';
-import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-updated';
-import { TagRepository } from '@domain/work/application/repositories/tag-repository';
-import { WatchList } from '@core/WatchList';
-import { map } from 'lodash';
 
 type UpdateWorkUseCaseInput = {
   id: string;
@@ -39,7 +39,7 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
 
     if (data.tagsId?.length) {
       const tags = await this.tagRepository.findAllTagsByWorkId(id);
-      const list = new WatchList(map(tags, 'id'));
+      const list = WatchList.create(map(tags, 'id'));
 
       const removedTags = list.getRemovedList(data?.tagsId ?? []);
       const addedTags = list.getAddedList(data?.tagsId ?? []);

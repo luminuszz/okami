@@ -1,24 +1,22 @@
+import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import {
   FiletoUpload,
   FiletoUploadWithUrl,
   FileUploadResponse,
   StorageProvider,
 } from '@domain/work/application/contracts/storageProvider';
-import { Injectable } from '@nestjs/common';
-import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import * as process from 'process';
-import { EnvService } from '../env/env.service';
 import { ImageTransformerProvider } from '@infra/storage/image-transformer.provider';
+import { Injectable } from '@nestjs/common';
+import { EnvService } from '../env/env.service';
 
 @Injectable()
 export class CloudFlareR2StorageAdapter implements StorageProvider {
   private readonly s3Client: S3Client;
-
   public readonly awsBucket: string;
 
   constructor(
-    private env: EnvService,
-    private imageTransformer: ImageTransformerProvider,
+    private readonly env: EnvService,
+    private readonly imageTransformer: ImageTransformerProvider,
   ) {
     this.s3Client = new S3Client({
       region: 'auto',
@@ -30,6 +28,14 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     });
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET');
+  }
+
+  static createS3FileUrl(fileName: string): string {
+    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
+  }
+
+  static createS3AvatarUrl(fileName: string): string {
+    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/user-avatars-images/${fileName}`;
   }
 
   async uploadAvatarImage({ fileName, fileData }: FiletoUpload): Promise<FileUploadResponse> {
@@ -105,14 +111,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
       fileType: parsedImage.fileMimeType,
       fileName: parsedImage.fileName,
     };
-  }
-
-  static createS3FileUrl(fileName: string): string {
-    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/work-images/${fileName}`;
-  }
-
-  static createS3AvatarUrl(fileName: string): string {
-    return `${process.env.CLOUD_FLARE_PUBLIC_BUCKET_URL}/user-avatars-images/${fileName}`;
   }
 
   async uploadWorkImageWithUrl({ fileName, fileData }: FiletoUploadWithUrl): Promise<FileUploadResponse> {

@@ -1,14 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
-import { NotionHealtCheckIndicator } from './health/notion-healt.service';
+import { IsPublic } from '../crqs/auth/auth.guard';
+import { NotionHealthIndicator } from './health/notion-health.service';
 import { PrismaHealtCheckIndicator } from './health/prisma-healt.service';
 
 @Controller('health')
+@IsPublic()
 export class LoggerController {
   constructor(
     private healtCheckService: HealthCheckService,
     private prismHealtCheckIndicator: PrismaHealtCheckIndicator,
-    private notionHealtCheckIndicator: NotionHealtCheckIndicator,
+    private notionHealtCheckIndicator: NotionHealthIndicator,
     private memoryHealtCheckIndicator: MemoryHealthIndicator,
   ) {}
 
