@@ -7,6 +7,7 @@ export class FetchWorksScrapingPaginatedReportQuery {
     public readonly page: number,
     public readonly userId: string,
     public readonly filter?: RefreshStatus,
+    public readonly search?: string,
   ) {}
 }
 
@@ -16,8 +17,8 @@ export class FetchWorksScrapingPaginatedReportQueryHandler
 {
   constructor(private readonly fetchWorksScrapingPaginatedRepor: FetchWorksScrapingPaginatedReportUseCase) {}
 
-  async execute({ page, filter, userId }: FetchWorksScrapingPaginatedReportQuery) {
-    const result = await this.fetchWorksScrapingPaginatedRepor.execute({ page, filter, userId });
+  async execute({ page, filter, userId, search }: FetchWorksScrapingPaginatedReportQuery) {
+    const result = await this.fetchWorksScrapingPaginatedRepor.execute({ page, filter, userId, search });
 
     if (result.isLeft()) {
       throw result.value;

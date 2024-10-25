@@ -220,6 +220,7 @@ export class PrismaWorkRepository implements WorkRepository {
     userId: string,
     page: number,
     filter?: RefreshStatus,
+    search?: string,
   ): Promise<{ data: Work[]; totalOfPages: number }> {
     const limit = 10;
 
@@ -233,6 +234,25 @@ export class PrismaWorkRepository implements WorkRepository {
 
     if (filter) {
       Object.assign(where, { refreshStatus: filter });
+    }
+
+    if (search) {
+      Object.assign(where, {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            alternativeName: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      });
     }
 
     const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
