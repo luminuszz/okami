@@ -10,9 +10,11 @@ import { CreateWorkCommand } from '@infra/crqs/work/commands/create-work.command
 import { MarkWorkFinishedCommand } from '@infra/crqs/work/commands/mark-work-finished.command';
 import { MarkWorkReadCommand } from '@infra/crqs/work/commands/mark-work-read.command';
 import { MarkWorkUnreadCommand } from '@infra/crqs/work/commands/mark-work-unread.command';
+import { ToggleFavoriteCommand } from '@infra/crqs/work/commands/toggle-favorite.command';
 import { UpdateWorkChapterCommand } from '@infra/crqs/work/commands/update-work-chapter.command';
 import { UpdateWorkRefreshStatusCommand } from '@infra/crqs/work/commands/update-work-refresh-status.command';
 import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-image.command';
+import { FetchFavoritesWorksQuery } from '@infra/crqs/work/queries/fetch-favorites-works';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
 import { WorkHttp, WorkModel, WorkModelPaged } from '@infra/http/models/work.model';
@@ -28,13 +30,13 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
   Put,
   Query,
   Req,
-  HttpCode,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -43,8 +45,6 @@ import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { ListUserWorksQuery } from '../validators/list-user-works-query';
-import { ToggleFavoriteCommand } from '@infra/crqs/work/commands/toggle-favorite.command';
-import { FetchFavoritesWorksQuery } from '@infra/crqs/work/queries/fetch-favorites-works';
 
 @ApiTags('work')
 @Controller('work')
@@ -188,7 +188,7 @@ export class WorkController {
   @ApiOkResponse({ type: WorkModelPaged })
   async fetchForWorksScrapingReportPaginated(@Query() query: FetchScrappingReportQuery, @User('id') userId: string) {
     const result = await this.queryBus.execute(
-      new FetchWorksScrapingPaginatedReportQuery(query.page, userId, query.filter),
+      new FetchWorksScrapingPaginatedReportQuery(query.page, userId, query.filter, query.search),
     );
 
     return {

@@ -19,6 +19,7 @@ export abstract class WorkRepository {
     userId: string,
     page: number,
     filter?: RefreshStatus,
+    search?: string,
   ): Promise<{ data: Work[]; totalOfPages: number }>;
 
   abstract fetchForWorksForScrapping(): Promise<Work[]>;

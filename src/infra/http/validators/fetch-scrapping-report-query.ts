@@ -13,4 +13,9 @@ export class FetchScrappingReportQuery {
   @ApiProperty()
   @ApiPropertyOptional({ enum: RefreshStatus, enumName: 'RefreshStatus' })
   filter?: RefreshStatus;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  search?: string;
 }
