@@ -37,14 +37,18 @@ export class PrismaWorkRepository implements WorkRepository {
     };
 
     if (status) {
-      const parserFilterStatus = {
-        unread: WorkStatus.UNREAD,
-        read: WorkStatus.READ,
-        finished: WorkStatus.FINISHED,
-        dropped: WorkStatus.DROPPED,
-      };
+      if (status === 'favorites') {
+        merge(query, { isFavorite: true });
+      } else {
+        const parserFilterStatus = {
+          unread: WorkStatus.UNREAD,
+          read: WorkStatus.READ,
+          finished: WorkStatus.FINISHED,
+          dropped: WorkStatus.DROPPED,
+        };
 
-      merge(query, { status: parserFilterStatus[status] });
+        merge(query, { status: parserFilterStatus[status] });
+      }
     }
 
     if (search) {

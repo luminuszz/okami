@@ -1,10 +1,10 @@
 import { Either, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
+import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { WorkRepository } from '../repositories/work-repository';
-import { Work } from '@domain/work/enterprise/entities/work';
 
-export type Status = 'unread' | 'read' | 'finished' | 'dropped';
+export type Status = 'unread' | 'read' | 'finished' | 'dropped' | 'favorites';
 
 interface FetchUserWorksInput {
   userId: string;

@@ -7,7 +7,7 @@ export class ListUserWorksQuery {
   @IsOptional()
   @ApiPropertyOptional({
     type: String,
-    enum: ['unread', 'read', 'finished', 'dropped'],
+    enum: ['unread', 'read', 'finished', 'favorites'],
   })
   status?: Status;
 

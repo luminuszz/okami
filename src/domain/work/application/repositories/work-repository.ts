@@ -2,7 +2,7 @@ import { Work } from '@domain/work/enterprise/entities/work';
 import { RefreshStatus } from '@prisma/client';
 
 export interface FetchUserWorksInput {
-  status?: 'unread' | 'read' | 'finished' | 'dropped';
+  status?: 'unread' | 'read' | 'finished' | 'dropped' | 'favorites';
   search?: string;
   userId: string;
 }
