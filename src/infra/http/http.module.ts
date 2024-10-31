@@ -10,6 +10,7 @@ import { AuthGuard } from '../crqs/auth/auth.guard';
 import { RoleGuard } from '../crqs/auth/role.guard';
 import { WorkModule } from '../crqs/work/work.module';
 import { PaymentModule } from '../payment/payment.module';
+import { AppController } from './controllers/app.controller';
 import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
 import { TagController } from './controllers/tag.controller';
@@ -28,6 +29,7 @@ import { WorkController } from './controllers/work.controller';
     PaymentController,
     TagController,
     SearchTokenController,
+    AppController,
   ],
 })
 export class HttpModule {}
