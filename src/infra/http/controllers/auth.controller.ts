@@ -1,11 +1,17 @@
 import { CreateUserCommand } from '@app/infra/crqs/auth/commands/create-user.command';
+import {
+  CreateRefreshTokenCommandResponse,
+  MakeLoginWithRefreshTokenCommand,
+} from '@app/infra/crqs/auth/commands/make-login-with-refresh-token';
 import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
+import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
 import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/send-reset-password-emai.command';
 import { UpdateNotionDatabaseIdCommand } from '@app/infra/crqs/auth/commands/update-notion-database-id.command';
 import { UpdateUserCommand } from '@app/infra/crqs/auth/commands/update-user.command';
 import { FetchUserAnalyticsQuery } from '@app/infra/crqs/auth/queries/fetch-user-analytics';
 import { ProtectFor } from '@app/infra/crqs/auth/role.guard';
 import { GetUserTrialQuote } from '@domain/auth/application/useCases/get-user-trial-quote';
+import { FindSubscriberByRecipientId } from '@domain/notifications/application/use-cases/find-subscriber-by-recipient-id';
 import { IsPublic, OKAMI_COOKIE_NAME } from '@infra/crqs/auth/auth.guard';
 import {
   CreateAccessTokenCommand,
@@ -15,6 +21,7 @@ import { CreateAdminHashCodeCommand } from '@infra/crqs/auth/commands/create-adm
 import { LoginCommand } from '@infra/crqs/auth/commands/login.command';
 import { ResetPasswordCommand } from '@infra/crqs/auth/commands/reset-password.command';
 import { UploadUserImageUrlCommand } from '@infra/crqs/auth/commands/upload-user-image-url.command';
+import { ValidateEmailCodeCommand } from '@infra/crqs/auth/commands/validate-email-code.command';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
 import { FindUserByIdQuery } from '@infra/crqs/auth/queries/find-user-by-id.query';
 import { AccessToken, TokenModel } from '@infra/http/models/token.model';
@@ -22,6 +29,7 @@ import { UserHttp, UserModel } from '@infra/http/models/user.model';
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto';
 import { MakeSessionDto } from '@infra/http/validators/make-session.dto';
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto';
+import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto';
 import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -32,10 +40,6 @@ import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
 import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 import { UpdateUserDto } from '../validators/update-user.dto';
-import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
-import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto';
-import { ValidateEmailCodeCommand } from '@infra/crqs/auth/commands/validate-email-code.command';
-import { FindSubscriberByRecipientId } from '@domain/notifications/application/use-cases/find-subscriber-by-recipient-id';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -63,6 +67,25 @@ export class AuthController {
       })
       .send()
       .status(201);
+  }
+
+  @IsPublic()
+  @Post('v2/login')
+  async loginV2(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
+    const results = (await this.commandBus.execute(
+      new MakeLoginWithRefreshTokenCommand(data.email, data.password),
+    )) as CreateRefreshTokenCommandResponse;
+
+    return res
+      .setCookie(OKAMI_COOKIE_NAME, results.token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        path: '/',
+      })
+      .send({
+        refreshToken: results.refreshToken,
+      })
+      .status(200);
   }
 
   @Post('/user/avatar/upload')

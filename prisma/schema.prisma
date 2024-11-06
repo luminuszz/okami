@@ -102,10 +102,20 @@ model User {
   emailIsValidated                Boolean?                   @default(false) @map("email_is_validated")
   emailValidationCodeExpirationAt DateTime?                  @map("email_validation_code_expiration_at")
 
-  accessToken AccessToken?
-  worksId     String[]     @map("works_id") @db.ObjectId
-  works       Work[]
-  Subscriber  Subscriber?
+  accessToken  AccessToken?
+  worksId      String[]       @map("works_id") @db.ObjectId
+  works        Work[]
+  Subscriber   Subscriber?
+  RefreshToken RefreshToken[]
+}
+
+model RefreshToken {
+  id        String @id @map("_id") @db.ObjectId
+  token     String @unique
+  expiresAt Int
+  userId    String @db.ObjectId
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model AccessToken {
