@@ -3,6 +3,7 @@ import {
   CreateRefreshTokenCommandResponse,
   MakeLoginWithRefreshTokenCommand,
 } from '@app/infra/crqs/auth/commands/make-login-with-refresh-token';
+import { RefreshTokenCommand, RefreshTokenCommandResponse } from '@app/infra/crqs/auth/commands/refresh-token.command';
 import { ResetUserPasswordCommand } from '@app/infra/crqs/auth/commands/reset-user-passsword.command';
 import { SendConfirmEmailCommand } from '@app/infra/crqs/auth/commands/send-confirm-email.command';
 import { SendResetPasswordEmailCommand } from '@app/infra/crqs/auth/commands/send-reset-password-emai.command';
@@ -36,6 +37,7 @@ import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from
 import { FastifyReply } from 'fastify';
 import { User } from '../user-auth.decorator';
 import { CreateUserDto } from '../validators/create-user.dto';
+import { RefreshTokenDto } from '../validators/refresh-token.dto';
 import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
 import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
@@ -86,6 +88,22 @@ export class AuthController {
         refreshToken: results.refreshToken,
       })
       .status(200);
+  }
+
+  @IsPublic()
+  @Post('v2/refresh-token')
+  async refreshToken(@Body() { refreshToken }: RefreshTokenDto, @Res({ passthrough: true }) res: FastifyReply) {
+    const { token } = (await this.commandBus.execute(
+      new RefreshTokenCommand(refreshToken),
+    )) as RefreshTokenCommandResponse;
+
+    return res
+      .setCookie(OKAMI_COOKIE_NAME, token, {
+        httpOnly: true,
+        path: '/',
+      })
+      .status(200)
+      .send();
   }
 
   @Post('/user/avatar/upload')

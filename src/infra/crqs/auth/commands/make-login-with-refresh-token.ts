@@ -54,7 +54,7 @@ export class MakeLoginWithRefreshTokenCommandHandler
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.env.get('JWT_SECRET'),
-      expiresIn: '7d',
+      expiresIn: '1d',
     });
 
     return {

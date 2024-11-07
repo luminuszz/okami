@@ -110,10 +110,11 @@ model User {
 }
 
 model RefreshToken {
-  id        String @id @map("_id") @db.ObjectId
-  token     String @unique
+  id        String   @id @map("_id") @db.ObjectId
+  token     String   @unique
   expiresAt Int
-  userId    String @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @map("created_at")
 
   user User @relation(fields: [userId], references: [id])
 }

@@ -3,23 +3,25 @@ import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { Category, RefreshStatus, Work, WorkStatus } from '@domain/work/enterprise/entities/work';
 
+import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
+import { RefreshToken } from '@domain/auth/enterprise/entities/RefreshToken';
+import { PaymentSubscriptionStatus, User, UserRole } from '@domain/auth/enterprise/entities/User';
+import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
+import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import {
   AccessToken as PrismaAccessToken,
   Category as PrismaCategory,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
   RefreshStatus as PrismaRefreshStatus,
+  RefreshToken as PrismaRefreshToken,
   SearchToken as PrismaSearchToken,
   Tag as PrismaTag,
   User as PrismaUser,
   Work as PrismaWork,
 } from '@prisma/client';
-import { PaymentSubscriptionStatus, User, UserRole } from '@domain/auth/enterprise/entities/User';
-import { AccessToken } from '@domain/auth/enterprise/entities/AccessToken';
 import { map } from 'lodash';
-import { Tag } from '@domain/work/enterprise/entities/tag';
-import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
-import { EmailValidationCode } from '@domain/auth/enterprise/value-objects/email-validation-code';
-import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -175,4 +177,13 @@ export const parsePrismaSearchTokenToDomain = (prismaSearchToken: PrismaSearchTo
     },
     new UniqueEntityID(prismaSearchToken.id),
   );
+};
+
+export const parsePrismaRefreshTokenToDomain = (prismaRefreshToken: PrismaRefreshToken): RefreshToken => {
+  return RefreshToken.create({
+    token: prismaRefreshToken.token,
+    expiresAt: prismaRefreshToken.expiresAt,
+    userId: prismaRefreshToken.userId,
+    createdAt: prismaRefreshToken.createdAt,
+  });
 };

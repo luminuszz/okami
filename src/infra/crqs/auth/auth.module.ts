@@ -17,6 +17,7 @@ import { UpdateNotionDatabaseId } from '@domain/auth/application/useCases/update
 import { UpdateUser } from '@domain/auth/application/useCases/update-user';
 import { UploadUserAvatarImage } from '@domain/auth/application/useCases/upload-user-avatar-image';
 import { ValidateEmailCode } from '@domain/auth/application/useCases/validate-email-code';
+import { ValidateRefreshToken } from '@domain/auth/application/useCases/validate-refresh-token';
 import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { AuthGuard } from '@infra/crqs/auth/auth.guard';
@@ -33,6 +34,8 @@ import { StorageModule } from '@infra/storage/storage.module';
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { MakeLoginWithRefreshTokenCommandHandler } from './commands/make-login-with-refresh-token';
+import { RefreshTokenCommandHandler } from './commands/refresh-token.command';
 import { ResetUserPasswordCommandHandler } from './commands/reset-user-passsword.command';
 import { SendConfirmEmailCommandHandler } from './commands/send-confirm-email.command';
 import { SendResetPasswordEmailCommandHandler } from './commands/send-reset-password-emai.command';
@@ -41,6 +44,7 @@ import { UpdateUserCommandHandler } from './commands/update-user.command';
 import { FetchUserAnalyticsQueryHandler } from './queries/fetch-user-analytics';
 import { RoleGuard } from './role.guard';
 import { SubscriberGuard } from './subscriber.guard';
+import { TokenService } from './token.service';
 
 const Commands = [
   LoginCommandHandler,
@@ -56,6 +60,8 @@ const Commands = [
   SendConfirmEmailCommandHandler,
   ValidateEmailCodeCommandHandler,
   CreateRefreshTokenUseCase,
+  RefreshTokenCommandHandler,
+  MakeLoginWithRefreshTokenCommandHandler,
 ];
 
 const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
@@ -76,6 +82,8 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
     }),
   ],
   providers: [
+    TokenService,
+    ValidateRefreshToken,
     SendConfirmEmail,
     SendResetPasswordEmail,
     CreateApiAccessTokenUseCase,
