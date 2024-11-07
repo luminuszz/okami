@@ -1,3 +1,5 @@
+import { UseCaseError } from '@core/entities/use-case-error';
+import { InvalidOperation } from '@core/errors/invalid-operation';
 import { InvalidCodeKey } from '@domain/auth/application/errors/InvalidCodeKey';
 import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
@@ -5,13 +7,12 @@ import { InvalidWorkOperationError } from '@domain/work/application/usecases/err
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
 import { catchError, Observable } from 'rxjs';
-import { SentryService } from '../logs/sentry/sentry.service';
-import { UseCaseError } from '@core/entities/use-case-error';
 import { ZodError } from 'zod';
+import { SentryService } from '../logs/sentry/sentry.service';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
-  constructor(private readonly sentryService: SentryService) {}
+  constructor(private readonly sentryService: SentryService) { }
 
   private isZodError(error: any): error is ZodError {
     return (
@@ -50,6 +51,10 @@ export class CommonExceptionInterceptor implements NestInterceptor {
         }
 
         if (err instanceof UseCaseError) {
+          throw new BadRequestException(err.message);
+        }
+
+        if (err instanceof InvalidOperation) {
           throw new BadRequestException(err.message);
         }
 

@@ -9,7 +9,7 @@ export class MakeLoginWithRefreshTokenCommand {
   constructor(
     readonly email: string,
     readonly password: string,
-  ) {}
+  ) { }
 }
 
 export interface CreateRefreshTokenCommandResponse {
@@ -19,14 +19,13 @@ export interface CreateRefreshTokenCommandResponse {
 
 @CommandHandler(MakeLoginWithRefreshTokenCommand)
 export class MakeLoginWithRefreshTokenCommandHandler
-  implements ICommandHandler<MakeLoginWithRefreshTokenCommand, CreateRefreshTokenCommandResponse>
-{
+  implements ICommandHandler<MakeLoginWithRefreshTokenCommand, CreateRefreshTokenCommandResponse> {
   constructor(
     private createRefreshToken: CreateRefreshTokenUseCase,
     private readonly authUser: AuthenticateUserUseCase,
     private readonly jwtService: JwtService,
     private env: EnvService,
-  ) {}
+  ) { }
 
   async execute({ email, password }: MakeLoginWithRefreshTokenCommand): Promise<CreateRefreshTokenCommandResponse> {
     const results = await this.authUser.execute({ email, password });
@@ -54,7 +53,7 @@ export class MakeLoginWithRefreshTokenCommandHandler
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.env.get('JWT_SECRET'),
-      expiresIn: '1d',
+      expiresIn: '30m',
     });
 
     return {
