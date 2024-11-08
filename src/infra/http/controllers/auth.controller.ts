@@ -51,7 +51,7 @@ export class AuthController {
     private readonly queryBus: QueryBus,
     private readonly getUserTrialQuote: GetUserTrialQuote,
     private readonly getSubscriberByRecipientId: FindSubscriberByRecipientId,
-  ) {}
+  ) { }
 
   @IsPublic()
   @Post('login')
@@ -86,6 +86,7 @@ export class AuthController {
       })
       .send({
         refreshToken: results.refreshToken,
+        token: results.token,
       })
       .status(200);
   }
