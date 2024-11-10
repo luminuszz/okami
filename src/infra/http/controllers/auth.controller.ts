@@ -51,7 +51,7 @@ export class AuthController {
     private readonly queryBus: QueryBus,
     private readonly getUserTrialQuote: GetUserTrialQuote,
     private readonly getSubscriberByRecipientId: FindSubscriberByRecipientId,
-  ) { }
+  ) {}
 
   @IsPublic()
   @Post('login')
@@ -104,7 +104,9 @@ export class AuthController {
         path: '/',
       })
       .status(200)
-      .send();
+      .send({
+        token,
+      });
   }
 
   @Post('/user/avatar/upload')
