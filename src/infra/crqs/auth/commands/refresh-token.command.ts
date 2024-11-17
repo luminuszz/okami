@@ -37,7 +37,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     const { user } = userResults.value;
 
     const token = await this.tokenService.generateUserToken(
-      { email: user.email, id: user.id, name: user.name },
+      { email: user.email, id: user.id, name: user.name, notionDatabaseId: user?.notionDatabaseId },
       {
         expiresIn: '30m',
       },
