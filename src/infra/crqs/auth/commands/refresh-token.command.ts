@@ -36,7 +36,12 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
 
     const { user } = userResults.value;
 
-    const token = await this.tokenService.generateUserToken({ email: user.email, id: user.id, name: user.name });
+    const token = await this.tokenService.generateUserToken(
+      { email: user.email, id: user.id, name: user.name },
+      {
+        expiresIn: '30m',
+      },
+    );
 
     return {
       token,
