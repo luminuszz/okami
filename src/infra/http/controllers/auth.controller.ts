@@ -35,6 +35,7 @@ import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from 
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyReply } from 'fastify';
+import { RefreshTokenModel, RefreshTokenOnlyModel } from '../models/refresh-token.model';
 import { User } from '../user-auth.decorator';
 import { CreateUserDto } from '../validators/create-user.dto';
 import { RefreshTokenDto } from '../validators/refresh-token.dto';
@@ -73,6 +74,7 @@ export class AuthController {
 
   @IsPublic()
   @Post('v2/login')
+  @ApiOkResponse({ type: RefreshTokenModel })
   async loginV2(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
     const results = (await this.commandBus.execute(
       new MakeLoginWithRefreshTokenCommand(data.email, data.password),
@@ -92,6 +94,7 @@ export class AuthController {
   }
 
   @IsPublic()
+  @ApiOkResponse({ type: RefreshTokenOnlyModel })
   @Post('v2/refresh-token')
   async refreshToken(@Body() { refreshToken }: RefreshTokenDto, @Res({ passthrough: true }) res: FastifyReply) {
     const { token } = (await this.commandBus.execute(

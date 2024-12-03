@@ -7,6 +7,11 @@ export interface FetchUserWorksInput {
   userId: string;
 }
 
+export interface FetchUserWorksInputPaged extends FetchUserWorksInput {
+  page: number;
+  limit: 10 | 20 | 30;
+}
+
 export abstract class WorkRepository {
   abstract create(work: Work): Promise<void>;
   abstract save(work: Work): Promise<void>;

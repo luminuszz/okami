@@ -3,6 +3,7 @@ import { BatchService } from '@infra/database/batchs/batch.service';
 import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
 import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
 import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
+import { FetchUserWorksWithFilterAndPagedQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter-and-paged';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
 import { Queue } from '@domain/work/application/queue/Queue';
 import { RefreshStatus } from '@domain/work/enterprise/entities/work';
@@ -44,7 +45,7 @@ import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command'
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
-import { ListUserWorksQuery } from '../validators/list-user-works-query';
+import { ListUserWorkQueryPaged, ListUserWorksQuery } from '../validators/list-user-works-query';
 
 @ApiTags('work')
 @Controller('work')
@@ -220,6 +221,21 @@ export class WorkController {
     );
 
     return WorkModel.toHttpList(works);
+  }
+
+  @Get('list/paged')
+  @ApiOkResponse({ type: WorkModelPaged })
+  async listUserWorksPaged(@User('id') userId: string, @Query() query: ListUserWorkQueryPaged) {
+    const results = await this.queryBus.execute(
+      new FetchUserWorksWithFilterAndPagedQuery(userId, {
+        status: query.status,
+        search: query.search,
+        limit: Number(query.limit) as any,
+        page: Number(query.page),
+      }),
+    );
+
+    return results;
   }
 
   @Patch(':id/toggle-favorite')

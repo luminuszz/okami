@@ -2,8 +2,8 @@ import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter
 import { Work } from '@domain/work/enterprise/entities/work';
 import { z } from 'zod';
 
-import { ApiProperty } from '@nestjs/swagger';
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
+import { ApiProperty } from '@nestjs/swagger';
 import { TagModel, tagSchema } from './tag.model';
 
 const workSchema = z
@@ -82,7 +82,7 @@ export class WorkHttp implements WorkHttpType {
 
 export class WorkModelPaged {
   @ApiProperty({ type: WorkHttp, isArray: true })
-  data: WorkHttp[];
+  works: WorkHttp[];
 
   @ApiProperty()
   totalOfPages: number;

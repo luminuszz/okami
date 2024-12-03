@@ -1,5 +1,5 @@
-import { IsArray, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class UpdateWorkDto {
   @ApiProperty()
@@ -23,12 +23,6 @@ export class UpdateWorkDto {
   alternativeName: string;
 
   @IsOptional()
-  @ApiProperty({
-    isArray: true,
-    type: String,
-  })
-  @IsArray({
-    message: 'tagsId must be an array of strings',
-  })
+  @IsArray()
   tagsId: string[];
 }
