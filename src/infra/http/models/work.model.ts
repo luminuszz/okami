@@ -58,7 +58,12 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty({ type: Date })
   updatedAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
+  alternativeName: string;
+
+  @ApiProperty({
+    enum: ['ANIME', 'MANGA'],
+  })
   category: string;
 
   @ApiProperty()
@@ -75,6 +80,12 @@ export class WorkHttp implements WorkHttpType {
 
   @ApiProperty()
   userId: string;
+
+  @ApiProperty()
+  createdAt: string;
+
+  @ApiProperty()
+  isFavorite: boolean;
 
   @ApiProperty({ type: TagModel, isArray: true })
   tags: TagModel[];

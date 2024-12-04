@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { ApiProperty } from '@nestjs/swagger';
-import { User, UserRole } from '@domain/auth/enterprise/entities/User';
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
+import { User, UserRole } from '@domain/auth/enterprise/entities/User';
+import { ApiProperty } from '@nestjs/swagger';
 import { PaymentSubscriptionStatus } from '@prisma/client';
+import { z } from 'zod';
 
 const userSchema = z
   .object({
@@ -30,8 +30,10 @@ export class UserHttp implements UserHttpType {
   name: string;
   @ApiProperty()
   email: string;
-  @ApiProperty()
+
+  @ApiProperty({ nullable: true })
   avatarImageUrl: string | null;
+
   @ApiProperty()
   avatarImageId?: string;
 

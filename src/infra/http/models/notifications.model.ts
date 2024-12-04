@@ -1,6 +1,6 @@
 import { Notification } from '@domain/notifications/enterprise/entities/notifications';
-import { z } from 'zod';
 import { ApiProperty } from '@nestjs/swagger';
+import { z } from 'zod';
 
 const notificationSchema = z.object({
   content: z.string().transform((value) => JSON.parse(value)),
@@ -13,13 +13,16 @@ export type NotificationHttpType = z.infer<typeof notificationSchema>;
 
 export class NotificationHttp implements NotificationHttpType {
   @ApiProperty()
-  content: string;
+  content: {
+    chapter: number;
+    name: string;
+  };
 
   @ApiProperty()
   id: string;
 
   @ApiProperty()
-  readAt: Date | string | null;
+  readAt: string;
 }
 
 export class NotificationsModel {
