@@ -235,7 +235,10 @@ export class WorkController {
       }),
     );
 
-    return results;
+    return {
+      totalOfPages: results.totalOfPages,
+      data: WorkModel.toHttpList(results.data),
+    };
   }
 
   @Patch(':id/toggle-favorite')
