@@ -24,7 +24,7 @@ const workSchema = z
     refreshStatus: z.string().nullable(),
     createdAt: z.date().transform((value) => value.toISOString()),
     userId: z.string().nonempty(),
-    //tags: z.array(tagSchema).optional(),
+    tags: z.array(tagSchema).optional(),
     alternativeName: z.string().optional().nullable(),
     isFavorite: z.boolean().optional().default(false),
   })
