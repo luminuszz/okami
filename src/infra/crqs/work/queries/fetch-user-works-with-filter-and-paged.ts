@@ -74,7 +74,6 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
         },
         skip: page * limit,
         take: limit,
-
         include: {
           tags: true,
         },

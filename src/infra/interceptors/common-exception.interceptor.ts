@@ -12,7 +12,7 @@ import { SentryService } from '../logs/sentry/sentry.service';
 
 @Injectable()
 export class CommonExceptionInterceptor implements NestInterceptor {
-  constructor(private readonly sentryService: SentryService) { }
+  constructor(private readonly sentryService: SentryService) {}
 
   private isZodError(error: any): error is ZodError {
     return (
