@@ -69,9 +69,17 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
     const [results, totalOfWorks] = await this.prisma.$transaction([
       this.prisma.work.findMany({
         where: query,
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [
+          {
+            nextChapterUpdatedAt: 'desc',
+          },
+          {
+            createdAt: 'desc',
+          },
+          {
+            updatedAt: 'desc',
+          },
+        ],
         skip: page * limit,
         take: limit,
         include: {
