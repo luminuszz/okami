@@ -238,6 +238,7 @@ export class WorkController {
     return {
       totalOfPages: results.totalOfPages,
       works: WorkModel.toHttpList(results.works),
+      nextPage: results.nextPage,
     };
   }
 

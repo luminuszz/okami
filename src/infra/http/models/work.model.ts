@@ -97,6 +97,9 @@ export class WorkModelPaged {
 
   @ApiProperty()
   totalOfPages: number;
+
+  @ApiProperty()
+  nextPage: number | null;
 }
 
 export class WorkModel {

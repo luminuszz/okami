@@ -86,6 +86,7 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
     return {
       works: results.map(prismaWorkToEntityMapper),
       totalOfPages: Math.ceil(totalOfWorks / limit),
+      nextPage: page >= totalOfWorks / limit ? null : page + 1,
     };
   }
 }
