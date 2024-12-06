@@ -3,7 +3,7 @@ import { PrismaService } from '@app/infra/database/prisma/prisma.service';
 import { Status } from '@domain/work/application/usecases/fetch-user-works-with-filter';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { WorkStatus } from '@prisma/client';
-import { merge } from 'lodash';
+import { isEmpty, merge } from 'lodash';
 
 export interface FetchUserWorksWithFilterQueryParams {
   status?: Status;
@@ -29,12 +29,21 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
     const { limit, page, search, status } = searchParams;
 
     const query = {
-      userId,
+      take: limit,
+      skip: (page - 1) * limit,
+      where: {
+        userId,
+      },
+      include: {
+        tags: true,
+      },
+      orderBy: {},
     };
 
     if (status) {
       if (status === 'favorites') {
-        merge(query, { isFavorite: true });
+        merge(query.where, { isFavorite: true });
+        merge(query.orderBy, { createdAt: 'desc' });
       } else {
         const parserFilterStatus = {
           unread: WorkStatus.UNREAD,
@@ -43,12 +52,15 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
           dropped: WorkStatus.DROPPED,
         };
 
-        merge(query, { status: parserFilterStatus[status] });
+        const currentStatus = parserFilterStatus[status];
+
+        merge(query.where, { status: currentStatus });
+        merge(query.orderBy, currentStatus === 'UNREAD' ? { nextChapterUpdatedAt: 'desc' } : { updatedAt: 'desc' });
       }
     }
 
     if (search) {
-      merge(query, {
+      merge(query.where, {
         OR: [
           {
             name: {
@@ -66,28 +78,16 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
       });
     }
 
+    if (isEmpty(query.orderBy)) {
+      merge(query.orderBy, { createdAt: 'desc' });
+    }
+
+    console.log(query);
+
     const [results, totalOfWorks] = await this.prisma.$transaction([
-      this.prisma.work.findMany({
-        where: query,
-        orderBy: [
-          {
-            nextChapterUpdatedAt: 'desc',
-          },
-          {
-            createdAt: 'desc',
-          },
-          {
-            updatedAt: 'desc',
-          },
-        ],
-        skip: page * limit,
-        take: limit,
-        include: {
-          tags: true,
-        },
-      }),
+      this.prisma.work.findMany(query as any),
       this.prisma.work.count({
-        where: query,
+        where: query.where,
       }),
     ]);
 
