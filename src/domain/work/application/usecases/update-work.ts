@@ -18,6 +18,7 @@ type UpdateWorkUseCaseInput = {
     name: string;
     tagsId: string[];
     alternativeName: string;
+    description: string;
   }>;
 };
 
@@ -52,6 +53,7 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
     existsWork.name = data?.name ?? existsWork.name;
     existsWork.tagsId = data?.tagsId ?? existsWork.tagsId;
     existsWork.alternativeName = data?.alternativeName ?? existsWork.alternativeName;
+    existsWork.description = data?.description ?? existsWork.description;
 
     await this.workRepository.save(existsWork);
 

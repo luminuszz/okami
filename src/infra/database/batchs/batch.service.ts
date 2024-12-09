@@ -1,14 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { NotionWorkRepository } from '../notion/notion-work.repository';
-import { PrismaWorkRepository } from '../prisma/prisma-work.repository';
 import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
 import { QueueMessage } from '@domain/work/application/queue/Queue';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import { EventBus } from '@nestjs/cqrs';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
+import { NotionWorkRepository } from '../notion/notion-work.repository';
 import { PrismaTagRepository } from '../prisma/prisma-tag.repository';
+import { PrismaWorkRepository } from '../prisma/prisma-work.repository';
 
 interface SyncNotionDatabaseBatchProps {
   database_id: string;
@@ -108,5 +108,27 @@ export class BatchService {
       .map((notionTag) => Tag.create({ name: notionTag.name, slug: new Slug(notionTag.name), color: notionTag.color }));
 
     await this.prismaTagRepository.updateTagColorBatch(tags);
+  }
+
+  async setAllDescriptionFromNotionDatabase(database_id: string) {
+    const allWorks = await this.notionWorkRepository.findAllDocumentWithStatusFollowing(database_id);
+
+    const payload: { recipientId: string; description: string }[] = [];
+
+    for (const notionPage of allWorks) {
+      this.logger.log(`Extracting description for work ${notionPage.name} - ${notionPage.recipientId}`);
+
+      const results = await this.notionWorkRepository.getNotionPageContent(notionPage.recipientId);
+
+      const parsed = results.filter((item: any) => item.type === 'paragraph') as any;
+
+      const extractedDescriptionFromNotion = parsed?.[1]?.paragraph?.rich_text
+        ?.map((item: any) => item?.text?.content)
+        .join(' ');
+
+      payload.push({ recipientId: notionPage.recipientId, description: extractedDescriptionFromNotion });
+    }
+
+    await this.prismaWorkRepository.updateDescriptionBatchFromNotion(payload);
   }
 }

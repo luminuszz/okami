@@ -27,6 +27,7 @@ const workSchema = z
     tags: z.array(tagSchema).optional(),
     alternativeName: z.string().optional().nullable(),
     isFavorite: z.boolean().optional().default(false),
+    description: z.string().optional().nullable(),
   })
   .transform((data) => {
     return {
@@ -89,6 +90,9 @@ export class WorkHttp implements WorkHttpType {
 
   @ApiProperty({ type: TagModel, isArray: true })
   tags: TagModel[];
+
+  @ApiProperty({ nullable: true })
+  description: string | null;
 }
 
 export class WorkModelPaged {

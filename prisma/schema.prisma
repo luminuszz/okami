@@ -60,6 +60,7 @@ model Work {
   status               WorkStatus     @default(READ)
   alternativeName      String?        @default("") @map("alternative_name")
   isFavorite           Boolean?       @default(false) @map("is_favorite")
+  description          String?        @default("")
 
   createdAt DateTime  @map("created_at")
   updatedAt DateTime? @map("updated_at")
