@@ -195,6 +195,9 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         id,
       },
+      include: {
+        tags: true,
+      },
     });
 
     return results ? prismaWorkToEntityMapper(results) : null;
