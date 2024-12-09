@@ -36,6 +36,7 @@ export class CreateWorkUseCase implements UseCaseImplementation<CreateWorkInput,
       userId,
       status: WorkStatus.READ,
       tagsId,
+      description: '',
     });
 
     await this.workRepository.create(work);

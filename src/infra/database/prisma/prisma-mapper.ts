@@ -63,6 +63,7 @@ export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
   tagsId: work.tagsId,
   alternativeName: work.alternativeName,
   isFavorite: work.isFavorite,
+  description: work.description,
 });
 
 export const prismaWorkToEntityMapper = (prismaWork: PrismaWorkWithTags): Work => {
@@ -84,6 +85,7 @@ export const prismaWorkToEntityMapper = (prismaWork: PrismaWorkWithTags): Work =
       tags: prismaWork.tags?.map(prismaTagToEntityTag) ?? [],
       alternativeName: prismaWork.alternativeName,
       isFavorite: prismaWork.isFavorite,
+      description: prismaWork.description,
     },
     new UniqueEntityID(prismaWork.id),
   );

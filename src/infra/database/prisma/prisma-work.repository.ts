@@ -355,4 +355,23 @@ export class PrismaWorkRepository implements WorkRepository {
       this.logger.error(`Error linking tags to work ${error}`);
     }
   }
+
+  async updateDescriptionBatchFromNotion(payload: { recipientId: string; description: string }[]): Promise<void> {
+    const operations = payload.map((data) => {
+      this.logger.log(`Updating description for work recipienteId ${data.recipientId}`);
+
+      this.logger.debug(data.description);
+
+      return this.prisma.work.update({
+        where: {
+          recipientId: data.recipientId,
+        },
+        data: {
+          description: data.description,
+        },
+      });
+    });
+
+    await this.prisma.$transaction(operations);
+  }
 }

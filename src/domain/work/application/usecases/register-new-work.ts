@@ -22,6 +22,7 @@ export interface RegisterNewWorkRequest {
   userId: string;
   tagsId?: string[];
   alternativeName?: string;
+  description?: string;
 }
 
 type RegisterNewWorkResponse = Either<UserNotFound | InvalidWorkOperationError, { work: Work }>;
@@ -42,6 +43,7 @@ export class RegisterNewWork implements UseCaseImplementation<RegisterNewWorkReq
     image,
     tagsId,
     alternativeName,
+    description,
   }: RegisterNewWorkRequest): Promise<RegisterNewWorkResponse> {
     const user = await this.userRepository.findById(userId);
 
@@ -68,6 +70,7 @@ export class RegisterNewWork implements UseCaseImplementation<RegisterNewWorkReq
       status: WorkStatus.READ,
       tagsId: tagsId,
       alternativeName: alternativeName,
+      description: description,
     });
 
     await this.workRepository.create(work);
