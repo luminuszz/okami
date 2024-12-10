@@ -122,9 +122,11 @@ export class BatchService {
 
       const parsed = results.filter((item: any) => item.type === 'paragraph') as any;
 
-      const extractedDescriptionFromNotion = parsed?.[1]?.paragraph?.rich_text
-        ?.map((item: any) => item?.text?.content)
-        .join(' ');
+      const extractedDescriptionFromNotion = parsed
+        .map((item) => {
+          return item.paragraph.rich_text.map((item: any) => item.text.content).join(' ');
+        })
+        .join('');
 
       payload.push({ recipientId: notionPage.recipientId, description: extractedDescriptionFromNotion });
     }

@@ -1,12 +1,13 @@
 import { EnvService } from '@app/infra/env/env.service';
+import { Providers } from '@domain/notifications/enterprise/entities/notifications';
+import { NotificationCreated } from '@domain/notifications/enterprise/events/notification-created';
+import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
+import { can } from '@infra/crqs/notification/handlers/utils';
 import { HttpService } from '@nestjs/axios';
 import { Logger } from '@nestjs/common';
-import { map } from 'lodash';
-import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { NotificationCreated } from '@domain/notifications/enterprise/events/notification-created';
-import { can } from '@infra/crqs/notification/handlers/utils';
-import { Providers } from '@domain/notifications/enterprise/entities/notifications';
+import { map } from 'lodash';
+import { catchError, of } from 'rxjs';
 
 @EventsHandler(NotificationCreated)
 export class OneSignalNotificationPublisher implements IEventHandler<NotificationCreated> {
@@ -48,6 +49,12 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
             c: 'push',
           },
         },
+      )
+      .pipe(
+        catchError((error) => {
+          console.error('Error sending notification:', error.message);
+          return of(null); // Return a fallback value or handle the error as needed
+        }),
       )
       .subscribe();
   }
