@@ -7,7 +7,7 @@ import { HttpService } from '@nestjs/axios';
 import { Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { map } from 'lodash';
-import { catchError, of } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @EventsHandler(NotificationCreated)
 export class OneSignalNotificationPublisher implements IEventHandler<NotificationCreated> {
@@ -33,29 +33,20 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
 
     console.log(this.envService.get('ONE_SIGNAL_SERVICE_ENDPOINT'));
 
-    this.httpService
-      .post<any>(
-        'notifications',
-        {
-          app_id: this.envService.get('ONE_SIGNAL_APP_ID'),
-          include_subscription_ids: subscribersTokens,
-          contents: {
-            en: content.message,
-          },
-          big_picture: content.imageUrl,
+    const results = (await firstValueFrom(
+      this.httpService.post<any>('notifications', {
+        app_id: this.envService.get('ONE_SIGNAL_APP_ID'),
+        target_channel: 'push',
+        include_subscription_ids: subscribersTokens,
+        contents: {
+          en: content.message,
         },
-        {
-          params: {
-            c: 'push',
-          },
-        },
-      )
-      .pipe(
-        catchError((error) => {
-          console.error('Error sending notification:', error.message);
-          return of(null); // Return a fallback value or handle the error as needed
-        }),
-      )
-      .subscribe();
+      }),
+      null,
+    )) as any;
+
+    if (results?.errors?.invalid_player_ids) {
+      this.logger.error(`Invalid player ids: ${results.errors.invalid_player_ids}`);
+    }
   }
 }
