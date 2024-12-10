@@ -1,11 +1,11 @@
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
+import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
+import { SubscriberRepository } from '@domain/notifications/application/contracts/subscriber-repository';
+import { SendNotificationUseCase } from '@domain/notifications/application/use-cases/send-notification';
 import { WorkMarkUnreadEvent } from '@domain/work/enterprise/entities/events/work-marked-unread';
 import { Category } from '@domain/work/enterprise/entities/work';
-import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { SendNotificationUseCase } from '@domain/notifications/application/use-cases/send-notification';
-import { SubscriberRepository } from '@domain/notifications/application/contracts/subscriber-repository';
 import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
-import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
+import { EventBus, EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
 export interface CreateNotificationEventPayload {
   content: string;
@@ -50,8 +50,6 @@ export class NotificationWorkMarkUnreadEventHandler implements IEventHandler<Wor
       workId: payload.id,
       subscriber: subscriberWithSubscriptions.toJSON() as any,
     } satisfies WorkContentObject;
-
-    console.log('content', content);
 
     const results = await this.sendNotification.execute({
       channels: ['on-new-chapter'],

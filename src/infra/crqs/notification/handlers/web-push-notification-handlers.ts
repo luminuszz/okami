@@ -1,13 +1,13 @@
 import { EnvService } from '@app/infra/env/env.service';
 import { OnModuleInit } from '@nestjs/common';
 
-import * as WebPush from 'web-push';
-import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
 import { DeleteWebPushSubscription } from '@domain/notifications/application/use-cases/delete-web-push-subscription';
-import { NotificationCreated } from '@domain/notifications/enterprise/events/notification-created';
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { can } from '@infra/crqs/notification/handlers/utils';
 import { Providers } from '@domain/notifications/enterprise/entities/notifications';
+import { NotificationCreated } from '@domain/notifications/enterprise/events/notification-created';
+import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
+import { can } from '@infra/crqs/notification/handlers/utils';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import * as WebPush from 'web-push';
 
 @EventsHandler(NotificationCreated)
 export class WebPushNotificationHandler implements OnModuleInit, IEventHandler {
@@ -36,7 +36,6 @@ export class WebPushNotificationHandler implements OnModuleInit, IEventHandler {
     const { webPushSubscriptions } = subscriber;
 
     for (const subscription of webPushSubscriptions) {
-      console.log('Sending web push notification', { subscription });
       try {
         await WebPush.sendNotification(
           {
