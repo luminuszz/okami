@@ -45,7 +45,9 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
       null,
     )) as any;
 
-    if (results?.errors?.invalid_player_ids) {
+    this.logger.debug(JSON.stringify(results.data));
+
+    if (results?.data?.errors?.invalid_player_ids) {
       this.logger.error(`Invalid player ids: ${results.errors.invalid_player_ids}`);
     }
   }
