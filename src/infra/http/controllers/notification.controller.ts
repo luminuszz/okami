@@ -103,34 +103,54 @@ export class NotificationController {
   @UseGuards(AuthGuard)
   @Patch('/telegram/update-chat-id')
   async updateChatId(@Body() body: UpdateTelegramChatIdValidator) {
-    return this.updateTelegramChatId.execute({
+    const results = await this.updateTelegramChatId.execute({
       recipientId: body.recipientId,
       telegramChatId: body.telegramChatId,
     });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
+
+    return results.value;
   }
 
   @UseGuards(AuthGuard)
   @Post('/telegram/send-auth-code')
   async sendAuthCode(@Body() body: SendAuthCodeByEmailValidator) {
-    return this.sendAuthCodeByEmail.execute({
+    const results = await this.sendAuthCodeByEmail.execute({
       email: body.email,
     });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
   }
 
   @UseGuards(AuthGuard)
   @Post('/telegram/compare-auth-code')
   async compareSubscriberAuthCodeCall(@Body() body: CompareSubscriberAuthTokenDto) {
-    return this.compareSubscriberAuthCode.execute({
+    const results = await this.compareSubscriberAuthCode.execute({
       authCode: body.authCode,
       userId: body.userId,
     });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
+
+    return results.value;
   }
 
   @UseGuards(AuthGuard)
   @Get('/telegram/find/:email')
   async getSubscriberByEmail(@Param() { email }: GetSubscriberByEmailDto) {
-    return this.findSubscriberByEmail.execute({
-      email,
-    });
+    const results = await this.findSubscriberByEmail.execute({ email });
+
+    if (results.isLeft()) {
+      throw results.value;
+    }
+
+    return results.value;
   }
 }
