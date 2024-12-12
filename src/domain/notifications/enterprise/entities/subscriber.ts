@@ -1,8 +1,8 @@
+import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 import { MobilePushSubscription } from './mobile-push-subscription';
-import { WebPushSubscription } from './web-push-subscription';
 import { Notification } from './notifications';
-import { Entity } from '@core/entities/entity';
+import { WebPushSubscription } from './web-push-subscription';
 
 export interface SubscriberProps {
   recipientId: string;
@@ -75,5 +75,12 @@ export class Subscriber extends Entity<SubscriberProps> {
 
   public compareAuthCode(authCode: string) {
     return this.props.authCode === authCode;
+  }
+
+  public toJSON() {
+    return {
+      ...this.props,
+      id: this.id,
+    };
   }
 }
