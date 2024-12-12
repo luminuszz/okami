@@ -1,13 +1,15 @@
-import { TelegrafProvider } from '../providers/telegraf.provider';
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { Providers } from '@domain/notifications/enterprise/entities/notifications';
 import { NotificationCreated } from '@domain/notifications/enterprise/events/notification-created';
+import { QueueProvider } from '@domain/work/application/contracts/queueProvider';
 import { WorkContentObject } from '@infra/crqs/notification/handlers/dto';
 import { can } from '@infra/crqs/notification/handlers/utils';
-import { Providers } from '@domain/notifications/enterprise/entities/notifications';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+
+const SEND_TELEGRAM_CHAT_QUEUE = 'SEND_TELEGRAM_NOTIFICATION';
 
 @EventsHandler(NotificationCreated)
 export class TelegramNotificationHandler implements IEventHandler<NotificationCreated> {
-  constructor(private readonly telegrafProvider: TelegrafProvider) {}
+  constructor(private readonly queue: QueueProvider) {}
 
   private parseContent(content: string): string {
     return content
@@ -34,19 +36,11 @@ export class TelegramNotificationHandler implements IEventHandler<NotificationCr
 
     if (!subscriber.telegramChatId) return;
 
-    const caption = this.parseContent(`${message.toString()}\n\n${url}`);
-
-    const isAllowedImageFiletype = ['png', 'jpg', 'jpeg', 'webp'].includes(imageUrl?.split('.')?.pop() ?? '');
-
-    if (isAllowedImageFiletype) {
-      void this.telegrafProvider.bot.telegram.sendPhoto(subscriber.telegramChatId, imageUrl, {
-        caption,
-        parse_mode: 'MarkdownV2',
-      });
-    } else {
-      void this.telegrafProvider.bot.telegram.sendMessage(subscriber.telegramChatId, this.parseContent(message), {
-        parse_mode: 'MarkdownV2',
-      });
-    }
+    await this.queue.publish(SEND_TELEGRAM_CHAT_QUEUE, {
+      message,
+      imageUrl,
+      url,
+      chatId: subscriber.telegramChatId,
+    });
   }
 }
