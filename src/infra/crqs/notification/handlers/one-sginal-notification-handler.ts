@@ -18,6 +18,10 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
 
   private logger = new Logger(OneSignalNotificationPublisher.name);
 
+  private createDeepLinkUrl(workId: string) {
+    return `${this.envService.get('OKAMI_APP_SLUG')}://modal/${workId}/`;
+  }
+
   public async handle({ notification }): Promise<void> {
     const canNotify = can(Providers.MOBILE_PUSH, notification);
 
@@ -41,6 +45,7 @@ export class OneSignalNotificationPublisher implements IEventHandler<Notificatio
         contents: {
           en: content.message,
         },
+        url: this.createDeepLinkUrl(content.workId),
       }),
       null,
     )) as any;
