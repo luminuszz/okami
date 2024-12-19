@@ -1,6 +1,6 @@
-import { z } from 'zod';
 import { SearchToken, SearchTokenType } from '@domain/work/enterprise/entities/search-token';
 import { ApiProperty } from '@nestjs/swagger';
+import { z } from 'zod';
 
 const searchTokenSchema = z.object({
   id: z.string(),
@@ -16,7 +16,7 @@ export class SearchTokenHttp implements SearchTokenHttpType {
   id: string;
 
   @ApiProperty({
-    enum: SearchTokenType,
+    enum: ['ANIME', 'MANGA'],
   })
   type: SearchTokenType;
 
