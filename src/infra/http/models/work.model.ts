@@ -49,7 +49,7 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty()
   imageId: string;
   @ApiProperty({ nullable: true })
-  imageUrl: string;
+  imageUrl: string | null;
   @ApiProperty()
   isFinished: boolean;
   @ApiProperty()
@@ -65,7 +65,7 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty({
     enum: ['ANIME', 'MANGA'],
   })
-  category: string;
+  category: 'ANIME' | 'MANGA';
 
   @ApiProperty()
   isDropped: boolean;
@@ -102,7 +102,7 @@ export class WorkModelPaged {
   @ApiProperty()
   totalOfPages: number;
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   nextPage: number | null;
 }
 

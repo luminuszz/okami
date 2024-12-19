@@ -76,11 +76,4 @@ export class Subscriber extends Entity<SubscriberProps> {
   public compareAuthCode(authCode: string) {
     return this.props.authCode === authCode;
   }
-
-  public toJSON() {
-    return {
-      ...this.props,
-      id: this.id,
-    };
-  }
 }

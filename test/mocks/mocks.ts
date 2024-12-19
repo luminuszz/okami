@@ -1,7 +1,6 @@
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
 import { MailProvider } from '@domain/auth/application/contracts/mail-provider';
 import { faker } from '@faker-js/faker';
-import { ClientKafka } from '@nestjs/microservices';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { WorkProps, WorkStatus } from '@domain/work/enterprise/entities/work';
 
@@ -31,6 +30,7 @@ export const createWorkPropsFactory = (props?: Partial<WorkProps>) => ({
   category: faker.helpers.arrayElement(['MANGA', 'ANIME']) as any,
   userId: faker.string.uuid(),
   status: faker.helpers.arrayElement(Object.values(WorkStatus)) as any,
+  description: faker.lorem.lines(2),
   ...props,
 });
 
@@ -50,4 +50,4 @@ export const mockKafkaClient = {
   connect: jest.fn().mockImplementation(() => Promise.resolve()),
   emit: jest.fn().mockImplementation(() => Promise.resolve()),
   send: jest.fn().mockImplementation(() => Promise.resolve()),
-} as unknown as ClientKafka;
+};

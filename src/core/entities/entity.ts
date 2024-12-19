@@ -29,7 +29,10 @@ export class Entity<EntityProps> {
   }
 
   public toJSON() {
-    return this.props;
+    return {
+      ...this.props,
+      id: this.id,
+    };
   }
 
   public events: DomainEvent[] = [];
