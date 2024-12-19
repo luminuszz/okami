@@ -92,7 +92,7 @@ export class WorkHttp implements WorkHttpType {
   tags: TagModel[];
 
   @ApiProperty({ nullable: true })
-  description: string | null;
+  description: string;
 }
 
 export class WorkModelPaged {
@@ -103,7 +103,7 @@ export class WorkModelPaged {
   totalOfPages: number;
 
   @ApiProperty({ nullable: true })
-  nextPage: number | null;
+  nextPage: number;
 }
 
 export class WorkModel {

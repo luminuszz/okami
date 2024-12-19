@@ -56,7 +56,7 @@ export class AuthController {
 
   @IsPublic()
   @Post('login')
-  @ApiCreatedResponse({ type: TokenModel })
+  @ApiOkResponse({ type: TokenModel })
   async makeSession(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
     const { email, password } = data;
 
