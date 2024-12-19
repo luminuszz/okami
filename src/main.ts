@@ -18,7 +18,7 @@ let app: NestFastifyApplication<RawServerDefault>;
   const adapter = new FastifyAdapter();
 
   await Promise.all([
-    adapter.register(helmet, {
+    adapter.register(helmet as any, {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: [`'self'`],
@@ -29,12 +29,15 @@ let app: NestFastifyApplication<RawServerDefault>;
       },
     }),
 
-    adapter.register(fmp, { attachFieldsToBody: 'keyValues', fields: 10, onFile: parseMultipartFormData }),
-    adapter.register(fastifyCookie, {
-      parseOptions: {
-        httpOnly: true,
-      },
-    } as FastifyCookieOptions),
+    adapter.register(fmp as any, { attachFieldsToBody: 'keyValues', fields: 10, onFile: parseMultipartFormData }),
+    adapter.register(
+      fastifyCookie as any,
+      {
+        parseOptions: {
+          httpOnly: true,
+        },
+      } as FastifyCookieOptions,
+    ),
   ]);
   adapter.enableCors({
     origin: ['http://localhost:5173', 'https://okami.daviribeiro.com'],
