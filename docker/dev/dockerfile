@@ -1,8 +1,9 @@
-FROM node:slim
+ARG NODE_VERSION=21.6.0
+FROM node:${NODE_VERSION}-slim as base
 
-WORKDIR app
+WORKDIR /app
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl procps
 
 COPY package.json .
 

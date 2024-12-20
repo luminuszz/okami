@@ -46,7 +46,7 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         this.consumers.set(endpoint, consumer);
       }
 
-      if (!consumer.isRunning) {
+      if (!consumer.status.isRunning) {
         consumer.start();
         consumer.on('error', (err) => this.logger.error(err));
         consumer.on('processing_error', (err) => this.logger.error(err));

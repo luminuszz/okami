@@ -49,7 +49,7 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty()
   imageId: string;
   @ApiProperty({ nullable: true })
-  imageUrl: string | null;
+  imageUrl: string;
   @ApiProperty()
   isFinished: boolean;
   @ApiProperty()
@@ -92,7 +92,7 @@ export class WorkHttp implements WorkHttpType {
   tags: TagModel[];
 
   @ApiProperty({ nullable: true })
-  description: string;
+  description: string | null;
 }
 
 export class WorkModelPaged {
@@ -103,7 +103,7 @@ export class WorkModelPaged {
   totalOfPages: number;
 
   @ApiProperty({ nullable: true })
-  nextPage: number;
+  nextPage: number | null;
 }
 
 export class WorkModel {

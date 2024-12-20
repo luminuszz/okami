@@ -64,6 +64,7 @@ let app: NestFastifyApplication<RawServerDefault>;
     .setDescription('The Okami rest api')
     .setVersion('1.0')
     .addTag('okami')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

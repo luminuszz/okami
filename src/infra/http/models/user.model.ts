@@ -1,6 +1,6 @@
 import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { User, UserRole } from '@domain/auth/enterprise/entities/User';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaymentSubscriptionStatus } from '@prisma/client';
 import { z } from 'zod';
 
@@ -26,23 +26,26 @@ export type UserHttpType = z.infer<typeof userSchema>;
 export class UserHttp implements UserHttpType {
   @ApiProperty()
   id: string;
+
   @ApiProperty()
   name: string;
+
   @ApiProperty()
   email: string;
 
   @ApiProperty({ nullable: true })
-  avatarImageUrl: string | null;
+  avatarImageUrl: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   avatarImageId?: string;
 
   @ApiProperty()
   finishedWorksCount: number;
+
   @ApiProperty()
   readingWorksCount: number;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   notionDatabaseId?: string;
 
   @ApiProperty({ enum: UserRole })
