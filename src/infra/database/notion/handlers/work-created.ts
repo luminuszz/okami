@@ -1,31 +1,26 @@
 import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
-import { NotionImageObject } from '@infra/database/notion/dto/notion-image.dto';
 import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
+import { Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { NotionImageObject } from '../dto/notion-image.dto';
 import { NotionMapper } from '../notion.mappter';
 
 @EventsHandler(WorkCreatedEvent)
-export class SetSyncIdOnNotionPageEventHandler implements IEventHandler<WorkCreatedEvent> {
-  constructor(private notionRepository: NotionWorkRepository) {}
+export class OnWorkCreatedEventHandlerNotion implements IEventHandler<WorkCreatedEvent> {
+  constructor(
+    private notionRepository: NotionWorkRepository,
+    private uploadWorkImage: UploadWorkImageUseCase,
+    private updateWork: UpdateWorkUseCase,
+  ) {}
+
+  private logger = new Logger(OnWorkCreatedEventHandlerNotion.name);
 
   async handle({ payload }: WorkCreatedEvent) {
     if (!payload.recipientId) return;
 
     await this.notionRepository.setSyncIdInNotionPage(payload.recipientId, payload.id);
-  }
-}
-
-@EventsHandler(WorkCreatedEvent)
-export class UploadNotionWorkImageFromNotionEventHandler implements IEventHandler<WorkCreatedEvent> {
-  constructor(
-    private notionRepository: NotionWorkRepository,
-    private uploadWorkImage: UploadWorkImageUseCase,
-  ) {}
-
-  async handle({ payload }: WorkCreatedEvent) {
-    if (!payload.recipientId) return;
 
     const notionPageDetails = await this.notionRepository.getNotionPageContent(payload.recipientId);
 
@@ -46,39 +41,21 @@ export class UploadNotionWorkImageFromNotionEventHandler implements IEventHandle
         throw response.value;
       }
     }
-  }
-}
 
-@EventsHandler(WorkCreatedEvent)
-export class ExtractDescriptionFormNotionEventHandler implements IEventHandler<WorkCreatedEvent> {
-  constructor(
-    private notionRepository: NotionWorkRepository,
-    private updateWork: UpdateWorkUseCase,
-  ) {}
+    const description = NotionMapper.extractDescriptionFromNotionPage(notionPageDetails);
 
-  async handle({ payload }: WorkCreatedEvent) {
-    const { userId, id, recipientId } = payload;
+    if (description) {
+      const updateWorkResults = await this.updateWork.execute({
+        data: {
+          description,
+        },
+        id: payload.id,
+        userId: payload.userId,
+      });
 
-    const notionPageContent = await this.notionRepository.getNotionPageContent(recipientId);
-
-    if (!notionPageContent) return;
-
-    const description = NotionMapper.extractDescriptionFromNotionPage(notionPageContent);
-
-    if (!description) {
-      throw new Error('Description not found');
-    }
-
-    const results = await this.updateWork.execute({
-      data: {
-        description,
-      },
-      id,
-      userId,
-    });
-
-    if (results.isLeft()) {
-      throw results.value;
+      if (updateWorkResults.isLeft()) {
+        throw updateWorkResults.value;
+      }
     }
   }
 }

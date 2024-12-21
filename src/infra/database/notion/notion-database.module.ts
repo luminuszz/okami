@@ -4,11 +4,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
-import {
-  ExtractDescriptionFormNotionEventHandler,
-  SetSyncIdOnNotionPageEventHandler,
-  UploadNotionWorkImageFromNotionEventHandler,
-} from '@infra/database/notion/handlers/work-created';
+import { OnWorkCreatedEventHandlerNotion } from '@infra/database/notion/handlers/work-created';
 import { WorkMarkReadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-read';
 import { WorkMarkUnreadNotionEventHandler } from '@infra/database/notion/handlers/work-mark-unread';
 import { WorkMarkedNotionFinishedEventHandler } from '@infra/database/notion/handlers/work-marked-finished';
@@ -22,17 +18,15 @@ import { NotionService } from './notion.service';
   imports: [CqrsModule, ConfigModule.forRoot(), StorageModule],
   providers: [
     NotionService,
-    UpdateWorkUseCase,
     NotionWorkRepository,
     WorkMarkReadNotionEventHandler,
     WorkMarkUnreadNotionEventHandler,
     WorkMarkedNotionFinishedEventHandler,
     WorkUpdatedEventHandler,
-    SetSyncIdOnNotionPageEventHandler,
+    OnWorkCreatedEventHandlerNotion,
     UploadWorkImageUseCase,
-    UploadNotionWorkImageFromNotionEventHandler,
     OnWorkDeletedHandler,
-    ExtractDescriptionFormNotionEventHandler,
+    UpdateWorkUseCase,
   ],
   exports: [NotionWorkRepository, NotionService],
 })
