@@ -20,6 +20,12 @@ export class NotionMapper {
     'Light novel': Category.MANGA,
   };
 
+  static extractDescriptionFromNotionPage(notionPage: any): string {
+    const parsed = notionPage.filter((item: any) => item.type === 'paragraph') as any;
+
+    return parsed.map((item) => item.paragraph.rich_text.map((item: any) => item.text.content).join(' ')).join('');
+  }
+
   static toDomain({ properties, id }: NotionPage): Work {
     const category = NotionMapper.notionCategoryToDomainMapper?.[properties.Tipo.select?.name as NotionCategory]
       ? NotionMapper.notionCategoryToDomainMapper[properties.Tipo.select.name || ('Manga' as NotionCategory)]
@@ -40,7 +46,7 @@ export class NotionMapper {
           Tag.create({ name: notionTag.name, slug: new Slug(notionTag.name) }),
         ),
         alternativeName: properties['Nome_alternativo']?.rich_text?.[0]?.text?.content ?? '',
-        description: properties['Descrição']?.rich_text?.[0]?.text?.content ?? '',
+        description: '',
       },
       new UniqueEntityID(properties?.sync_id?.rich_text?.[0]?.text?.content || null),
     );

@@ -1,8 +1,10 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
-import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
+import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
+import { WorkCreatedEvent } from '@domain/work/enterprise/entities/events/work-created';
 import { NotionImageObject } from '@infra/database/notion/dto/notion-image.dto';
+import { NotionWorkRepository } from '@infra/database/notion/notion-work.repository';
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { NotionMapper } from '../notion.mappter';
 
 @EventsHandler(WorkCreatedEvent)
 export class SetSyncIdOnNotionPageEventHandler implements IEventHandler<WorkCreatedEvent> {
@@ -43,6 +45,40 @@ export class UploadNotionWorkImageFromNotionEventHandler implements IEventHandle
       if (response.isLeft()) {
         throw response.value;
       }
+    }
+  }
+}
+
+@EventsHandler(WorkCreatedEvent)
+export class ExtractDescriptionFormNotionEventHandler implements IEventHandler<WorkCreatedEvent> {
+  constructor(
+    private notionRepository: NotionWorkRepository,
+    private updateWork: UpdateWorkUseCase,
+  ) {}
+
+  async handle({ payload }: WorkCreatedEvent) {
+    const { userId, id, recipientId } = payload;
+
+    const notionPageContent = await this.notionRepository.getNotionPageContent(recipientId);
+
+    if (!notionPageContent) return;
+
+    const description = NotionMapper.extractDescriptionFromNotionPage(notionPageContent);
+
+    if (!description) {
+      throw new Error('Description not found');
+    }
+
+    const results = await this.updateWork.execute({
+      data: {
+        description,
+      },
+      id,
+      userId,
+    });
+
+    if (results.isLeft()) {
+      throw results.value;
     }
   }
 }

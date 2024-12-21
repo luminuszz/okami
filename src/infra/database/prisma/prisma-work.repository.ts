@@ -368,6 +368,7 @@ export class PrismaWorkRepository implements WorkRepository {
       return this.prisma.work.update({
         where: {
           recipientId: data.recipientId,
+          description: null,
         },
         data: {
           description: data.description,

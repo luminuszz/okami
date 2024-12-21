@@ -1,9 +1,9 @@
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 import { Work } from '@domain/work/enterprise/entities/work';
 import { Injectable } from '@nestjs/common';
 import { NotionPage } from './dto/notion-page.dto';
 import { NotionMapper } from './notion.mappter';
 import { NotionService } from './notion.service';
-import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
 
 @Injectable()
 export class NotionWorkRepository {

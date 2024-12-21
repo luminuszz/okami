@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 
+import { UpdateWorkUseCase } from '@domain/work/application/usecases/update-work';
 import { UploadWorkImageUseCase } from '@domain/work/application/usecases/upload-work-image';
 import {
+  ExtractDescriptionFormNotionEventHandler,
   SetSyncIdOnNotionPageEventHandler,
   UploadNotionWorkImageFromNotionEventHandler,
 } from '@infra/database/notion/handlers/work-created';
@@ -20,6 +22,7 @@ import { NotionService } from './notion.service';
   imports: [CqrsModule, ConfigModule.forRoot(), StorageModule],
   providers: [
     NotionService,
+    UpdateWorkUseCase,
     NotionWorkRepository,
     WorkMarkReadNotionEventHandler,
     WorkMarkUnreadNotionEventHandler,
@@ -29,6 +32,7 @@ import { NotionService } from './notion.service';
     UploadWorkImageUseCase,
     UploadNotionWorkImageFromNotionEventHandler,
     OnWorkDeletedHandler,
+    ExtractDescriptionFormNotionEventHandler,
   ],
   exports: [NotionWorkRepository, NotionService],
 })
