@@ -1,30 +1,29 @@
 import { AppModule } from '@app/app.module';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
+import { User, UserRole } from '@domain/auth/enterprise/entities/User';
+import { TagRepository } from '@domain/work/application/repositories/tag-repository';
+import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { SearchTokenType } from '@domain/work/enterprise/entities/search-token';
+import { Tag } from '@domain/work/enterprise/entities/tag';
+import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
+import { Work } from '@domain/work/enterprise/entities/work';
 import { faker } from '@faker-js/faker';
 import * as fastifyCookie from '@fastify/cookie';
+import { FastifyCookieOptions } from '@fastify/cookie';
+import { OKAMI_COOKIE_NAME } from '@infra/crqs/auth/auth.guard';
 import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { parseDomainUserToPrismaUser } from '@infra/database/prisma/prisma-mapper';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { EnvService } from '@infra/env/env.service';
+import { SearchTokenHttp } from '@infra/http/models/search-token.model';
+import { TagHttpType } from '@infra/http/models/tag.model';
 import { JwtService } from '@nestjs/jwt';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
-import { UniqueEntityID } from '@core/entities/unique-entity-id';
-import { SearchTokenHttp } from '@infra/http/models/search-token.model';
-import { User, UserRole } from '@domain/auth/enterprise/entities/User';
-import { parseDomainUserToPrismaUser } from '@infra/database/prisma/prisma-mapper';
-import { CreateApiAccessTokenUseCase } from '@domain/auth/application/useCases/create-api-access-token-use-case';
-import { TagRepository } from '@domain/work/application/repositories/tag-repository';
-import { Tag } from '@domain/work/enterprise/entities/tag';
-import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
-import { map } from 'lodash';
-import { TagHttpType } from '@infra/http/models/tag.model';
-import { CreateWorkSchemaType } from '@infra/http/validators/create-work.dto';
-import { FastifyCookieOptions } from '@fastify/cookie';
-import { OKAMI_COOKIE_NAME } from '@infra/crqs/auth/auth.guard';
-import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 import { createWorkPropsFactory } from '@test/mocks/mocks';
-import { Work } from '@domain/work/enterprise/entities/work';
+import { map } from 'lodash';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
@@ -53,11 +52,14 @@ describe('E2E tests', () => {
 
     app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
 
-    await app.register(fastifyCookie, {
-      parseOptions: {
-        httpOnly: true,
-      },
-    } as FastifyCookieOptions);
+    await app.register(
+      fastifyCookie as any,
+      {
+        parseOptions: {
+          httpOnly: true,
+        },
+      } as FastifyCookieOptions,
+    );
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
 
@@ -77,7 +79,7 @@ describe('E2E tests', () => {
     [OKAMI_COOKIE_NAME]: app.get(JwtService).sign({
       id: user?.id ?? faker.string.uuid(),
       email: user?.email ?? faker.internet.email(),
-      name: user?.name ?? faker.internet.userName(),
+      name: user?.name ?? faker.internet.username(),
     } satisfies UserTokenDto),
   });
 
