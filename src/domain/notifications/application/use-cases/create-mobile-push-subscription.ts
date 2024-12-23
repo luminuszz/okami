@@ -1,12 +1,12 @@
 import { Either, left, right } from '@core/either';
 import { UseCaseImplementation } from '@core/use-case';
 
+import { InvalidOperation } from '@core/errors/invalid-operation';
+import { ResourceNotFound } from '@core/errors/resource-not-found';
+import { MobilePushSubscriptionRepository } from '@domain/notifications/application/contracts/mobile-push-subscription-repository';
+import { MobilePushSubscription } from '@domain/notifications/enterprise/entities/mobile-push-subscription';
 import { Injectable } from '@nestjs/common';
 import { FindSubscriberByRecipientId } from './find-subscriber-by-recipient-id';
-import { ResourceNotFound } from '@core/errors/resource-not-found';
-import { InvalidOperation } from '@core/errors/invalid-operation';
-import { MobilePushSubscription } from '@domain/notifications/enterprise/entities/mobile-push-subscription';
-import { MobilePushSubscriptionRepository } from '@domain/notifications/application/contracts/mobile-push-subscription-repository';
 
 interface CreateMobilePushSubscriptionRequest {
   recipientId: string;
@@ -40,7 +40,7 @@ export class CreateMobilePushSubscription
     const existsSubscription = await this.mobilePushSubscriptionRepository.findBySubscriptionToken(subscriptionToken);
 
     if (existsSubscription) {
-      return left(new InvalidOperation('Subscription already exists'));
+      return right({ mobilePushSubscription: existsSubscription });
     }
 
     const { subscriber } = results.value;
