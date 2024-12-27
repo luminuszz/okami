@@ -2,6 +2,10 @@ import { BatchService } from '@infra/database/batchs/batch.service';
 
 import { UserTokenDto } from '@app/infra/crqs/auth/dto/user-token.dto';
 import { DeleteWorkCommand } from '@app/infra/crqs/work/commands/delete-work.command';
+import {
+  GenerateWorkImageUploadUrlCommand,
+  GenerateWorkImageUploadUrlCommandResults,
+} from '@app/infra/crqs/work/commands/generate-work-image-upload-url.command';
 import { FetchWorksScrapingPaginatedReportQuery } from '@app/infra/crqs/work/queries/fetch-for-works-scraping-report-paginated';
 import { FetchUserWorksWithFilterAndPagedQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter-and-paged';
 import { FetchUserWorksWithFilterQuery } from '@app/infra/crqs/work/queries/fetch-user-works-with-filter.query';
@@ -18,7 +22,7 @@ import { UploadWorkImageCommand } from '@infra/crqs/work/commands/upload-work-im
 import { FetchFavoritesWorksQuery } from '@infra/crqs/work/queries/fetch-favorites-works';
 import { FetchForWorkersReadQuery } from '@infra/crqs/work/queries/fetch-for-works-read';
 import { FetchForWorkersUnreadQuery } from '@infra/crqs/work/queries/fetch-for-works-unread';
-import { WorkHttp, WorkModel, WorkModelPaged } from '@infra/http/models/work.model';
+import { WorkHttp, WorkModel, WorkModelPaged, WorkUploadUrlResponseModel } from '@infra/http/models/work.model';
 import { CreateWorkApiShape, createWorkSchema } from '@infra/http/validators/create-work.dto';
 import { MarkWorkUnreadDto } from '@infra/http/validators/mark-work-unread.dto';
 import { ScrappingReportDto } from '@infra/http/validators/scrapping-report.dto';
@@ -45,6 +49,7 @@ import { UpdateWorkCommand } from '../../crqs/work/commands/update-work.command'
 import { FindOneWorkQuery } from '../../crqs/work/queries/find-one-work';
 import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
+import { GetWorkUploadUrlDto } from '../validators/get-work-upload-url.dto';
 import { ListUserWorkQueryPaged, ListUserWorksQuery } from '../validators/list-user-works-query';
 
 @ApiTags('work')
@@ -254,5 +259,27 @@ export class WorkController {
     const results = await this.queryBus.execute(new FetchFavoritesWorksQuery(userId));
 
     return WorkModel.toHttpList(results);
+  }
+
+  @Post('/upload/get-upload-url')
+  @ApiOkResponse({ type: WorkUploadUrlResponseModel })
+  async getUploadUrl(@Body() { fileName, fileType, workId }: GetWorkUploadUrlDto): Promise<WorkUploadUrlResponseModel> {
+    const { filename, url } = await this.commandBus.execute<
+      GenerateWorkImageUploadUrlCommand,
+      GenerateWorkImageUploadUrlCommandResults
+    >(
+      new GenerateWorkImageUploadUrlCommand(
+        {
+          filename: fileName,
+          filetype: fileType,
+        },
+        workId,
+      ),
+    );
+
+    return {
+      filename,
+      url,
+    };
   }
 }

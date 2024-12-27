@@ -1,8 +1,8 @@
 import { HashProvider } from '@domain/auth/application/contracts/hash-provider';
 import { MailProvider } from '@domain/auth/application/contracts/mail-provider';
-import { faker } from '@faker-js/faker';
 import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
 import { WorkProps, WorkStatus } from '@domain/work/enterprise/entities/work';
+import { faker } from '@faker-js/faker';
 
 export const fakeHashProvider: HashProvider = {
   hash: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
@@ -13,6 +13,7 @@ export const fakeStorageProvider = {
   uploadWorkImage: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
   uploadWorkImageWithUrl: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
   uploadAvatarImage: jest.fn().mockImplementation(() => Promise.resolve(faker.string.uuid())),
+  createUploadUrl: jest.fn().mockImplementation(() => Promise.resolve(faker.internet.url())),
 };
 
 export const fakeEmailProvider: MailProvider = {

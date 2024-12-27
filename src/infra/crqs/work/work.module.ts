@@ -23,6 +23,7 @@ import { FetchUserWorksWithFilterUseCase } from '@domain/work/application/usecas
 import { FetchWorksForScrappingUseCase } from '@domain/work/application/usecases/fetch-works-for-scrapping';
 import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
 import { FindOneWorkUseCase } from '@domain/work/application/usecases/fnd-one-work';
+import { GenerateWorkImageUploadUrlUseCase } from '@domain/work/application/usecases/generate-work-image-upload-url';
 import { ListSearchTokensByType } from '@domain/work/application/usecases/list-search-tokens-by-type';
 import { MarkWorkAsDroppedUseCase } from '@domain/work/application/usecases/mark-work-as-dropped';
 import { MarkWorkFinishedUseCase } from '@domain/work/application/usecases/mark-work-finished';
@@ -49,6 +50,7 @@ import { StorageModule } from '@infra/storage/storage.module';
 import { CreateManySearchTokensCommandHandler } from './commands/create-many-search-tokens.command';
 import { CreateTagCommandHandler } from './commands/create-tag.command';
 import { DeleteWorkCommandHandler } from './commands/delete-work.command';
+import { GenerateWorkImageUploadUrlCommandHandler } from './commands/generate-work-image-upload-url.command';
 import { MarkWorkAsDroppedCommandHandler } from './commands/mark-work-as-dropped.command';
 import { UpdateWorkChapterCommandHandler } from './commands/update-work-chapter.command';
 import { UpdateWorkCommandHandler } from './commands/update-work.command';
@@ -78,6 +80,7 @@ const CommandHandlers = [
   UpdateTagCommandHandler,
   DeleteTagCommandHandler,
   ToggleFavoriteCommandHandler,
+  GenerateWorkImageUploadUrlCommandHandler,
 ];
 
 const QueryHandlers = [
@@ -130,6 +133,7 @@ const EventHandlers = [];
     DeleteTag,
     Queue,
     ToggleWorkFavorite,
+    GenerateWorkImageUploadUrlUseCase,
   ],
   exports: [
     CreateWorkUseCase,
