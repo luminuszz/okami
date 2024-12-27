@@ -1,4 +1,5 @@
 import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
   FiletoUpload,
   FiletoUploadWithUrl,
@@ -28,6 +29,20 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     });
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET');
+  }
+
+  async createUploadUrl(fileName: string, fileType: string): Promise<string> {
+    await this.createFolderIfNotExists('work-images');
+
+    const puts3Command = new PutObjectCommand({
+      Bucket: this.awsBucket,
+      Key: `work-images/${fileName}.${fileType}`,
+      ContentType: `image/${fileType}`,
+    });
+
+    const uploadUrl = await getSignedUrl(this.s3Client, puts3Command, { expiresIn: 3600 });
+
+    return uploadUrl;
   }
 
   static createS3FileUrl(fileName: string): string {

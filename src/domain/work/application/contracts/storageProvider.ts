@@ -19,4 +19,5 @@ export abstract class StorageProvider {
   abstract uploadWorkImage(file: FiletoUpload): Promise<FileUploadResponse>;
   abstract uploadWorkImageWithUrl(file: FiletoUploadWithUrl): Promise<FileUploadResponse>;
   abstract uploadAvatarImage(file: FiletoUpload): Promise<FileUploadResponse>;
+  abstract createUploadUrl(fileName: string, fileType: string): Promise<string>;
 }

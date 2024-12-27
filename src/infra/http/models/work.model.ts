@@ -115,3 +115,11 @@ export class WorkModel {
     return workSchema.parse(work);
   }
 }
+
+export class WorkUploadUrlResponseModel {
+  @ApiProperty()
+  url: string;
+
+  @ApiProperty()
+  filename: string;
+}
