@@ -51,6 +51,7 @@ import { User } from '../user-auth.decorator';
 import { FetchScrappingReportQuery } from '../validators/fetch-scrapping-report-query';
 import { GetWorkUploadUrlDto } from '../validators/get-work-upload-url.dto';
 import { ListUserWorkQueryPaged, ListUserWorksQuery } from '../validators/list-user-works-query';
+import { HttpStatusCode } from 'axios';
 
 @ApiTags('work')
 @Controller('work')
@@ -263,6 +264,7 @@ export class WorkController {
 
   @Post('/upload/get-upload-url')
   @ApiOkResponse({ type: WorkUploadUrlResponseModel })
+  @HttpCode(HttpStatusCode.Ok)
   async getUploadUrl(@Body() { fileName, fileType, workId }: GetWorkUploadUrlDto): Promise<WorkUploadUrlResponseModel> {
     const { filename, url } = await this.commandBus.execute<
       GenerateWorkImageUploadUrlCommand,

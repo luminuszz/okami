@@ -64,7 +64,7 @@ describe('E2E tests', () => {
     await app.getHttpAdapter().getInstance().ready();
 
     adminUser = User.create({
-      name: faker.internet.userName(),
+      name: faker.internet.username(),
       email: faker.internet.email(),
       role: UserRole.ADMIN,
       passwordHash: faker.internet.password(),
@@ -262,7 +262,7 @@ describe('E2E tests', () => {
 
     beforeAll(async () => {
       adminUser = User.create({
-        name: faker.internet.userName(),
+        name: faker.internet.username(),
         email: faker.internet.email(),
         role: UserRole.ADMIN,
         passwordHash: faker.internet.password(),
@@ -287,7 +287,7 @@ describe('E2E tests', () => {
 
     it('should not be able to access a protected route', async () => {
       const user = User.create({
-        name: faker.internet.userName(),
+        name: faker.internet.username(),
         email: faker.internet.email(),
         role: UserRole.USER,
         passwordHash: faker.internet.password(),
@@ -437,6 +437,32 @@ describe('E2E tests', () => {
 
       expect(results.statusCode).toBe(200);
       expect(results.json().length).toBe(1);
+    });
+
+    it('GET /work/upload/get-upload-url', async () => {
+      const work = Work.create(
+        createWorkPropsFactory({
+          userId: adminUser.id,
+        }),
+      );
+
+      await app.get(WorkRepository).create(work);
+
+      const results = await app.inject({
+        url: '/work/upload/get-upload-url',
+        method: 'POST',
+        cookies: {
+          ...generateValidTokenCookie(adminUser),
+        },
+        body: {
+          workId: work.id,
+          fileName: faker.system.fileName(),
+          fileType: faker.system.mimeType(),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+      expect(results.json()).toHaveProperty('url');
     });
   });
 

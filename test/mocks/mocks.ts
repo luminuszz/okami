@@ -23,7 +23,7 @@ export const fakeEmailProvider: MailProvider = {
 };
 
 export const createWorkPropsFactory = (props?: Partial<WorkProps>) => ({
-  name: faker.internet.userName(),
+  name: faker.internet.username(),
   url: faker.internet.url(),
   chapter: new Chapter(faker.number.int({ max: 1000, min: 1 })),
   hasNewChapter: false,
