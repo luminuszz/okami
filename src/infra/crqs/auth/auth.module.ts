@@ -45,6 +45,8 @@ import { FetchUserAnalyticsQueryHandler } from './queries/fetch-user-analytics';
 import { RoleGuard } from './role.guard';
 import { SubscriberGuard } from './subscriber.guard';
 import { TokenService } from './token.service';
+import { InvalidateRefreshTokenCommandHandler } from '@infra/crqs/auth/commands/invalidate-refresh-token-command';
+import { InvalidateRefreshToken } from '@domain/auth/application/useCases/invalidate-refresh-token';
 
 const Commands = [
   LoginCommandHandler,
@@ -62,6 +64,7 @@ const Commands = [
   CreateRefreshTokenUseCase,
   RefreshTokenCommandHandler,
   MakeLoginWithRefreshTokenCommandHandler,
+  InvalidateRefreshTokenCommandHandler,
 ];
 
 const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
@@ -83,6 +86,7 @@ const Queries = [FindUserByIdQueryHandler, FetchUserAnalyticsQueryHandler];
   ],
   providers: [
     TokenService,
+    InvalidateRefreshToken,
     ValidateRefreshToken,
     SendConfirmEmail,
     SendResetPasswordEmail,

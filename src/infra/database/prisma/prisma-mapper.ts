@@ -187,5 +187,6 @@ export const parsePrismaRefreshTokenToDomain = (prismaRefreshToken: PrismaRefres
     expiresAt: prismaRefreshToken.expiresAt,
     userId: prismaRefreshToken.userId,
     createdAt: prismaRefreshToken.createdAt,
+    invalidatedAt: prismaRefreshToken.invalidatedAt,
   });
 };

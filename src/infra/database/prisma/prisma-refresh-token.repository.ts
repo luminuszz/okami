@@ -8,6 +8,20 @@ import { PrismaService } from './prisma.service';
 export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
   constructor(private prisma: PrismaService) {}
 
+  async save(refreshToken: RefreshToken): Promise<void> {
+    await this.prisma.refreshToken.update({
+      where: {
+        token: refreshToken.token,
+      },
+      data: {
+        expiresAt: refreshToken.expiresAt,
+        token: refreshToken.token,
+        userId: refreshToken.userId,
+        invalidatedAt: refreshToken.invalidatedAt,
+      },
+    });
+  }
+
   async findByToken(token: string): Promise<RefreshToken | null> {
     const results = await this.prisma.refreshToken.findUnique({
       where: {
