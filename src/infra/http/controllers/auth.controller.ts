@@ -43,6 +43,8 @@ import { ResetUserPasswordDto } from '../validators/reset-user-password.dto';
 import { SendResetPasswordEmailDto } from '../validators/send-reset-password-email.dto';
 import { UpdateNotionDatabaseIdDto } from '../validators/update-notiton-database-id.dto';
 import { UpdateUserDto } from '../validators/update-user.dto';
+import { InvalidateRefreshTokenCommand } from '@infra/crqs/auth/commands/invalidate-refresh-token-command';
+import { LogoutDto } from '@infra/http/validators/logout.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -196,7 +198,10 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: FastifyReply) {
+  async logout(@Body() data: LogoutDto, @Res({ passthrough: true }) res: FastifyReply) {
+    if (data?.refreshToken) {
+      await this.commandBus.execute(new InvalidateRefreshTokenCommand(data.refreshToken));
+    }
     return res.clearCookie(OKAMI_COOKIE_NAME).status(201).send();
   }
 

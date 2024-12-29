@@ -7,6 +7,7 @@ import { HashProvider } from '../contracts/hash-provider';
 import { UserNotFound } from '../errors/UserNotFound';
 import { RefreshTokenRepository } from './repositories/refresh-token-repository';
 import { UserRepository } from './repositories/user-repository';
+import { randomUUID } from 'crypto';
 
 interface CreateRefreshTokenDTO {
   userId: string;
@@ -27,13 +28,13 @@ export class CreateRefreshTokenUseCase
   async execute({ userId }: CreateRefreshTokenDTO): Promise<CreateRefreshTokenResponse> {
     const userExists = await this.userRepository.findById(userId);
 
-    const expiresAt = dayjs().add(30, 'days').unix();
+    const expiresAt = dayjs().add(30, 'days').toDate();
 
     if (!userExists) {
       return left(new UserNotFound());
     }
 
-    const token = await this.hashProvider.hash(`${userId}-${expiresAt}`);
+    const token = randomUUID();
 
     const refreshToken = RefreshToken.create({
       expiresAt,
