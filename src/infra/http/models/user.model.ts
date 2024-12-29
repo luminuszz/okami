@@ -33,8 +33,8 @@ export class UserHttp implements UserHttpType {
   @ApiProperty()
   email: string;
 
-  @ApiProperty({ nullable: true })
-  avatarImageUrl: string;
+  @ApiProperty({ nullable: true, type: String })
+  avatarImageUrl: string | null;
 
   @ApiPropertyOptional()
   avatarImageId?: string;

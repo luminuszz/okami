@@ -48,8 +48,8 @@ export class WorkHttp implements WorkHttpType {
   id: string;
   @ApiProperty()
   imageId: string;
-  @ApiProperty({ nullable: true })
-  imageUrl: string;
+  @ApiProperty({ nullable: true, type: String })
+  imageUrl: string | null;
   @ApiProperty()
   isFinished: boolean;
   @ApiProperty()
@@ -102,7 +102,7 @@ export class WorkModelPaged {
   @ApiProperty()
   totalOfPages: number;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: String })
   nextPage: number | null;
 }
 
