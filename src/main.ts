@@ -69,7 +69,9 @@ let app: NestFastifyApplication<RawServerDefault>;
 
   const document = SwaggerModule.createDocument(app, config);
 
-  writeFileSync('./swagger.json', JSON.stringify(document));
+  app.getHttpAdapter().get('/static/swagger', (_, reply) => {
+    return reply.header('Content-Type', 'application/json; charset=utf-8').send(document);
+  });
 
   if (envService.get('NODE_ENV') === 'development') {
     SwaggerModule.setup('api', app, document);
