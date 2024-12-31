@@ -1,5 +1,5 @@
 import { UseCaseImplementation } from '@core/use-case';
-import { Either, right } from '@core/either';
+import { Either, left, right } from '@core/either';
 import { ResourceNotFound } from '@core/errors/resource-not-found';
 import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
 import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
@@ -19,6 +19,12 @@ export class AddWorkInCalendar implements UseCaseImplementation<AddWorkInCalenda
   constructor(private readonly calendarRepository: CalendarRepository) {}
 
   async execute({ workId, calendarId, dayOfWeek }: AddWorkInCalendarInput): Promise<AddWorkInCalendarOutput> {
+    const existsCalendar = await this.calendarRepository.findCalendarById(calendarId);
+
+    if (!existsCalendar) {
+      return left(new ResourceNotFound('Calendar not found'));
+    }
+
     const row = CalendarRow.create({
       calendarId,
       workId,
@@ -26,6 +32,14 @@ export class AddWorkInCalendar implements UseCaseImplementation<AddWorkInCalenda
       createdAt: new Date(),
       updatedAt: null,
     });
+
+    const worksInSameDayOfWeek = await this.calendarRepository.fetchRowsByCalendarIdAndDayOfWeek(calendarId, dayOfWeek);
+
+    const alreadyExistsRowWithSameWorkInSameDayOfWeek = worksInSameDayOfWeek.some((row) => row.workId === workId);
+
+    if (alreadyExistsRowWithSameWorkInSameDayOfWeek) {
+      return left(new InvalidCalendarOperation('Work already added in calendar in same day of week'));
+    }
 
     await this.calendarRepository.createRow(row);
 
