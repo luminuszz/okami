@@ -15,9 +15,11 @@ import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
 import { TagController } from './controllers/tag.controller';
 import { WorkController } from './controllers/work.controller';
+import { CalendarModule } from '@infra/crqs/calendar/calendar.module';
+import { CalendarController } from '@infra/http/controllers/calendar-controller';
 
 @Module({
-  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule],
+  imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, CalendarModule],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RoleGuard },
@@ -29,6 +31,7 @@ import { WorkController } from './controllers/work.controller';
     PaymentController,
     TagController,
     SearchTokenController,
+    CalendarController,
   ],
 })
 export class HttpModule {}

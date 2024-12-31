@@ -1,11 +1,12 @@
 import { Entity } from '@core/entities/entity';
 import { Replace } from '@core/replaced';
 import { CalendarRow } from '@domain/calendar/enterprise/entities/calendar-row';
+import { UniqueEntityID } from '@core/entities/unique-entity-id';
 
 export interface CalendarProps {
   userId: string;
   title: string;
-  description: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date | null;
   rows: CalendarRow[];
@@ -21,16 +22,17 @@ export type CalendarReplacedProps = Replace<
 >;
 
 export class Calendar extends Entity<CalendarProps> {
-  private constructor(props: CalendarReplacedProps) {
+  private constructor(props: CalendarReplacedProps, id?: UniqueEntityID) {
     props.createdAt = props.createdAt ?? new Date();
     props.updatedAt = props.updatedAt ?? null;
+    props.description = props.description ?? '';
     props.rows = props.rows ?? [];
 
-    super(props as CalendarProps);
+    super(props as CalendarProps, id);
   }
 
-  static create(props: CalendarReplacedProps): Calendar {
-    return new Calendar(props);
+  static create(props: CalendarReplacedProps, id?: UniqueEntityID): Calendar {
+    return new Calendar(props, id);
   }
 
   get userId() {
