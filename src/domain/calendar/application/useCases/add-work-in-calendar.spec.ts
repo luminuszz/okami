@@ -33,4 +33,6 @@ describe('AddWorkInCalendar', () => {
 
     expect(calendarRepository.calendars[0].rows).toHaveLength(1);
   });
+
+  it.skip('should not be able to add row in calendar if calendar not exists', async () => {});
 });
