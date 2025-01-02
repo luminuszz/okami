@@ -11,12 +11,12 @@ import { RoleGuard } from '../crqs/auth/role.guard';
 import { WorkModule } from '../crqs/work/work.module';
 import { PaymentModule } from '../payment/payment.module';
 
+import { CalendarController } from '@app/infra/http/controllers/calendar.controller';
+import { CalendarModule } from '@infra/crqs/calendar/calendar.module';
 import { NotificationController } from './controllers/notification.controller';
 import { PaymentController } from './controllers/payment.controller';
 import { TagController } from './controllers/tag.controller';
 import { WorkController } from './controllers/work.controller';
-import { CalendarModule } from '@infra/crqs/calendar/calendar.module';
-import { CalendarController } from '@infra/http/controllers/calendar-controller';
 
 @Module({
   imports: [PaymentModule, CqrsModule, WorkModule, AuthModule, NotificationModule, DatabaseModule, CalendarModule],
