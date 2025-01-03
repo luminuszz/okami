@@ -17,6 +17,7 @@ export const calendarSchema = z.object({
     z.object({
       id: z.string(),
       dayOfWeek: z.number(),
+      createdAt: z.date().transform((value) => value.toISOString()),
       Work: z
         .object({
           id: z.string(),
@@ -78,9 +79,6 @@ export class CalendarModel implements CalendarHttpType {
 
   @ApiProperty({ type: 'string', format: 'datetime' })
   createdAt: string;
-
-  @ApiProperty()
-  userId: string;
 
   @ApiProperty({ type: CalendarRowModel, isArray: true })
   rows: CalendarRowModel[];

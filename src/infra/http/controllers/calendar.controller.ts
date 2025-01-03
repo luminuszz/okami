@@ -6,8 +6,10 @@ import { AddRowInCalendarDto } from '@infra/http/validators/addRowInCalendar.dto
 import { CreateCalendarDto } from '@infra/http/validators/create-calendar-dto';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CalendarHttpModelValidator } from '../models/calendar.model';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CalendarHttpModelValidator, CalendarModel } from '../models/calendar.model';
 
+@ApiTags('calendar')
 @Controller('calendar')
 export class CalendarController {
   constructor(
@@ -23,10 +25,15 @@ export class CalendarController {
   }
 
   @Post('/:calendarId/row')
-  async addRowInCalendar(@Body() { dayOfWeek, workId }: AddRowInCalendarDto, @Param('calendarId') calendarId: string) {
-    await this.commandBus.execute(new AddRowInCalendarCommand(workId, calendarId, dayOfWeek));
+  async addRowInCalendar(
+    @Body() { dayOfWeek, workId }: AddRowInCalendarDto,
+    @Param('calendarId') calendarId: string,
+    @User('id') userId: string,
+  ) {
+    await this.commandBus.execute(new AddRowInCalendarCommand(workId, calendarId, dayOfWeek, userId));
   }
 
+  @ApiResponse({ type: CalendarModel })
   @Get('')
   async fetchUserCalendar(@User('id') userId: string) {
     const results = await this.queryBus.execute(new FetchUserCalendarWithRowsQuery(userId));

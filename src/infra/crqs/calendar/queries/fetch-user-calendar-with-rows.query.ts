@@ -10,7 +10,7 @@ export class FetchUserCalendarWithRowsQueryHandler implements IQueryHandler<Fetc
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(query: FetchUserCalendarWithRowsQuery) {
-    const calendar = await this.prisma.calendar.findUnique({
+    return this.prisma.calendar.findUnique({
       where: {
         userId: query.userId,
       },
@@ -28,13 +28,12 @@ export class FetchUserCalendarWithRowsQueryHandler implements IQueryHandler<Fetc
                 imageId: true,
               },
             },
+            createdAt: true,
             dayOfWeek: true,
             id: true,
           },
         },
       },
     });
-
-    return calendar;
   }
 }

@@ -1,12 +1,13 @@
+import { AddWorkInCalendar } from '@domain/calendar/application/useCases/add-work-in-calendar';
 import { DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AddWorkInCalendar } from '@domain/calendar/application/useCases/add-work-in-calendar';
 
 export class AddRowInCalendarCommand {
   constructor(
     public readonly workId: string,
     public readonly calendarId: string,
     public readonly dayOfWeek: DaysOfWeek,
+    public readonly userId: string,
   ) {}
 }
 
@@ -19,6 +20,7 @@ export class AddRowInCalendarCommandHandler implements ICommandHandler<AddRowInC
       workId: command.workId,
       calendarId: command.calendarId,
       dayOfWeek: command.dayOfWeek,
+      userId: command.userId,
     });
 
     if (results.isLeft()) {
