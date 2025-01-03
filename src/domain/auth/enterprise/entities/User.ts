@@ -4,6 +4,7 @@ import { UserEmailValidated } from '@domain/auth/enterprise/events/user-email-va
 import { Work } from '@domain/work/enterprise/entities/work';
 import { UserEmailUpdated } from '../events/user-email-updated';
 import { EmailValidationCode } from '../value-objects/email-validation-code';
+import { UserCreated } from '@domain/auth/enterprise/events/user-created';
 
 export enum PaymentSubscriptionStatus {
   ACTIVE = 'ACTIVE',
@@ -53,6 +54,10 @@ export class User extends Entity<EntityProps> {
     this.props.resetPasswordCode = props.resetPasswordCode ?? null;
     this.props.role = props.role ?? UserRole.USER;
     this.props.emailValidationCode = props.emailValidationCode ?? new EmailValidationCode('');
+
+    if (!id) {
+      this.events.push(new UserCreated(this));
+    }
   }
 
   get email(): string {

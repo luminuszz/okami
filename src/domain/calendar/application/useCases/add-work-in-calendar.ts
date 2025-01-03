@@ -3,7 +3,7 @@ import { ResourceNotFound } from '@core/errors/resource-not-found';
 import { UseCaseImplementation } from '@core/use-case';
 import { CalendarRepository } from '@domain/calendar/application/contracts/calendar-repository';
 import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
-import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
+import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { Injectable } from '@nestjs/common';
 
 export interface AddWorkInCalendarInput {

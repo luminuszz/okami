@@ -3,10 +3,8 @@ import { User } from '@domain/auth/enterprise/entities/User';
 
 export class UserCreated implements DomainEvent<User> {
   eventName: string;
-  payload: User;
 
-  constructor(user: User) {
+  constructor(public readonly payload: User) {
     this.eventName = UserCreated.name;
-    this.payload = user;
   }
 }

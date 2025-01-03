@@ -2,7 +2,7 @@ import { Either, left, right } from '@core/either';
 import { ResourceNotFound } from '@core/errors/resource-not-found';
 import { UseCaseImplementation } from '@core/use-case';
 import { Injectable } from '@nestjs/common';
-import { Calendar } from '@domain/calendar/enterprise/entities/calendar';
+import { Calendar } from '@domain/calendar/enterprise/entities/Calendar';
 import { CalendarRepository } from '@domain/calendar/application/contracts/calendar-repository';
 import { UserRepository } from '@domain/auth/application/useCases/repositories/user-repository';
 import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
@@ -30,8 +30,6 @@ export class CreateCalendar implements UseCaseImplementation<CreateCalendarInput
     }
 
     const userAlreadyHasCalendar = await this.calendarRepository.findByCalendarByUserId(userExists.id);
-
-    console.log(userAlreadyHasCalendar);
 
     if (userAlreadyHasCalendar) {
       return left(new InvalidCalendarOperation('Calendar Duplicate'));

@@ -1,6 +1,6 @@
 import { IsObjectId } from '@infra/utils/IsObjectId';
 import { ApiProperty } from '@nestjs/swagger';
-import { DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
+import { DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { IsInt, IsPositive } from 'class-validator';
 
 export class AddRowInCalendarDto {

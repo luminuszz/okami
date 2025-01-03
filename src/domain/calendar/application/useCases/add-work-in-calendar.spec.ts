@@ -1,8 +1,8 @@
 import { ResourceNotFound } from '@core/errors/resource-not-found';
 import { AddWorkInCalendar } from '@domain/calendar/application/useCases/add-work-in-calendar';
 import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
-import { Calendar } from '@domain/calendar/enterprise/entities/calendar';
-import { DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
+import { Calendar } from '@domain/calendar/enterprise/entities/Calendar';
+import { DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { faker } from '@faker-js/faker';
 import { InMemoryCalendarRepository } from '@test/mocks/in-memory-calendar-repository';
 

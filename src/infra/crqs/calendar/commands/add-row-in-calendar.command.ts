@@ -1,5 +1,5 @@
 import { AddWorkInCalendar } from '@domain/calendar/application/useCases/add-work-in-calendar';
-import { DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
+import { DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 export class AddRowInCalendarCommand {

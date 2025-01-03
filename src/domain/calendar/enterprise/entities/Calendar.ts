@@ -1,6 +1,6 @@
 import { Entity } from '@core/entities/entity';
 import { Replace } from '@core/replaced';
-import { CalendarRow } from '@domain/calendar/enterprise/entities/calendar-row';
+import { CalendarRow } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
 
 export interface CalendarProps {

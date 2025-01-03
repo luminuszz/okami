@@ -1,5 +1,5 @@
-import { Calendar } from '@domain/calendar/enterprise/entities/calendar';
-import { CalendarRow } from '@domain/calendar/enterprise/entities/calendar-row';
+import { Calendar } from '@domain/calendar/enterprise/entities/Calendar';
+import { CalendarRow } from '@domain/calendar/enterprise/entities/Calendar-row';
 
 export abstract class CalendarRepository {
   abstract create(calendar: Calendar): Promise<void>;

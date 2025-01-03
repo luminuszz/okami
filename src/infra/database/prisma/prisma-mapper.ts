@@ -24,8 +24,8 @@ import {
   Work as PrismaWork,
 } from '@prisma/client';
 import { map } from 'lodash';
-import { Calendar } from '@domain/calendar/enterprise/entities/calendar';
-import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/calendar-row';
+import { Calendar } from '@domain/calendar/enterprise/entities/Calendar';
+import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
