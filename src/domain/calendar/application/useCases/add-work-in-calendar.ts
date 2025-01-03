@@ -26,13 +26,7 @@ export class AddWorkInCalendar implements UseCaseImplementation<AddWorkInCalenda
     const existsCalendar = await this.calendarRepository.findByCalendarByUserId(userId);
 
     if (!existsCalendar) {
-      return left(new ResourceNotFound('Calendar not found'));
-    }
-
-    const isCalendarOwner = existsCalendar.userId === userId;
-
-    if (!isCalendarOwner) {
-      return left(new InvalidCalendarOperation('User is not the owner of the calendar'));
+      return left(new ResourceNotFound('Calendar'));
     }
 
     const work = await this.workRepository.findById(workId);
