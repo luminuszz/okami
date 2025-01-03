@@ -24,11 +24,14 @@ import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { createWorkPropsFactory } from '@test/mocks/mocks';
 import { map } from 'lodash';
+import { CalendarRepository } from '@domain/calendar/application/contracts/calendar-repository';
+import { CalendarModel } from '@infra/http/models/calendar.model';
 
 describe('E2E tests', () => {
   let app: NestFastifyApplication;
   let prisma: PrismaClient;
   let adminUser: User;
+  let commonUser: User;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -70,8 +73,15 @@ describe('E2E tests', () => {
       passwordHash: faker.internet.password(),
     });
 
-    await prisma.user.create({
-      data: parseDomainUserToPrismaUser(adminUser),
+    commonUser = User.create({
+      name: faker.internet.username(),
+      email: faker.internet.email(),
+      role: UserRole.ADMIN,
+      passwordHash: faker.internet.password(),
+    });
+
+    await prisma.user.createMany({
+      data: [parseDomainUserToPrismaUser(adminUser), parseDomainUserToPrismaUser(commonUser)],
     });
   });
 
@@ -466,16 +476,92 @@ describe('E2E tests', () => {
     });
   });
 
+  describe('CalendarController', () => {
+    it('POST /calendar', async () => {
+      const results = await app.inject({
+        url: '/calendar',
+        method: 'POST',
+        cookies: {
+          ...generateValidTokenCookie(commonUser),
+        },
+        body: {
+          title: faker.lorem.words(),
+          description: faker.lorem.words(),
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const calendar = await app.get(CalendarRepository).findByCalendarByUserId(commonUser.id);
+
+      expect(calendar).toBeDefined();
+      expect(calendar?.userId).toBe(commonUser.id);
+    });
+
+    it(`POST /calendar/{calendarId}/row`, async () => {
+      const work = Work.create(createWorkPropsFactory({ userId: commonUser.id, name: 'arifureta' }));
+
+      await app.get(WorkRepository).create(work);
+
+      const results = await app.inject({
+        url: '/calendar/row',
+        method: 'POST',
+        cookies: {
+          ...generateValidTokenCookie(commonUser),
+        },
+        body: {
+          workId: work.id,
+          dayOfWeek: 2,
+        },
+      });
+
+      expect(results.statusCode).toBe(201);
+
+      const calendar = await app.get(CalendarRepository).findByCalendarByUserId(commonUser.id);
+
+      expect(calendar).toBeDefined();
+      expect(calendar.rows.length).toBe(1);
+    });
+
+    it('GET /calendar', async () => {
+      const results = await app.inject({
+        url: '/calendar',
+        method: 'GET',
+        cookies: {
+          ...generateValidTokenCookie(commonUser),
+        },
+      });
+
+      expect(results.statusCode).toBe(200);
+
+      const data = results.json<CalendarModel>();
+
+      expect(data).toBeDefined();
+      expect(data.createdAt).toBeDefined();
+      expect(data.rows.length).toBe(1);
+      expect(data.rows[0].Work.name).toBe('arifureta');
+    });
+  });
+
   afterAll(async () => {
+    console.log('Cleaning up database');
+
     await prisma.$transaction([
       prisma.work.deleteMany(),
       prisma.accessToken.deleteMany(),
       prisma.user.deleteMany(),
       prisma.tag.deleteMany(),
       prisma.searchToken.deleteMany(),
+      prisma.calendar.deleteMany(),
+      prisma.calendarRow.deleteMany(),
     ]);
 
+    console.log('Disconnecting from database');
+
     await prisma.$disconnect();
+
+    console.log('Closing app');
+
     await app.close();
   });
 });

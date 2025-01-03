@@ -4,7 +4,30 @@ import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { z } from 'zod';
 
-export const calendarSchema = z.object({
+const workCalendarRowSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().nullable(),
+    status: z.string(),
+    nextChapter: z.number().nullable(),
+    chapters: z.number(),
+    imageId: z.string().optional().nullable(),
+  })
+  .transform((data) => ({
+    ...data,
+    chapter: data.chapters,
+    imageUrl: data.imageId ? CloudFlareR2StorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
+  }));
+
+const calendarRowSchema = z.object({
+  id: z.string(),
+  dayOfWeek: z.number(),
+  createdAt: z.date().transform((value) => value.toISOString()),
+  Work: workCalendarRowSchema,
+});
+
+const calendarSchema = z.object({
   title: z.string(),
   description: z.string().optional().nullable(),
   createdAt: z.date().transform((value) => value.toISOString()),
@@ -13,36 +36,14 @@ export const calendarSchema = z.object({
     .transform((value) => value.toISOString())
     .nullable(),
 
-  rows: z.array(
-    z.object({
-      id: z.string(),
-      dayOfWeek: z.number(),
-      createdAt: z.date().transform((value) => value.toISOString()),
-      Work: z
-        .object({
-          id: z.string(),
-          name: z.string(),
-          description: z.string().nullable(),
-          status: z.string(),
-          nextChapter: z.number().nullable(),
-          chapters: z.number(),
-          imageId: z.string().optional().nullable(),
-        })
-        .transform((data) => ({
-          ...data,
-          chapter: data.chapters,
-          imageUrl: data.imageId ? CloudFlareR2StorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
-        })),
-    }),
-  ),
+  rows: z.array(calendarRowSchema),
 });
 
 export type CalendarHttpType = z.infer<typeof calendarSchema>;
+export type CalendarRowHttpType = z.infer<typeof calendarRowSchema>;
+export type WorkCalendarRowHttpType = z.infer<typeof workCalendarRowSchema>;
 
-export class CalendarRowModel {
-  @ApiProperty()
-  id: string;
-
+export class WorkCalendarRowModel implements WorkCalendarRowHttpType {
   @ApiProperty()
   name: string;
 
@@ -68,6 +69,23 @@ export class CalendarRowModel {
 
   @ApiProperty({ type: 'string', nullable: true })
   imageUrl: string | null;
+
+  @ApiProperty({ type: 'number' })
+  chapter: number;
+}
+
+export class CalendarRowModel implements CalendarRowHttpType {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty({ enum: [0, 1, 2, 3, 4, 5, 6] })
+  dayOfWeek: number;
+
+  @ApiProperty({ type: 'string', format: 'datetime' })
+  createdAt: string;
+
+  @ApiProperty({ type: WorkCalendarRowModel })
+  Work: WorkCalendarRowModel;
 }
 
 export class CalendarModel implements CalendarHttpType {
