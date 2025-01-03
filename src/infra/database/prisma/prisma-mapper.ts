@@ -12,6 +12,8 @@ import { Tag } from '@domain/work/enterprise/entities/tag';
 import { Slug } from '@domain/work/enterprise/entities/values-objects/slug';
 import {
   AccessToken as PrismaAccessToken,
+  Calendar as PrismaCalendar,
+  CalendarRow as PrismaCalendarRow,
   Category as PrismaCategory,
   PaymentSubscriptionStatus as PrismaPaymentSubscriptionStatus,
   RefreshStatus as PrismaRefreshStatus,
@@ -22,6 +24,8 @@ import {
   Work as PrismaWork,
 } from '@prisma/client';
 import { map } from 'lodash';
+import { Calendar } from '@domain/calendar/enterprise/entities/Calendar';
+import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 
 export const enumMapper = (category: Category): PrismaCategory => {
   return PrismaCategory[category];
@@ -42,6 +46,10 @@ interface PrismaUserWithMeta extends PrismaUser {
 
 interface PrismaWorkWithTags extends PrismaWork {
   tags?: PrismaTag[];
+}
+
+export interface PrismaCalendarWithRows extends PrismaCalendar {
+  rows?: PrismaCalendarRow[];
 }
 
 export const workEntityToPrismaMapper = (work: Work): PrismaWork => ({
@@ -189,4 +197,29 @@ export const parsePrismaRefreshTokenToDomain = (prismaRefreshToken: PrismaRefres
     createdAt: prismaRefreshToken.createdAt,
     invalidatedAt: prismaRefreshToken.invalidatedAt,
   });
+};
+
+export const parsePrismaCalendarRowToDomainCalendarRow = (prismaCalendarRow: PrismaCalendarRow): CalendarRow => {
+  return CalendarRow.create(
+    {
+      calendarId: prismaCalendarRow.calendarId,
+      createdAt: prismaCalendarRow.createdAt,
+      dayOfWeek: prismaCalendarRow.dayOfWeek as DaysOfWeek,
+      updatedAt: prismaCalendarRow.updatedAt,
+      workId: prismaCalendarRow.workId,
+    },
+    new UniqueEntityID(prismaCalendarRow.id),
+  );
+};
+
+export const parsePrismaCalendarToDomainCalendar = (prismaCalendar: PrismaCalendarWithRows): Calendar => {
+  return Calendar.create(
+    {
+      description: prismaCalendar.description,
+      title: prismaCalendar.title,
+      userId: prismaCalendar.userId,
+      rows: prismaCalendar?.rows?.map((row) => parsePrismaCalendarRowToDomainCalendarRow(row)) ?? [],
+    },
+    new UniqueEntityID(prismaCalendar.id),
+  );
 };

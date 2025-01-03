@@ -27,6 +27,8 @@ import { NotionDatabaseModule } from './notion/notion-database.module';
 import { PrismaRefreshTokenRepository } from './prisma/prisma-refresh-token.repository';
 import { PrismaTagRepository } from './prisma/prisma-tag.repository';
 import { PrismaWorkRepository } from './prisma/prisma-work.repository';
+import { CalendarRepository } from '@domain/calendar/application/contracts/calendar-repository';
+import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar.repository';
 
 @Global()
 @Module({
@@ -45,6 +47,7 @@ import { PrismaWorkRepository } from './prisma/prisma-work.repository';
     { provide: MobilePushSubscriptionRepository, useClass: PrismaMobilePushSubscriptionRepository },
     { provide: WePushSubscriptionRepository, useClass: PrismaWebPushSubscriptionRepository },
     { provide: RefreshTokenRepository, useClass: PrismaRefreshTokenRepository },
+    { provide: CalendarRepository, useClass: PrismaCalendarRepository },
   ],
   exports: [
     WorkRepository,
@@ -59,6 +62,7 @@ import { PrismaWorkRepository } from './prisma/prisma-work.repository';
     MobilePushSubscriptionRepository,
     NotificationRepository,
     RefreshTokenRepository,
+    CalendarRepository,
   ],
 })
 export class DatabaseModule {}

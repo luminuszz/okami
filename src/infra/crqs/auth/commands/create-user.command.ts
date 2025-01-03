@@ -1,6 +1,5 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserUseCase } from '@domain/auth/application/useCases/create-user';
-import { UserCreated } from '@domain/auth/application/events/user-created';
 
 interface Payload {
   name: string;
@@ -25,6 +24,6 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
       throw results.value;
     }
 
-    this.eventBus.publish(new UserCreated(results.value.user));
+    this.eventBus.publishAll(results.value.user.events);
   }
 }

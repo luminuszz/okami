@@ -10,6 +10,7 @@ import { PrismaRefreshTokenRepository } from './prisma-refresh-token.repository'
 import { PrismaTagRepository } from './prisma-tag.repository';
 import { PrismaWorkRepository } from './prisma-work.repository';
 import { PrismaService } from './prisma.service';
+import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar.repository';
 
 @Module({
   providers: [
@@ -24,6 +25,7 @@ import { PrismaService } from './prisma.service';
     PrismaNotificationRepository,
     PrismaSubscriberRepository,
     PrismaRefreshTokenRepository,
+    PrismaCalendarRepository,
   ],
   exports: [
     PrismaService,
@@ -37,6 +39,7 @@ import { PrismaService } from './prisma.service';
     PrismaNotificationRepository,
     PrismaSubscriberRepository,
     PrismaRefreshTokenRepository,
+    PrismaCalendarRepository,
   ],
 })
 export class PrismaModule {}

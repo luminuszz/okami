@@ -3,6 +3,7 @@ import { InvalidOperation } from '@core/errors/invalid-operation';
 import { InvalidCodeKey } from '@domain/auth/application/errors/InvalidCodeKey';
 import { UserAlreadyExists } from '@domain/auth/application/errors/UserAlreadyExists';
 import { UserNotFound } from '@domain/auth/application/errors/UserNotFound';
+import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
 import { InvalidWorkOperationError } from '@domain/work/application/usecases/errors/invalid-work-operation';
 import { WorkNotFoundError } from '@domain/work/application/usecases/errors/work-not-found';
 import { BadRequestException, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
@@ -40,6 +41,10 @@ export class CommonExceptionInterceptor implements NestInterceptor {
         }
 
         if (err instanceof InvalidWorkOperationError) {
+          throw new BadRequestException(err.message);
+        }
+
+        if (err instanceof InvalidCalendarOperation) {
           throw new BadRequestException(err.message);
         }
 
