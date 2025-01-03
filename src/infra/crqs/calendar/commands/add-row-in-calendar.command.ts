@@ -5,7 +5,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 export class AddRowInCalendarCommand {
   constructor(
     public readonly workId: string,
-    public readonly calendarId: string,
     public readonly dayOfWeek: DaysOfWeek,
     public readonly userId: string,
   ) {}
@@ -18,7 +17,6 @@ export class AddRowInCalendarCommandHandler implements ICommandHandler<AddRowInC
   async execute(command: AddRowInCalendarCommand): Promise<void> {
     const results = await this.stu.execute({
       workId: command.workId,
-      calendarId: command.calendarId,
       dayOfWeek: command.dayOfWeek,
       userId: command.userId,
     });

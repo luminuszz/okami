@@ -5,10 +5,10 @@ import { CalendarRepository } from '@domain/calendar/application/contracts/calen
 import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation';
 import { CalendarRow, DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
 import { Injectable } from '@nestjs/common';
+import { WorkRepository } from '@domain/work/application/repositories/work-repository';
 
 export interface AddWorkInCalendarInput {
   workId: string;
-  calendarId: string;
   dayOfWeek: DaysOfWeek;
   userId: string;
 }
@@ -17,10 +17,13 @@ export type AddWorkInCalendarOutput = Either<ResourceNotFound | InvalidCalendarO
 
 @Injectable()
 export class AddWorkInCalendar implements UseCaseImplementation<AddWorkInCalendarInput, AddWorkInCalendarOutput> {
-  constructor(private readonly calendarRepository: CalendarRepository) {}
+  constructor(
+    private readonly calendarRepository: CalendarRepository,
+    private readonly workRepository: WorkRepository,
+  ) {}
 
-  async execute({ workId, calendarId, dayOfWeek, userId }: AddWorkInCalendarInput): Promise<AddWorkInCalendarOutput> {
-    const existsCalendar = await this.calendarRepository.findCalendarById(calendarId);
+  async execute({ workId, dayOfWeek, userId }: AddWorkInCalendarInput): Promise<AddWorkInCalendarOutput> {
+    const existsCalendar = await this.calendarRepository.findByCalendarByUserId(userId);
 
     if (!existsCalendar) {
       return left(new ResourceNotFound('Calendar not found'));
@@ -32,21 +35,32 @@ export class AddWorkInCalendar implements UseCaseImplementation<AddWorkInCalenda
       return left(new InvalidCalendarOperation('User is not the owner of the calendar'));
     }
 
-    const row = CalendarRow.create({
-      calendarId,
-      workId,
-      dayOfWeek,
-      createdAt: new Date(),
-      updatedAt: null,
-    });
+    const work = await this.workRepository.findById(workId);
 
-    const worksInSameDayOfWeek = await this.calendarRepository.fetchRowsByCalendarIdAndDayOfWeek(calendarId, dayOfWeek);
+    const isWorkOwner = work && work.userId === userId;
+
+    if (!isWorkOwner) {
+      return left(new InvalidCalendarOperation('User is not the owner of the work'));
+    }
+
+    const worksInSameDayOfWeek = await this.calendarRepository.fetchRowsByCalendarIdAndDayOfWeek(
+      existsCalendar.id,
+      dayOfWeek,
+    );
 
     const alreadyExistsRowWithSameWorkInSameDayOfWeek = worksInSameDayOfWeek.some((row) => row.workId === workId);
 
     if (alreadyExistsRowWithSameWorkInSameDayOfWeek) {
       return left(new InvalidCalendarOperation('Work already added in calendar in same day of week'));
     }
+
+    const row = CalendarRow.create({
+      calendarId: existsCalendar.id,
+      workId,
+      dayOfWeek,
+      createdAt: new Date(),
+      updatedAt: null,
+    });
 
     await this.calendarRepository.createRow(row);
 
