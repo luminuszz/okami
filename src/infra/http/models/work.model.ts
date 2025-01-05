@@ -91,7 +91,7 @@ export class WorkHttp implements WorkHttpType {
   @ApiProperty({ type: TagModel, isArray: true })
   tags: TagModel[];
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty({ nullable: true, type: 'string' })
   description: string | null;
 }
 

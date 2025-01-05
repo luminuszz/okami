@@ -72,13 +72,16 @@ export class WorkCalendarRowModel implements WorkCalendarRowHttpType {
 
   @ApiProperty({ type: 'number' })
   chapter: number;
+
+  @ApiProperty({ nullable: true, type: 'string', format: 'datetime' })
+  updatedAt: string | null;
 }
 
 export class CalendarRowModel implements CalendarRowHttpType {
   @ApiProperty()
   id: string;
 
-  @ApiProperty({ enum: [0, 1, 2, 3, 4, 5, 6] })
+  @ApiProperty()
   dayOfWeek: number;
 
   @ApiProperty({ type: 'string', format: 'datetime' })

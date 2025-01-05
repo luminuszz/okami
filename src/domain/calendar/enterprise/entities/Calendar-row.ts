@@ -1,8 +1,8 @@
-import { Replace } from '@core/replaced';
 import { Entity } from '@core/entities/entity';
 import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { Replace } from '@core/replaced';
 
-export type DaysOfWeek = 1 | 2 | 3 | 4 | 5 | 6;
+export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface CalendarRowProps {
   calendarId: string;

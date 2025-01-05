@@ -9,7 +9,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CalendarHttpModelValidator, CalendarModel } from '../models/calendar.model';
 
-@ApiTags('calendar')
+@ApiTags('/calendar')
 @Controller('calendar')
 export class CalendarController {
   constructor(
@@ -17,7 +17,7 @@ export class CalendarController {
     private queryBus: QueryBus,
   ) {}
 
-  @Post('/')
+  @Post()
   async create(@Body() body: CreateCalendarDto, @User('id') userId: string) {
     console.log('userId', userId);
 
@@ -30,7 +30,7 @@ export class CalendarController {
   }
 
   @ApiResponse({ type: CalendarModel })
-  @Get('')
+  @Get()
   async fetchUserCalendar(@User('id') userId: string) {
     const results = await this.queryBus.execute(new FetchUserCalendarWithRowsQuery(userId));
 
