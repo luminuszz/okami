@@ -10,5 +10,5 @@ export class RefreshTokenModel {
 
 export class RefreshTokenOnlyModel {
   @ApiProperty()
-  refreshToken: string;
+  token: string;
 }
