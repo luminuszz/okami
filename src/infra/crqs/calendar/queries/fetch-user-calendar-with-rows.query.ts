@@ -1,5 +1,5 @@
-import { PrismaService } from '@infra/database/prisma/prisma.service';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { PrismaService } from '@infra/database/prisma/prisma.service'
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 
 export class FetchUserCalendarWithRowsQuery {
   constructor(public readonly userId: string) {}
@@ -26,6 +26,7 @@ export class FetchUserCalendarWithRowsQueryHandler implements IQueryHandler<Fetc
                 nextChapter: true,
                 chapters: true,
                 imageId: true,
+                category: true,
               },
             },
             createdAt: true,
@@ -34,6 +35,6 @@ export class FetchUserCalendarWithRowsQueryHandler implements IQueryHandler<Fetc
           },
         },
       },
-    });
+    })
   }
 }

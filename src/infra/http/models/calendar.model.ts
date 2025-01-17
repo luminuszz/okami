@@ -1,8 +1,8 @@
-import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
-import { WorkStatus } from '@domain/work/enterprise/entities/work';
-import { BadRequestException } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { z } from 'zod';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter'
+import { WorkStatus } from '@domain/work/enterprise/entities/work'
+import { BadRequestException } from '@nestjs/common'
+import { ApiProperty } from '@nestjs/swagger'
+import { z } from 'zod'
 
 const workCalendarRowSchema = z
   .object({
@@ -13,19 +13,20 @@ const workCalendarRowSchema = z
     nextChapter: z.number().nullable(),
     chapters: z.number(),
     imageId: z.string().optional().nullable(),
+    category: z.string(),
   })
   .transform((data) => ({
     ...data,
     chapter: data.chapters,
     imageUrl: data.imageId ? CloudFlareR2StorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
-  }));
+  }))
 
 const calendarRowSchema = z.object({
   id: z.string(),
   dayOfWeek: z.number(),
   createdAt: z.date().transform((value) => value.toISOString()),
   Work: workCalendarRowSchema,
-});
+})
 
 const calendarSchema = z.object({
   title: z.string(),
@@ -37,79 +38,82 @@ const calendarSchema = z.object({
     .nullable(),
 
   rows: z.array(calendarRowSchema),
-});
+})
 
-export type CalendarHttpType = z.infer<typeof calendarSchema>;
-export type CalendarRowHttpType = z.infer<typeof calendarRowSchema>;
-export type WorkCalendarRowHttpType = z.infer<typeof workCalendarRowSchema>;
+export type CalendarHttpType = z.infer<typeof calendarSchema>
+export type CalendarRowHttpType = z.infer<typeof calendarRowSchema>
+export type WorkCalendarRowHttpType = z.infer<typeof workCalendarRowSchema>
 
 export class WorkCalendarRowModel implements WorkCalendarRowHttpType {
   @ApiProperty()
-  name: string;
+  id: string
+
+  @ApiProperty()
+  name: string
 
   @ApiProperty({ type: 'string', nullable: true })
-  description: string;
+  description: string
 
   @ApiProperty({
     enum: ['ANIME', 'MANGA'],
   })
-  category: 'ANIME' | 'MANGA';
+  category: 'ANIME' | 'MANGA'
 
   @ApiProperty({ enum: WorkStatus })
-  status: WorkStatus;
+  status: WorkStatus
 
   @ApiProperty({ type: 'number', nullable: true })
-  nextChapter: number;
+  nextChapter: number
 
   @ApiProperty()
-  chapters: number;
+  chapters: number
 
   @ApiProperty({ type: 'string', nullable: true })
-  imageId: string | null;
+  imageId: string | null
 
   @ApiProperty({ type: 'string', nullable: true })
-  imageUrl: string | null;
+  imageUrl: string | null
 
   @ApiProperty({ type: 'number' })
-  chapter: number;
+  chapter: number
 }
 
 export class CalendarRowModel implements CalendarRowHttpType {
   @ApiProperty()
-  id: string;
+  id: string
 
   @ApiProperty({ enum: [0, 1, 2, 3, 4, 5, 6] })
-  dayOfWeek: number;
+  dayOfWeek: number
 
   @ApiProperty({ type: 'string', format: 'datetime' })
-  createdAt: string;
+  createdAt: string
 
   @ApiProperty({ type: WorkCalendarRowModel })
-  Work: WorkCalendarRowModel;
+  Work: WorkCalendarRowModel
 }
 
 export class CalendarModel implements CalendarHttpType {
   @ApiProperty()
-  title: string;
+  title: string
 
   @ApiProperty({ type: 'string', nullable: true })
-  description: string;
+  description: string
 
   @ApiProperty({ type: 'string', format: 'datetime' })
-  createdAt: string;
+  createdAt: string
 
   @ApiProperty({ type: CalendarRowModel, isArray: true })
-  rows: CalendarRowModel[];
+  rows: CalendarRowModel[]
 }
 
 export class CalendarHttpModelValidator {
   static validate(data: any): CalendarModel {
-    const result = calendarSchema.safeParse(data);
+    const result = calendarSchema.safeParse(data)
 
     if (!result.success) {
-      throw new BadRequestException(result.error.errors.map((error) => `${error.path} ${error.message}`).join(', '));
+      throw new BadRequestException(result.error.errors.map((error) => `${error.path} ${error.message}`).join(', '))
     }
 
-    return result.data as CalendarModel;
+    return result.data as CalendarModel
   }
 }

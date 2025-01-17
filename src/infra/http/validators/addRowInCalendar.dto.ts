@@ -1,17 +1,15 @@
-import { IsObjectId } from '@infra/utils/IsObjectId';
-import { ApiProperty } from '@nestjs/swagger';
-import { DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row';
-import { IsInt, IsPositive } from 'class-validator';
+import { DaysOfWeek } from '@domain/calendar/enterprise/entities/Calendar-row'
+import { IsObjectId } from '@infra/utils/IsObjectId'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsInt, IsPositive } from 'class-validator'
 
 export class AddRowInCalendarDto {
   @IsObjectId()
   @ApiProperty()
-  workId: string;
+  workId: string
 
   @IsInt()
   @IsPositive()
-  @ApiProperty({
-    enum: [1, 2, 3, 4, 5, 6],
-  })
-  dayOfWeek: DaysOfWeek;
+  @ApiProperty({ type: 'number' })
+  dayOfWeek: DaysOfWeek
 }
