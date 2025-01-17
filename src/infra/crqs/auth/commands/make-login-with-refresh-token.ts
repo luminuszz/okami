@@ -1,4 +1,5 @@
 import { EnvService } from '@app/infra/env/env.service';
+import { EXPIRE_AUTH_TOKEN } from '@app/infra/utils/constants';
 import { AuthenticateUserUseCase } from '@domain/auth/application/useCases/authenticate-user';
 import { CreateRefreshTokenUseCase } from '@domain/auth/application/useCases/create-refresh-token';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
@@ -54,7 +55,7 @@ export class MakeLoginWithRefreshTokenCommandHandler
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.env.get('JWT_SECRET'),
-      expiresIn: '30m',
+      expiresIn: EXPIRE_AUTH_TOKEN,
     });
 
     return {
