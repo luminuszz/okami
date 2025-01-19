@@ -71,7 +71,8 @@ model Work {
 
   tags Tag[] @relation(fields: [tagsId], references: [id])
 
-  calendarRows CalendarRow[]
+  calendarRows           CalendarRow[]
+  ScrappingRefreshStatus ScrappingRefreshStatus[]
 }
 
 model Tag {
@@ -222,4 +223,16 @@ model CalendarRow {
 
   Work     Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
   Calendar Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+}
+
+model ScrappingRefreshStatus {
+  id      String        @id @map("_id") @db.ObjectId
+  status  RefreshStatus
+  workId  String        @db.ObjectId
+  message String?
+
+  createdAt DateTime  @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+
+  work Work @relation(fields: [workId], references: [id])
 }

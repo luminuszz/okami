@@ -1,16 +1,17 @@
-import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-access-token.repository';
-import { PrismaMobilePushSubscriptionRepository } from '@infra/database/prisma/prisma-mobile-subscription.repository';
-import { PrismaNotificationRepository } from '@infra/database/prisma/prisma-notification.repository';
-import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository';
-import { PrismaSubscriberRepository } from '@infra/database/prisma/prisma-subscriber.repository';
-import { PrismaUserRepository } from '@infra/database/prisma/prisma-user.repository';
-import { PrismaWebPushSubscriptionRepository } from '@infra/database/prisma/prisma-web-push-subscription.repository';
-import { Module } from '@nestjs/common';
-import { PrismaRefreshTokenRepository } from './prisma-refresh-token.repository';
-import { PrismaTagRepository } from './prisma-tag.repository';
-import { PrismaWorkRepository } from './prisma-work.repository';
-import { PrismaService } from './prisma.service';
-import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar.repository';
+import { PrismaAccessTokenRepository } from '@infra/database/prisma/prisma-access-token.repository'
+import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar.repository'
+import { PrismaMobilePushSubscriptionRepository } from '@infra/database/prisma/prisma-mobile-subscription.repository'
+import { PrismaNotificationRepository } from '@infra/database/prisma/prisma-notification.repository'
+import { PrismaSearchTokenRepository } from '@infra/database/prisma/prisma-search-token.repository'
+import { PrismaSubscriberRepository } from '@infra/database/prisma/prisma-subscriber.repository'
+import { PrismaUserRepository } from '@infra/database/prisma/prisma-user.repository'
+import { PrismaWebPushSubscriptionRepository } from '@infra/database/prisma/prisma-web-push-subscription.repository'
+import { Module } from '@nestjs/common'
+import { PrismaRefreshTokenRepository } from './prisma-refresh-token.repository'
+import { PrismaScrappingRefreshStatusRepository } from './prisma-scrapping-refresh-status.repository'
+import { PrismaTagRepository } from './prisma-tag.repository'
+import { PrismaWorkRepository } from './prisma-work.repository'
+import { PrismaService } from './prisma.service'
 
 @Module({
   providers: [
@@ -26,6 +27,7 @@ import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar
     PrismaSubscriberRepository,
     PrismaRefreshTokenRepository,
     PrismaCalendarRepository,
+    PrismaScrappingRefreshStatusRepository,
   ],
   exports: [
     PrismaService,
@@ -40,6 +42,7 @@ import { PrismaCalendarRepository } from '@infra/database/prisma/prisma-calendar
     PrismaSubscriberRepository,
     PrismaRefreshTokenRepository,
     PrismaCalendarRepository,
+    PrismaScrappingRefreshStatusRepository,
   ],
 })
 export class PrismaModule {}
