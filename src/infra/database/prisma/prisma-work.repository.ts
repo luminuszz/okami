@@ -1,15 +1,15 @@
-import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository';
-import { Tag } from '@domain/work/enterprise/entities/tag';
-import { Work } from '@domain/work/enterprise/entities/work';
-import { Injectable, Logger } from '@nestjs/common';
-import { RefreshStatus, WorkStatus } from '@prisma/client';
-import { map, merge } from 'lodash';
-import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper';
-import { PrismaService } from './prisma.service';
+import { FetchUserWorksInput, WorkRepository } from '@domain/work/application/repositories/work-repository'
+import { Tag } from '@domain/work/enterprise/entities/tag'
+import { Work } from '@domain/work/enterprise/entities/work'
+import { Injectable, Logger } from '@nestjs/common'
+import { RefreshStatus, WorkStatus } from '@prisma/client'
+import { map, merge } from 'lodash'
+import { prismaWorkToEntityMapper, workEntityToPrismaMapper } from './prisma-mapper'
+import { PrismaService } from './prisma.service'
 
 @Injectable()
 export class PrismaWorkRepository implements WorkRepository {
-  private logger = new Logger(PrismaWorkRepository.name);
+  private logger = new Logger(PrismaWorkRepository.name)
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -26,28 +26,28 @@ export class PrismaWorkRepository implements WorkRepository {
           },
         ],
       },
-    });
+    })
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async fetchWorksByUserIdWithFilters({ userId, status, search }: FetchUserWorksInput): Promise<Work[]> {
     const query = {
       userId,
-    };
+    }
 
     if (status) {
       if (status === 'favorites') {
-        merge(query, { isFavorite: true });
+        merge(query, { isFavorite: true })
       } else {
         const parserFilterStatus = {
           unread: WorkStatus.UNREAD,
           read: WorkStatus.READ,
           finished: WorkStatus.FINISHED,
           dropped: WorkStatus.DROPPED,
-        };
+        }
 
-        merge(query, { status: parserFilterStatus[status] });
+        merge(query, { status: parserFilterStatus[status] })
       }
     }
 
@@ -67,7 +67,7 @@ export class PrismaWorkRepository implements WorkRepository {
             },
           },
         ],
-      });
+      })
     }
 
     const results = await this.prisma.work.findMany({
@@ -79,13 +79,13 @@ export class PrismaWorkRepository implements WorkRepository {
       include: {
         tags: true,
       },
-    });
+    })
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async create(work: Work): Promise<void> {
-    const data = workEntityToPrismaMapper(work);
+    const data = workEntityToPrismaMapper(work)
 
     await this.prisma.work.create({
       data: {
@@ -96,20 +96,20 @@ export class PrismaWorkRepository implements WorkRepository {
           })),
         },
       },
-    });
+    })
   }
 
   async save(work: Work): Promise<void> {
-    const parsedData = workEntityToPrismaMapper(work);
+    const parsedData = workEntityToPrismaMapper(work)
 
-    delete parsedData.id;
+    delete parsedData.id
 
     await this.prisma.work.update({
       where: {
         id: work.id.toString(),
       },
       data: parsedData,
-    });
+    })
   }
   async findById(id: string): Promise<Work> {
     const results = await this.prisma.work.findUnique({
@@ -119,9 +119,9 @@ export class PrismaWorkRepository implements WorkRepository {
       include: {
         tags: true,
       },
-    });
+    })
 
-    return results ? prismaWorkToEntityMapper(results) : null;
+    return results ? prismaWorkToEntityMapper(results) : null
   }
 
   async fetchForWorkersWithHasNewChapterFalse(): Promise<Work[]> {
@@ -129,16 +129,16 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         status: WorkStatus.READ,
       },
-    });
+    })
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async createAllWithNotExists(data: Work[]) {
     const operations = data.map((work) => {
-      this.logger.log(`Syncing document ${work.name} to prisma database category => ${work.name}}`);
+      this.logger.log(`Syncing document ${work.name} to prisma database category => ${work.name}}`)
 
-      const parsedData = workEntityToPrismaMapper(work);
+      const parsedData = workEntityToPrismaMapper(work)
 
       const updateParsedData = {
         name: work.name,
@@ -147,7 +147,7 @@ export class PrismaWorkRepository implements WorkRepository {
         url: work.url,
         userId: work.userId,
         isUpserted: true,
-      };
+      }
 
       return this.prisma.work.upsert({
         where: {
@@ -173,11 +173,11 @@ export class PrismaWorkRepository implements WorkRepository {
           },
         },
         update: updateParsedData,
-      });
-    });
-    const results = await this.prisma.$transaction(operations);
+      })
+    })
+    const results = await this.prisma.$transaction(operations)
 
-    return results.filter((result) => !result.isUpserted).map(prismaWorkToEntityMapper);
+    return results.filter((result) => !result.isUpserted).map(prismaWorkToEntityMapper)
   }
 
   async fetchForWorkersWithHasNewChapterTrue(): Promise<Work[]> {
@@ -185,9 +185,9 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         status: WorkStatus.UNREAD,
       },
-    });
+    })
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async findOne(id: string): Promise<Work> {
@@ -198,32 +198,32 @@ export class PrismaWorkRepository implements WorkRepository {
       include: {
         tags: true,
       },
-    });
+    })
 
-    return results ? prismaWorkToEntityMapper(results) : null;
+    return results ? prismaWorkToEntityMapper(results) : null
   }
 
   async findAll() {
-    const results = await this.prisma.work.findMany();
+    const results = await this.prisma.work.findMany()
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async saveMany(works: Work[]): Promise<void> {
     const operations = works.map((work) => {
-      const data = workEntityToPrismaMapper(work);
+      const data = workEntityToPrismaMapper(work)
 
-      delete data.id;
+      delete data.id
 
       return this.prisma.work.update({
         where: {
           id: work.id.toString(),
         },
         data,
-      });
-    });
+      })
+    })
 
-    await this.prisma.$transaction(operations);
+    await this.prisma.$transaction(operations)
   }
 
   async fetchWorksScrapingPaginated(
@@ -232,7 +232,7 @@ export class PrismaWorkRepository implements WorkRepository {
     filter?: RefreshStatus,
     search?: string,
   ): Promise<{ data: Work[]; totalOfPages: number }> {
-    const limit = 10;
+    const limit = 10
 
     const where = {
       userId,
@@ -240,10 +240,10 @@ export class PrismaWorkRepository implements WorkRepository {
       refreshStatus: {
         not: null,
       },
-    };
+    }
 
     if (filter) {
-      Object.assign(where, { refreshStatus: filter });
+      Object.assign(where, { refreshStatus: filter })
     }
 
     if (search) {
@@ -262,7 +262,7 @@ export class PrismaWorkRepository implements WorkRepository {
             },
           },
         ],
-      });
+      })
     }
 
     const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
@@ -272,18 +272,18 @@ export class PrismaWorkRepository implements WorkRepository {
         orderBy: {
           updatedAt: 'desc',
         },
+
         where,
       }),
-
       this.prisma.work.count({
         where,
       }),
-    ]);
+    ])
 
     return {
       data: map(prismaWorks, prismaWorkToEntityMapper),
       totalOfPages: Math.ceil(totalOfPrismaWorks / limit),
-    };
+    }
   }
 
   async fetchAllWorksByUserIdCount(userId: string): Promise<number> {
@@ -291,7 +291,7 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         userId,
       },
-    });
+    })
   }
 
   async deleteWork(workId: string): Promise<void> {
@@ -299,7 +299,7 @@ export class PrismaWorkRepository implements WorkRepository {
       where: {
         id: workId,
       },
-    });
+    })
   }
 
   async fetchAllWorksByUserIdAndHasNewChapterFalse(userId: string): Promise<Work[]> {
@@ -308,9 +308,9 @@ export class PrismaWorkRepository implements WorkRepository {
         userId,
         status: WorkStatus.READ,
       },
-    });
+    })
 
-    return results.map(prismaWorkToEntityMapper);
+    return results.map(prismaWorkToEntityMapper)
   }
 
   async findUserWorkById(userId: string, workId: string): Promise<Work> {
@@ -319,15 +319,15 @@ export class PrismaWorkRepository implements WorkRepository {
         id: workId,
         userId,
       },
-    });
+    })
 
-    return results ? prismaWorkToEntityMapper(results) : null;
+    return results ? prismaWorkToEntityMapper(results) : null
   }
 
   async linkTagsBatch(payload: { workId: string; tags: Tag[] }[]): Promise<void> {
     try {
       const operations = payload.map((data) => {
-        this.logger.log(`Linking tags to work ${data.workId} with tags ${data.tags.map((tag) => tag.name).join(', ')}`);
+        this.logger.log(`Linking tags to work ${data.workId} with tags ${data.tags.map((tag) => tag.name).join(', ')}`)
 
         return this.prisma.work.update({
           where: {
@@ -350,20 +350,20 @@ export class PrismaWorkRepository implements WorkRepository {
               })),
             },
           },
-        });
-      });
+        })
+      })
 
-      await this.prisma.$transaction(operations);
+      await this.prisma.$transaction(operations)
     } catch (error) {
-      this.logger.error(`Error linking tags to work ${error}`);
+      this.logger.error(`Error linking tags to work ${error}`)
     }
   }
 
   async updateDescriptionBatchFromNotion(payload: { recipientId: string; description: string }[]): Promise<void> {
     const operations = payload.map((data) => {
-      this.logger.log(`Updating description for work recipienteId ${data.recipientId}`);
+      this.logger.log(`Updating description for work recipienteId ${data.recipientId}`)
 
-      this.logger.debug(data.description);
+      this.logger.debug(data.description)
 
       return this.prisma.work.update({
         where: {
@@ -373,9 +373,9 @@ export class PrismaWorkRepository implements WorkRepository {
         data: {
           description: data.description,
         },
-      });
-    });
+      })
+    })
 
-    await this.prisma.$transaction(operations);
+    await this.prisma.$transaction(operations)
   }
 }

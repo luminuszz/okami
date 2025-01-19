@@ -1,24 +1,24 @@
-import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter';
-import { Work } from '@domain/work/enterprise/entities/work';
-import { z } from 'zod';
+import { Chapter } from '@domain/work/enterprise/entities/values-objects/chapter'
+import { Work } from '@domain/work/enterprise/entities/work'
+import { z } from 'zod'
 
-import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter';
-import { ApiProperty } from '@nestjs/swagger';
-import { TagModel, tagSchema } from './tag.model';
+import { CloudFlareR2StorageAdapter } from '@app/infra/storage/cloudFlare-r2-storage.adapter'
+import { ApiProperty } from '@nestjs/swagger'
+import { TagModel, tagSchema } from './tag.model'
 
-const workSchema = z
+export const workSchema = z
   .object({
     id: z.string().nonempty(),
     name: z.string().nonempty(),
     url: z.string().url(),
     hasNewChapter: z.boolean(),
-    chapter: z.preprocess((value: Chapter) => value.getChapter(), z.number()),
     isFinished: z.boolean(),
     imageId: z.string().optional().nullable(),
     imageUrl: z.string().url().nullable().default(null),
     updatedAt: z.date().optional().nullable(),
     category: z.string().optional().nullable(),
     nextChapterUpdatedAt: z.date().optional().nullable(),
+    chapter: z.preprocess((value: Chapter) => value.getChapter(), z.number()),
     nextChapter: z.preprocess((value: Chapter) => value.getChapter(), z.number().nullable()),
     isDropped: z.boolean(),
     refreshStatus: z.string().nullable(),
@@ -33,93 +33,93 @@ const workSchema = z
     return {
       ...data,
       imageUrl: data.imageId ? CloudFlareR2StorageAdapter.createS3FileUrl(`${data.id}-${data.imageId}`) : null,
-    };
-  });
+    }
+  })
 
-export type WorkHttpType = z.infer<typeof workSchema>;
-export type TagHttpType = z.infer<typeof tagSchema>;
+export type WorkHttpType = z.infer<typeof workSchema>
+export type TagHttpType = z.infer<typeof tagSchema>
 
 export class WorkHttp implements WorkHttpType {
   @ApiProperty()
-  chapter: number;
+  chapter: number
   @ApiProperty()
-  hasNewChapter: boolean;
+  hasNewChapter: boolean
   @ApiProperty()
-  id: string;
+  id: string
   @ApiProperty()
-  imageId: string;
+  imageId: string
   @ApiProperty({ nullable: true, type: String })
-  imageUrl: string | null;
+  imageUrl: string | null
   @ApiProperty()
-  isFinished: boolean;
+  isFinished: boolean
   @ApiProperty()
-  name: string;
+  name: string
   @ApiProperty()
-  url: string;
+  url: string
   @ApiProperty({ type: Date })
-  updatedAt: Date;
+  updatedAt: Date
 
   @ApiProperty({ nullable: true })
-  alternativeName: string;
+  alternativeName: string
 
   @ApiProperty({
     enum: ['ANIME', 'MANGA'],
   })
-  category: 'ANIME' | 'MANGA';
+  category: 'ANIME' | 'MANGA'
 
   @ApiProperty()
-  isDropped: boolean;
+  isDropped: boolean
 
   @ApiProperty({ nullable: true, type: Date })
-  nextChapterUpdatedAt: Date | null;
+  nextChapterUpdatedAt: Date | null
 
   @ApiProperty({ nullable: true, type: Number })
-  nextChapter: number | null;
+  nextChapter: number | null
 
   @ApiProperty()
-  refreshStatus: string;
+  refreshStatus: string
 
   @ApiProperty()
-  userId: string;
+  userId: string
 
   @ApiProperty()
-  createdAt: string;
+  createdAt: string
 
   @ApiProperty()
-  isFavorite: boolean;
+  isFavorite: boolean
 
   @ApiProperty({ type: TagModel, isArray: true })
-  tags: TagModel[];
+  tags: TagModel[]
 
   @ApiProperty({ nullable: true, type: 'string' })
-  description: string | null;
+  description: string | null
 }
 
 export class WorkModelPaged {
   @ApiProperty({ type: WorkHttp, isArray: true })
-  works: WorkHttp[];
+  works: WorkHttp[]
 
   @ApiProperty()
-  totalOfPages: number;
+  totalOfPages: number
 
   @ApiProperty({ nullable: true, type: String })
-  nextPage: number | null;
+  nextPage: number | null
 }
 
 export class WorkModel {
   static toHttpList(works: Work[]): WorkHttpType[] {
-    return z.array(workSchema).parse(works);
+    return z.array(workSchema).parse(works)
   }
 
   static toHttp(work: Work): WorkHttpType {
-    return workSchema.parse(work);
+    return workSchema.parse(work)
   }
 }
 
 export class WorkUploadUrlResponseModel {
   @ApiProperty()
-  url: string;
+  url: string
 
   @ApiProperty()
-  filename: string;
+  filename: string
 }

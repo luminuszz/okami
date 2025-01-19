@@ -1,6 +1,8 @@
-import { FetchWorksScrapingPaginatedReportUseCase } from '@domain/work/application/usecases/fetch-works-scraping-pagineted-report';
-import { RefreshStatus } from '@domain/work/enterprise/entities/work';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { prismaWorkToEntityMapper } from '@app/infra/database/prisma/prisma-mapper'
+import { PrismaService } from '@app/infra/database/prisma/prisma.service'
+import { RefreshStatus, WorkStatus } from '@domain/work/enterprise/entities/work'
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
+import { map, merge } from 'lodash'
 
 export class FetchWorksScrapingPaginatedReportQuery {
   constructor(
@@ -15,20 +17,77 @@ export class FetchWorksScrapingPaginatedReportQuery {
 export class FetchWorksScrapingPaginatedReportQueryHandler
   implements IQueryHandler<FetchWorksScrapingPaginatedReportQuery>
 {
-  constructor(private readonly fetchWorksScrapingPaginatedRepor: FetchWorksScrapingPaginatedReportUseCase) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute({ page, filter, userId, search }: FetchWorksScrapingPaginatedReportQuery) {
-    const result = await this.fetchWorksScrapingPaginatedRepor.execute({ page, filter, userId, search });
+    const limit = 10
 
-    if (result.isLeft()) {
-      throw result.value;
+    const where = {
+      userId,
+      OR: [{ status: WorkStatus.UNREAD }, { status: WorkStatus.READ }],
+      refreshStatus: {
+        not: null,
+      },
     }
 
-    const { data, totalOfPages } = result.value;
+    if (filter) {
+      Object.assign(where, { refreshStatus: filter })
+    }
+
+    if (search) {
+      Object.assign(where, {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            alternativeName: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      })
+    }
+
+    const [prismaWorks, totalOfPrismaWorks] = await this.prisma.$transaction([
+      this.prisma.work.findMany({
+        take: limit,
+        skip: page * limit,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        include: {
+          ScrappingRefreshStatus: {
+            select: {
+              message: true,
+            },
+
+            orderBy: {
+              createdAt: 'desc',
+            },
+          },
+        },
+        where,
+      }),
+
+      this.prisma.work.count({
+        where,
+      }),
+    ])
+
+    const data = map(prismaWorks, (prismaWork) => {
+      return merge(prismaWorkToEntityMapper(prismaWork), {
+        message: prismaWork?.ScrappingRefreshStatus?.[0]?.message ?? null,
+      })
+    })
 
     return {
       data,
-      totalOfPages,
-    };
+      totalOfPages: Math.ceil(totalOfPrismaWorks / limit),
+    }
   }
 }

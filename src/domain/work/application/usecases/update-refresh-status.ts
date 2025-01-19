@@ -38,11 +38,15 @@ export class UpdateRefreshStatusUseCase
 
     await this.workRepository.save(work)
 
-    await this.registerScrappingStatus.execute({
+    const results = await this.registerScrappingStatus.execute({
       workId,
       status: refreshStatus,
       message,
     })
+
+    if (results.isLeft()) {
+      return left(results.value)
+    }
 
     return right(work)
   }
