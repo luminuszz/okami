@@ -20,4 +20,10 @@ export class MakeSessionValidator extends createZodValidator(
     email: z.string().email(),
     password: z.string().min(6),
   }),
-) {}
+) {
+  @ApiProperty({ type: 'string', format: 'email' })
+  email: string
+
+  @ApiProperty({ type: 'string' })
+  password: string
+}
