@@ -30,7 +30,7 @@ import { AccessToken, TokenModel } from '@infra/http/models/token.model'
 import { UserHttp, UserModel } from '@infra/http/models/user.model'
 import { CreateAdminHashCodeDto } from '@infra/http/validators/create-admin-hash-code.dto'
 import { LogoutDto } from '@infra/http/validators/logout.dto'
-import { MakeSessionDto } from '@infra/http/validators/make-session.dto'
+import { MakeSessionDto, MakeSessionValidator } from '@infra/http/validators/make-session.dto'
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto'
 import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto'
 import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from '@nestjs/common'
@@ -62,7 +62,7 @@ export class AuthController {
   async makeSession(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
     const { email, password } = data
 
-    const { token } = await this.commandBus.execute<unknown, { token: string }>(new LoginCommand(email, password))
+    const { token } = await this.commandBus.execute<LoginCommand, { token: string }>(new LoginCommand(email, password))
 
     return res
       .setCookie(OKAMI_COOKIE_NAME, token, {
@@ -78,7 +78,7 @@ export class AuthController {
   @Post('v2/login')
 
   @ApiOkResponse({ type: RefreshTokenModel })
-  async loginV2(@Body() data: MakeSessionDto, @Res({ passthrough: true }) res: FastifyReply) {
+  async loginV2(@Body() data: MakeSessionValidator, @Res({ passthrough: true }) res: FastifyReply) {
     const results = (await this.commandBus.execute(
       new MakeLoginWithRefreshTokenCommand(data.email, data.password),
     )) as CreateRefreshTokenCommandResponse
@@ -173,7 +173,7 @@ export class AuthController {
       new CreateUserCommand({ email: data.email, password: data.password, name: data.name }),
     )
 
-    const sessionCreated = await this.commandBus.execute<unknown, { token: string }>(
+    const sessionCreated = await this.commandBus.execute<LoginCommand, { token: string }>(
       new LoginCommand(data.email, data.password),
     )
 
@@ -209,7 +209,7 @@ export class AuthController {
   @IsPublic()
   @Post('login-mobile')
   async createMobileSession(@Body() data: MakeSessionDto) {
-    const { token } = await this.commandBus.execute<unknown, { token: string }>(
+    const { token } = await this.commandBus.execute<LoginCommand, { token: string }>(
       new LoginCommand(data.email, data.password),
     )
 
