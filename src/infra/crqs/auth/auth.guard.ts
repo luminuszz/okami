@@ -1,6 +1,6 @@
-import { EnvService } from '@app/infra/env/env.service';
-import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case';
-import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto';
+import { EnvService } from '@app/infra/env/env.service'
+import { VerifyApiAccessTokenUseCase } from '@domain/auth/application/useCases/verify-api-access-token-use-case'
+import { UserTokenDto } from '@infra/crqs/auth/dto/user-token.dto'
 import {
   CanActivate,
   ExecutionContext,
@@ -8,18 +8,18 @@ import {
   SetMetadata,
   UnauthorizedException,
   UseGuards,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
-import { FastifyRequest } from 'fastify';
+} from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
+import { JwtService } from '@nestjs/jwt'
+import { FastifyRequest } from 'fastify'
 
-const IS_PUBLIC_METADATA_KEY = 'isPublic';
+const IS_PUBLIC_METADATA_KEY = 'isPublic'
 
-export const WithAuth = () => UseGuards(AuthGuard);
+export const WithAuth = () => UseGuards(AuthGuard)
 
-export const IsPublic = () => SetMetadata(IS_PUBLIC_METADATA_KEY, true);
+export const IsPublic = () => SetMetadata(IS_PUBLIC_METADATA_KEY, true)
 
-export const OKAMI_COOKIE_NAME = 'okami-web-token';
+export const OKAMI_COOKIE_NAME = 'okami-web-token'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -30,68 +30,68 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
   ) {}
 
-  private readonly accessTokenHeaderKey = 'accesstoken';
+  private readonly accessTokenHeaderKey = 'accesstoken'
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_METADATA_KEY, [
       context.getClass(),
       context.getHandler(),
-    ]);
+    ])
 
     if (isPublic) {
-      return true;
+      return true
     }
 
-    const request = context.switchToHttp().getRequest();
-    const jwtToken = this.extractTokenFormRequest(request);
+    const request = context.switchToHttp().getRequest()
+    const jwtToken = this.extractTokenFormRequest(request)
 
     try {
       if (!jwtToken) {
-        const accessToken = this.extractAccessTokenFromHeader(request);
+        const accessToken = this.extractAccessTokenFromHeader(request)
 
         if (accessToken) {
-          return await this.validateAccessToken(accessToken, request);
+          return await this.validateAccessToken(accessToken, request)
         }
       }
 
       const decodePayload = await this.jwtService.verifyAsync<UserTokenDto>(jwtToken, {
         secret: this.env.get('JWT_SECRET'),
-      });
+      })
 
-      request['user'] = decodePayload;
+      request['user'] = decodePayload
 
-      return !!decodePayload;
-    } catch (e) {
-      throw new UnauthorizedException('invalid token');
+      return !!decodePayload
+    } catch {
+      throw new UnauthorizedException('invalid token')
     }
   }
 
   private extractTokenFormRequest(request: FastifyRequest): string | undefined {
-    let token: string;
+    let token: string
 
     if (request.cookies[OKAMI_COOKIE_NAME]) {
-      token = request.cookies[OKAMI_COOKIE_NAME];
+      token = request.cookies[OKAMI_COOKIE_NAME]
     }
 
     if (request.headers['authorization']) {
-      token = request.headers.authorization.split(' ')[1];
+      token = request.headers.authorization.split(' ')[1]
     }
 
-    return token;
+    return token
   }
 
   private extractAccessTokenFromHeader(request: FastifyRequest): string | undefined {
-    return request.headers[this.accessTokenHeaderKey] as string;
+    return request.headers[this.accessTokenHeaderKey] as string
   }
 
   private async validateAccessToken(token: string, request: { user: any }): Promise<boolean> {
-    const results = await this.verifyAccessToken.execute({ token });
+    const results = await this.verifyAccessToken.execute({ token })
 
     if (results.isLeft()) {
-      throw results.value;
+      throw results.value
     }
 
-    const { isValid, owner } = results.value;
+    const { isValid, owner } = results.value
 
     if (isValid) {
       request['user'] = {
@@ -99,9 +99,9 @@ export class AuthGuard implements CanActivate {
         name: owner.name,
         notionDatabaseId: owner.notionDatabaseId,
         id: owner.id,
-      } satisfies UserTokenDto;
+      } satisfies UserTokenDto
     }
 
-    return isValid;
+    return isValid
   }
 }
