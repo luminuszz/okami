@@ -29,17 +29,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     })
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET')
-
-    this.s3Client.middlewareStack.addRelativeTo(
-      (next) => async (args) => {
-        delete args.request.headers['x-amz-checksum-crc32']
-        return next(args)
-      },
-      {
-        relation: 'after',
-        toMiddleware: 'headerMiddleware',
-      },
-    )
   }
 
   async createUploadUrl(fileName: string, fileType: string): Promise<string> {
