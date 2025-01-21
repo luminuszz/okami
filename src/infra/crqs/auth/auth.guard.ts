@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { JwtService } from '@nestjs/jwt'
+import { JwtService, TokenExpiredError } from '@nestjs/jwt'
 import { FastifyRequest } from 'fastify'
 
 const IS_PUBLIC_METADATA_KEY = 'isPublic'
@@ -61,7 +61,11 @@ export class AuthGuard implements CanActivate {
       request['user'] = decodePayload
 
       return !!decodePayload
-    } catch {
+    } catch (exception) {
+      if (exception instanceof TokenExpiredError) {
+        throw new UnauthorizedException('token expired')
+      }
+
       throw new UnauthorizedException('invalid token')
     }
   }
