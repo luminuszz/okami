@@ -29,6 +29,27 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
     })
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET')
+
+    const headers: Record<string, string> = {
+      'x-amz-checksum-algorithm': '"CRC32"',
+    }
+
+    this.s3Client.middlewareStack.add(
+      (next) =>
+        async (args): Promise<any> => {
+          const request = args.request as RequestInit
+
+          Object.entries(headers).forEach(([key, value]: [string, string]): void => {
+            if (!request.headers) {
+              request.headers = {}
+            }
+            ;(request.headers as Record<string, string>)[key] = value
+          })
+
+          return next(args)
+        },
+      { step: 'build', name: 'customHeaders' },
+    )
   }
 
   async createUploadUrl(fileName: string, fileType: string): Promise<string> {
@@ -67,7 +88,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `user-avatars-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
-        ChecksumAlgorithm: 'CRC32',
       }),
     )
 
@@ -120,7 +140,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
-        ChecksumAlgorithm: 'CRC32',
       }),
     )
 
@@ -148,7 +167,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
-        ChecksumAlgorithm: 'CRC32',
       }),
     )
     return {
