@@ -157,7 +157,6 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
-        ChecksumAlgorithm: '',
       }),
     )
     return {
