@@ -26,10 +26,20 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         accessKeyId: this.env.get('CLOUD_FLARE_R2_KEY'),
         secretAccessKey: this.env.get('CLOUD_FLARE_R2_SECRET_KEY'),
       },
-      forcePathStyle: true,
     })
 
     this.awsBucket = this.env.get('CLOUD_FLARE_BUCKET')
+
+    this.s3Client.middlewareStack.addRelativeTo(
+      (next) => async (args) => {
+        delete args.request.headers['x-amz-checksum-crc32']
+        return next(args)
+      },
+      {
+        relation: 'after',
+        toMiddleware: 'headerMiddleware',
+      },
+    )
   }
 
   async createUploadUrl(fileName: string, fileType: string): Promise<string> {
@@ -147,6 +157,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
+        ChecksumAlgorithm: '',
       }),
     )
     return {
