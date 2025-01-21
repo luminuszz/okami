@@ -67,6 +67,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `user-avatars-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
+        ChecksumAlgorithm: 'CRC32',
       }),
     )
 
@@ -119,6 +120,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
+        ChecksumAlgorithm: 'CRC32',
       }),
     )
 
@@ -146,6 +148,7 @@ export class CloudFlareR2StorageAdapter implements StorageProvider {
         Body: parsedImage.fileData,
         Key: `work-images/${parsedImage.fileName}.${parsedImage.fileMimeType}`,
         ContentType: `image/${parsedImage.fileMimeType}`,
+        ChecksumAlgorithm: 'CRC32',
       }),
     )
     return {
