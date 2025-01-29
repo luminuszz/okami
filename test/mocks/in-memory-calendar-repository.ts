@@ -34,9 +34,13 @@ export class InMemoryCalendarRepository implements CalendarRepository {
     return filter(calendar.rows, (row) => row.dayOfWeek === dayOfWeek) ?? []
   }
 
-  async removeRow(rowId: string): Promise<void> {
+  async deleteRow(rowId: string): Promise<void> {
     this.calendars.forEach((calendar) => {
       calendar.rows = filter(calendar.rows, (row) => row.id !== rowId)
     })
+  }
+
+  async findCalendarRowById(calendarId: string, rowId: string): Promise<CalendarRow | null> {
+    return find(this.calendars, (item) => item.id === calendarId)?.rows.find((row) => row.id === rowId) ?? null
   }
 }

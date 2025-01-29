@@ -1,7 +1,6 @@
 import { ResourceNotFound } from '@core/errors/resource-not-found'
 import { User } from '@domain/auth/enterprise/entities/User'
-import { InvalidCalendarOperation } from '@domain/calendar/application/useCases/errors/invalid-calendar-operation'
-import { RemoveWorkFromCalendarDay } from '@domain/calendar/application/useCases/remove-work-from-calendar-day'
+import { RemoveRowFromCalendar } from '@domain/calendar/application/useCases/remove-row-from-calendar'
 import { Calendar } from '@domain/calendar/enterprise/entities/Calendar'
 import { CalendarRow } from '@domain/calendar/enterprise/entities/Calendar-row'
 import { faker } from '@faker-js/faker'
@@ -9,8 +8,8 @@ import { InMemoryCalendarRepository } from '@test/mocks/in-memory-calendar-repos
 import { InMemoryUserRepository } from '@test/mocks/in-memory-user-repository'
 import { createUserPropsFactory } from '@test/mocks/mocks'
 
-describe('RemoveWorkFromCalendarDay', () => {
-  let stu: RemoveWorkFromCalendarDay
+describe('RemoveRowFromCalendar', () => {
+  let stu: RemoveRowFromCalendar
 
   let userRepository: InMemoryUserRepository
   let calendarRepository: InMemoryCalendarRepository
@@ -18,7 +17,7 @@ describe('RemoveWorkFromCalendarDay', () => {
   beforeEach(() => {
     userRepository = new InMemoryUserRepository()
     calendarRepository = new InMemoryCalendarRepository()
-    stu = new RemoveWorkFromCalendarDay(calendarRepository)
+    stu = new RemoveRowFromCalendar(calendarRepository)
   })
 
   it('should be able to remove work from day in calendar', async () => {
@@ -45,16 +44,14 @@ describe('RemoveWorkFromCalendarDay', () => {
 
     const result = await stu.execute({
       userId: user.id,
-      workId: calendarRow.workId,
-      calendarId: calendar.id,
-      dayOfWeek: calendarRow.dayOfWeek,
+      rowId: calendarRow.id,
     })
 
     expect(result.isRight()).toBeTruthy()
     expect(calendarRepository.calendars[0].rows).toHaveLength(0)
   })
 
-  it(' not should be able to remove work from day in calendar if calendar not exists', async () => {
+  it("not should be able to remove work from day in calendar if user calendar doesn't exist", async () => {
     const user = User.create(createUserPropsFactory())
 
     await userRepository.create(user)
@@ -76,20 +73,18 @@ describe('RemoveWorkFromCalendarDay', () => {
 
     await calendarRepository.createRow(calendarRow)
 
-    const FAKE_CALENDAR_ID = faker.string.uuid()
+    const FAKE_USER_ID = faker.string.uuid()
 
     const result = await stu.execute({
-      userId: user.id,
-      workId: calendarRow.workId,
-      calendarId: FAKE_CALENDAR_ID,
-      dayOfWeek: calendarRow.dayOfWeek,
+      userId: FAKE_USER_ID,
+      rowId: calendarRow.id,
     })
 
     expect(result.isLeft()).toBeTruthy()
     expect(result.value).toBeInstanceOf(ResourceNotFound)
   })
 
-  it(' not should be able to remove work from day in calendar if calendar user is not calendar owner', async () => {
+  it('not should be able to remove work from day in calendar if row not exists in calendar', async () => {
     const user = User.create(createUserPropsFactory())
 
     await userRepository.create(user)
@@ -111,16 +106,14 @@ describe('RemoveWorkFromCalendarDay', () => {
 
     await calendarRepository.createRow(calendarRow)
 
-    const FAKER_USER_ID = faker.string.uuid()
+    const FAKER_CALENDAR_ROW_ID = faker.string.uuid()
 
     const result = await stu.execute({
-      userId: FAKER_USER_ID,
-      workId: calendarRow.workId,
-      calendarId: calendar.id,
-      dayOfWeek: calendarRow.dayOfWeek,
+      userId: user.id,
+      rowId: FAKER_CALENDAR_ROW_ID,
     })
 
     expect(result.isLeft()).toBeTruthy()
-    expect(result.value).toBeInstanceOf(InvalidCalendarOperation)
+    expect(result.value).toBeInstanceOf(ResourceNotFound)
   })
 })
