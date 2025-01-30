@@ -1,5 +1,5 @@
-import { SendResetPasswordEmail } from '@domain/auth/application/useCases/send-reset-password-email';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { SendResetPasswordEmail } from '@domain/auth/application/useCases/send-reset-password-email'
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 
 export class SendResetPasswordEmailCommand {
   constructor(public readonly email: string) {}
@@ -10,10 +10,10 @@ export class SendResetPasswordEmailCommandHandler implements ICommandHandler<Sen
   constructor(private readonly sendResetPasswordEmail: SendResetPasswordEmail) {}
 
   async execute({ email }: SendResetPasswordEmailCommand): Promise<any> {
-    const results = await this.sendResetPasswordEmail.execute({ email });
+    const results = await this.sendResetPasswordEmail.execute({ email })
 
     if (results.isLeft()) {
-      console.log('Error on SendResetPasswordEmailCommandHandler', results.value);
+      throw results.value
     }
   }
 }
