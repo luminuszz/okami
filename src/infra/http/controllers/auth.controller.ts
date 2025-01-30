@@ -33,9 +33,10 @@ import { LogoutDto } from '@infra/http/validators/logout.dto'
 import { MakeSessionDto, MakeSessionValidator } from '@infra/http/validators/make-session.dto'
 import { ResetPasswordDto } from '@infra/http/validators/reset-password.dto'
 import { ValidateEmailDto } from '@infra/http/validators/validate-email.dto'
-import { BadRequestException, Body, Controller, Get, Post, Put, Req, Res } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, HttpCode, Post, Put, Req, Res } from '@nestjs/common'
 import { CommandBus, QueryBus } from '@nestjs/cqrs'
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
 import { FastifyReply } from 'fastify'
 import { RefreshTokenModel, RefreshTokenOnlyModel } from '../models/refresh-token.model'
 import { User } from '../user-auth.decorator'
@@ -74,9 +75,9 @@ export class AuthController {
       .status(201)
   }
 
+  @HttpCode(200)
   @IsPublic()
   @Post('v2/login')
-
   @ApiOkResponse({ type: RefreshTokenModel })
   async loginV2(@Body() data: MakeSessionValidator, @Res({ passthrough: true }) res: FastifyReply) {
     const results = (await this.commandBus.execute(
@@ -170,7 +171,11 @@ export class AuthController {
   @Post('/register')
   async register(@Body() data: CreateUserDto, @Res({ passthrough: true }) res: FastifyReply) {
     await this.commandBus.execute(
-      new CreateUserCommand({ email: data.email, password: data.password, name: data.name }),
+      new CreateUserCommand({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+      }),
     )
 
     const sessionCreated = await this.commandBus.execute<LoginCommand, { token: string }>(
@@ -241,7 +246,9 @@ export class AuthController {
 
   @Get('/user/telegram-status')
   async getTelegramStatus(@User('id') userId: string) {
-    const results = await this.getSubscriberByRecipientId.execute({ recipientId: userId })
+    const results = await this.getSubscriberByRecipientId.execute({
+      recipientId: userId,
+    })
 
     if (results.isLeft()) {
       throw new BadRequestException(results.value)

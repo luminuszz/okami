@@ -1,61 +1,65 @@
-import { Entity } from '@core/entities/entity';
-import { Replace } from '@core/replaced';
-import { CalendarRow } from '@domain/calendar/enterprise/entities/Calendar-row';
-import { UniqueEntityID } from '@core/entities/unique-entity-id';
+import { Entity } from '@core/entities/entity'
+import { UniqueEntityID } from '@core/entities/unique-entity-id'
+import { Replace } from '@core/replaced'
+import { CalendarRow } from '@domain/calendar/enterprise/entities/Calendar-row'
 
 export interface CalendarProps {
-  userId: string;
-  title: string;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  rows: CalendarRow[];
+  userId: string
+  title: string
+  description?: string
+  createdAt: Date
+  updatedAt: Date | null
+  rows: CalendarRow[]
 }
 
 export type CalendarReplacedProps = Replace<
   CalendarProps,
   {
-    createdAt?: Date;
-    updatedAt?: Date | null;
-    rows?: CalendarRow[];
+    createdAt?: Date
+    updatedAt?: Date | null
+    rows?: CalendarRow[]
   }
->;
+>
 
 export class Calendar extends Entity<CalendarProps> {
   private constructor(props: CalendarReplacedProps, id?: UniqueEntityID) {
-    props.createdAt = props.createdAt ?? new Date();
-    props.updatedAt = props.updatedAt ?? null;
-    props.description = props.description ?? '';
-    props.rows = props.rows ?? [];
+    props.createdAt = props.createdAt ?? new Date()
+    props.updatedAt = props.updatedAt ?? null
+    props.description = props.description ?? ''
+    props.rows = props.rows ?? []
 
-    super(props as CalendarProps, id);
+    super(props as CalendarProps, id)
   }
 
   static create(props: CalendarReplacedProps, id?: UniqueEntityID): Calendar {
-    return new Calendar(props, id);
+    return new Calendar(props, id)
   }
 
   get userId() {
-    return this.props.userId;
+    return this.props.userId
   }
 
   get title() {
-    return this.props.title;
+    return this.props.title
   }
 
   get description() {
-    return this.props.description;
+    return this.props.description
   }
 
   get createdAt() {
-    return this.props.createdAt;
+    return this.props.createdAt
   }
 
   get updatedAt() {
-    return this.props.updatedAt;
+    return this.props.updatedAt
   }
 
   get rows() {
-    return this.props.rows;
+    return this.props.rows
+  }
+
+  set rows(rows: CalendarRow[]) {
+    this.props.rows = rows
   }
 }
