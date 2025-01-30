@@ -1,15 +1,15 @@
-import { prismaWorkToEntityMapper } from '@app/infra/database/prisma/prisma-mapper';
-import { PrismaService } from '@app/infra/database/prisma/prisma.service';
-import { Status } from '@domain/work/application/usecases/fetch-user-works-with-filter';
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { WorkStatus } from '@prisma/client';
-import { isEmpty, merge } from 'lodash';
+import { prismaWorkToEntityMapper } from '@app/infra/database/prisma/prisma-mapper'
+import { PrismaService } from '@app/infra/database/prisma/prisma.service'
+import { Status } from '@domain/work/application/usecases/fetch-user-works-with-filter'
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
+import { WorkStatus } from '@prisma/client'
+import { isEmpty, merge } from 'lodash'
 
 export interface FetchUserWorksWithFilterQueryParams {
-  status?: Status;
-  search?: string;
-  page: number;
-  limit: 10 | 20 | 30;
+  status?: Status
+  search?: string
+  page: number
+  limit: 10 | 20 | 30
 }
 
 export class FetchUserWorksWithFilterAndPagedQuery {
@@ -26,7 +26,7 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
   constructor(private readonly prisma: PrismaService) {}
 
   async execute({ searchParams, userId }: FetchUserWorksWithFilterAndPagedQuery) {
-    const { limit, page, search, status } = searchParams;
+    const { limit, page, search, status } = searchParams
 
     const query = {
       take: limit,
@@ -38,24 +38,24 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
         tags: true,
       },
       orderBy: {},
-    };
+    }
 
     if (status) {
       if (status === 'favorites') {
-        merge(query.where, { isFavorite: true });
-        merge(query.orderBy, { createdAt: 'desc' });
+        merge(query.where, { isFavorite: true })
+        merge(query.orderBy, { createdAt: 'desc' })
       } else {
         const parserFilterStatus = {
           unread: WorkStatus.UNREAD,
           read: WorkStatus.READ,
           finished: WorkStatus.FINISHED,
           dropped: WorkStatus.DROPPED,
-        };
+        }
 
-        const currentStatus = parserFilterStatus[status];
+        const currentStatus = parserFilterStatus[status]
 
-        merge(query.where, { status: currentStatus });
-        merge(query.orderBy, currentStatus === 'UNREAD' ? { nextChapterUpdatedAt: 'desc' } : { updatedAt: 'desc' });
+        merge(query.where, { status: currentStatus })
+        merge(query.orderBy, currentStatus === 'UNREAD' ? { nextChapterUpdatedAt: 'desc' } : { updatedAt: 'desc' })
       }
     }
 
@@ -75,26 +75,24 @@ export class FetchUserWorksWithFilterAndPagedQueryHandler
             },
           },
         ],
-      });
+      })
     }
 
     if (isEmpty(query.orderBy)) {
-      merge(query.orderBy, { createdAt: 'desc' });
+      merge(query.orderBy, { createdAt: 'desc' })
     }
-
-    console.log(query);
 
     const [results, totalOfWorks] = await this.prisma.$transaction([
       this.prisma.work.findMany(query as any),
       this.prisma.work.count({
         where: query.where,
       }),
-    ]);
+    ])
 
     return {
       works: results.map(prismaWorkToEntityMapper),
       totalOfPages: Math.ceil(totalOfWorks / limit),
       nextPage: page >= totalOfWorks / limit ? null : page + 1,
-    };
+    }
   }
 }
