@@ -1,6 +1,6 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { UserCreated } from '@domain/auth/enterprise/events/user-created';
-import { CreateCalendar } from '@domain/calendar/application/useCases/create-calendar';
+import { UserCreated } from '@domain/auth/enterprise/events/user-created'
+import { CreateCalendar } from '@domain/calendar/application/useCases/create-calendar'
+import { EventsHandler, IEventHandler } from '@nestjs/cqrs'
 
 @EventsHandler(UserCreated)
 export class CreateCalendarOnNewUserHandler implements IEventHandler<UserCreated> {
@@ -11,10 +11,10 @@ export class CreateCalendarOnNewUserHandler implements IEventHandler<UserCreated
       title: `${user.name}'s calendar`,
       description: `${user.name}'s calendar`,
       userId: user.id,
-    });
+    })
 
     if (results.isLeft()) {
-      throw results.value;
+      throw results.value
     }
   }
 }

@@ -1,12 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { createZodValidator } from '@infra/http/validators/zod/create-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { z } from 'zod'
 
-export class CompareSubscriberAuthTokenDto {
-  @IsString()
+export class CompareSubscriberAuthTokenDto extends createZodValidator(
+  z.object({
+    userId: z.string(),
+    authCode: z.string(),
+  }),
+) {
   @ApiProperty()
-  userId: string;
+  userId: string
 
-  @IsString()
   @ApiProperty()
-  authCode: string;
+  authCode: string
 }

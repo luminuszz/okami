@@ -1,14 +1,16 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { createZodValidator } from '@infra/http/validators/zod/create-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { z } from 'zod'
 
-export class CreateCalendarDto {
-  @IsString()
-  @IsNotEmpty()
+const schema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+})
+
+export class CreateCalendarDto extends createZodValidator(schema) {
   @ApiProperty()
-  title: string;
+  title: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({ type: 'string', required: false })
-  description?: string;
+  description?: string
 }

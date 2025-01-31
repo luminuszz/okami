@@ -3,7 +3,7 @@ import { AddRowInCalendarCommand } from '@infra/crqs/calendar/commands/add-row-i
 import { CreateCalendarCommand } from '@infra/crqs/calendar/commands/create-calendar-command'
 import { RemoveRowFromCalendarCommand } from '@infra/crqs/calendar/commands/remove-row-from-calendar.command'
 import { User } from '@infra/http/user-auth.decorator'
-import { AddRowInCalendarDto } from '@infra/http/validators/addRowInCalendar.dto'
+import { AddRowInCalendarDto } from '@infra/http/validators/add-row-in-calendar.dto'
 import { CreateCalendarDto } from '@infra/http/validators/create-calendar-dto'
 import { ParseObjectIdPipe } from '@infra/utils/parse-objectId.pipe'
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
@@ -19,6 +19,14 @@ export class CalendarController {
     private queryBus: QueryBus,
   ) {}
 
+  @Get('')
+  @ApiResponse({ type: CalendarModel })
+  async fetchUserCalendar(@User('id') userId: string) {
+    const results = await this.queryBus.execute(new FetchUserCalendarWithRowsQuery(userId))
+
+    return CalendarHttpModelValidator.validate(results)
+  }
+
   @Post('/')
   async create(@Body() body: CreateCalendarDto, @User('id') userId: string) {
     console.log('userId', userId)
@@ -29,14 +37,6 @@ export class CalendarController {
   @Post('/row')
   async addRowInCalendar(@Body() { dayOfWeek, workId }: AddRowInCalendarDto, @User('id') userId: string) {
     await this.commandBus.execute(new AddRowInCalendarCommand(workId, dayOfWeek, userId))
-  }
-
-  @ApiResponse({ type: CalendarModel })
-  @Get('')
-  async fetchUserCalendar(@User('id') userId: string) {
-    const results = await this.queryBus.execute(new FetchUserCalendarWithRowsQuery(userId))
-
-    return CalendarHttpModelValidator.validate(results)
   }
 
   @Delete('/row/:rowId')
