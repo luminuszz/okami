@@ -1,7 +1,7 @@
-import { EnvService } from '@app/infra/env/env.service';
-import { Injectable } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { UserTokenDto } from './dto/user-token.dto';
+import { EnvService } from '@app/infra/env/env.service'
+import { Injectable } from '@nestjs/common'
+import { JwtService, JwtSignOptions } from '@nestjs/jwt'
+import { UserTokenDto } from './dto/user-token.dto'
 
 @Injectable()
 export class TokenService {
@@ -11,11 +11,9 @@ export class TokenService {
   ) {}
 
   async generateUserToken(payload: UserTokenDto, options?: JwtSignOptions): Promise<string> {
-    const token = await this.jwtService.signAsync(payload, {
+    return await this.jwtService.signAsync(payload, {
       secret: this.envService.get('JWT_SECRET'),
       ...options,
-    });
-
-    return token;
+    })
   }
 }

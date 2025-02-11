@@ -1,21 +1,19 @@
-import type { FastifyCookieOptions } from '@fastify/cookie';
-import * as fastifyCookie from '@fastify/cookie';
-import * as helmet from '@fastify/helmet';
-import * as fmp from '@fastify/multipart';
-import { EnvService } from '@infra/env/env.service';
-import { parseMultipartFormData } from '@infra/utils/parseMultipartFormData';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RawServerDefault } from 'fastify';
-import { writeFileSync } from 'node:fs';
-import { AppModule } from './app.module';
+import type { FastifyCookieOptions } from '@fastify/cookie'
+import * as fastifyCookie from '@fastify/cookie'
+import * as helmet from '@fastify/helmet'
+import * as fmp from '@fastify/multipart'
+import { EnvService } from '@infra/env/env.service'
+import { parseMultipartFormData } from '@infra/utils/parseMultipartFormData'
+import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { RawServerDefault } from 'fastify'
+import { AppModule } from './app.module'
 
-let app: NestFastifyApplication<RawServerDefault>;
-
-(async () => {
-  const adapter = new FastifyAdapter();
+let app: NestFastifyApplication<RawServerDefault>
+;(async () => {
+  const adapter = new FastifyAdapter()
 
   await Promise.all([
     adapter.register(helmet as any, {
@@ -38,7 +36,7 @@ let app: NestFastifyApplication<RawServerDefault>;
         },
       } as FastifyCookieOptions,
     ),
-  ]);
+  ])
   adapter.enableCors({
     origin: ['http://localhost:5173', 'https://okami.daviribeiro.com'],
     allowedHeaders: [
@@ -51,13 +49,13 @@ let app: NestFastifyApplication<RawServerDefault>;
     ],
     credentials: true,
     methods: ['GET', 'PUT', 'OPTIONS', 'POST', 'DELETE', 'PATCH'],
-  });
+  })
 
-  app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true });
+  app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, { rawBody: true })
 
-  const envService = app.get(EnvService);
+  const envService = app.get(EnvService)
 
-  app.useGlobalPipes(new ValidationPipe({ transformOptions: { enableImplicitConversion: true } }));
+  app.useGlobalPipes(new ValidationPipe({ transformOptions: { enableImplicitConversion: true } }))
 
   const config = new DocumentBuilder()
     .setTitle('Okami API')
@@ -65,19 +63,19 @@ let app: NestFastifyApplication<RawServerDefault>;
     .setVersion('1.0')
     .addTag('okami')
     .addBearerAuth()
-    .build();
+    .build()
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config)
 
   app.getHttpAdapter().get('/static/swagger', (_, reply) => {
-    return reply.header('Content-Type', 'application/json; charset=utf-8').send(document);
-  });
+    return reply.header('Content-Type', 'application/json; charset=utf-8').send(document)
+  })
 
   if (envService.get('NODE_ENV') === 'development') {
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api', app, document)
   }
 
   await app.listen(envService.get('PORT'), envService.get('ADDRESS'), (error, address) =>
     console.log(address, { error }),
-  );
-})();
+  )
+})()
