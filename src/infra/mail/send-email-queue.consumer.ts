@@ -19,7 +19,7 @@ export class SendEmailQueueConsumer implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.queueProvider.subscribe(sendEmailQueueKey, (payload: SendEmailQueueConsumerDto) => this.process(payload))
+    this.queueProvider.subscribe(sendEmailQueueKey, this.process.bind(this))
   }
 
   async process(payload: SendEmailQueueConsumerDto) {
