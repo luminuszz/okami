@@ -1,13 +1,14 @@
-import { Either, left, right } from '@core/either';
-import { UseCaseImplementation } from '@core/use-case';
-import { WatchList } from '@core/WatchList';
-import { TagRepository } from '@domain/work/application/repositories/tag-repository';
-import { WorkUpdatedEvent } from '@domain/work/enterprise/entities/events/work-updated';
-import { Work } from '@domain/work/enterprise/entities/work';
-import { Injectable } from '@nestjs/common';
-import { map } from 'lodash';
-import { WorkRepository } from '../repositories/work-repository';
-import { WorkNotFoundError } from './errors/work-not-found';
+import { WatchList } from "@core/WatchList";
+import { Either, left, right } from "@core/either";
+import { UseCaseImplementation } from "@core/use-case";
+import { TagRepository } from "@domain/work/application/repositories/tag-repository";
+import { WorkUpdatedEvent } from "@domain/work/enterprise/entities/events/work-updated";
+import { Work } from "@domain/work/enterprise/entities/work";
+import { Injectable } from "@nestjs/common";
+import { map } from "lodash";
+import { WorkRepository } from "../repositories/work-repository";
+import { InvalidWorkOperationError } from "./errors/invalid-work-operation";
+import { WorkNotFoundError } from "./errors/work-not-found";
 
 type UpdateWorkUseCaseInput = {
   id: string;
@@ -28,7 +29,7 @@ type UpdateWorkUseCaseOutput = Either<WorkNotFoundError, { work: Work }>;
 export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCaseInput, UpdateWorkUseCaseOutput> {
   constructor(
     private readonly workRepository: WorkRepository,
-    private readonly tagRepository: TagRepository,
+    private readonly tagRepository: TagRepository
   ) {}
 
   async execute({ data, id, userId }: UpdateWorkUseCaseInput): Promise<UpdateWorkUseCaseOutput> {
@@ -38,9 +39,15 @@ export class UpdateWorkUseCase implements UseCaseImplementation<UpdateWorkUseCas
       return left(new WorkNotFoundError());
     }
 
+    const userIsWorkOwner = existsWork.userId === userId;
+
+    if (!userIsWorkOwner) {
+      return left(new InvalidWorkOperationError("User is not the owner of the work"));
+    }
+
     if (data.tagsId?.length) {
       const tags = await this.tagRepository.findAllTagsByWorkId(id);
-      const list = WatchList.create(map(tags, 'id'));
+      const list = WatchList.create(map(tags, "id"));
 
       const removedTags = list.getRemovedList(data?.tagsId ?? []);
       const addedTags = list.getAddedList(data?.tagsId ?? []);
