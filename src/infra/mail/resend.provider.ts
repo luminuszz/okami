@@ -1,10 +1,12 @@
-import { EnvService } from '@infra/env/env.service'
-import { Injectable } from '@nestjs/common'
-import { Resend } from 'resend'
+import { EnvService } from "@infra/env/env.service";
+import { Injectable, Provider } from "@nestjs/common";
+import { Resend } from "resend";
 
-@Injectable()
-export class ResendProvider extends Resend {
-  constructor(envService: EnvService) {
-    super(envService.get('RESEND_API_SECRET_KEY'))
-  }
-}
+export const RESEND_PROVIDER = Symbol("RESEND_PROVIDER");
+
+export const ResendProvider: Provider = {
+  provide: RESEND_PROVIDER,
+  inject: [EnvService],
+  useFactory: (envService: EnvService) =>
+    new Resend(envService.get("RESEND_API_SECRET_KEY")),
+};
